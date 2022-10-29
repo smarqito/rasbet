@@ -1,24 +1,35 @@
+using Domain;
+using DTO.UserDTO;
 using Microsoft.AspNetCore.Mvc;
+using UserApplication.Interfaces;
 
 namespace UserAPI.Controllers
 {
     public class UserController : BaseController
     {
+        private readonly IUserRepository userRepository;
 
-        public UserController()
+        public UserController(IUserRepository userRepository)
         {
+            this.userRepository = userRepository;
         }
 
         [HttpGet("login")]
-        public Task<IActionResult> Login()
+        public Task<IActionResult> Login(int id)
         {
             throw new NotImplementedException();
         }
 
         [HttpPost("user")]
-        public Task<IActionResult> RegisterUser()
+        public async Task<IActionResult> RegisterUser([FromBody] RegisterAppUserDTO registerApp)
         {
-            throw new NotImplementedException();
+            await userRepository.RegisterUser(registerApp.Name,
+                                              registerApp.Email,
+                                              registerApp.Nif,
+                                              registerApp.PhoneNumber,
+                                              registerApp.BirthDate,
+                                              registerApp.Password);
+            return Ok();
         }
 
         [HttpPost("admin")]

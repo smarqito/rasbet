@@ -3,13 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rasbet", "Rasbet\Rasbet.csproj", "{56B79EBB-8508-4DC6-8FFD-B8B8FA18C900}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rasbet", "Rasbet\Rasbet.csproj", "{56B79EBB-8508-4DC6-8FFD-B8B8FA18C900}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserAPI", "UserAPI\UserAPI.csproj", "{B1FF588B-E977-40FD-B43A-79714EE0C140}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserAPI", "UserAPI\UserAPI.csproj", "{B1FF588B-E977-40FD-B43A-79714EE0C140}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BetAPI", "BetAPI\BetAPI.csproj", "{66D3583D-EBCE-4A25-B013-3DD53AD532DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BetAPI", "BetAPI\BetAPI.csproj", "{66D3583D-EBCE-4A25-B013-3DD53AD532DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameOddAPI", "GameOddAPI\GameOddAPI.csproj", "{482A0DB8-A8C1-4846-AA20-C2C567F4B6D7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameOddAPI", "GameOddAPI\GameOddAPI.csproj", "{482A0DB8-A8C1-4846-AA20-C2C567F4B6D7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DTO", "DTO\DTO.csproj", "{71E4241B-6514-4186-800A-9C3523BBFF0F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{AF5C1808-974C-4FD3-917F-2F5675104D0A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserPersistence", "User.Persistence\UserPersistence.csproj", "{BC42633E-FE74-4503-B761-3CEBF420CB2B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserApplication", "UserApplication\UserApplication.csproj", "{1C1C4177-00E9-4ADF-9876-C30B50CEFEA8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +41,22 @@ Global
 		{482A0DB8-A8C1-4846-AA20-C2C567F4B6D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{482A0DB8-A8C1-4846-AA20-C2C567F4B6D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{482A0DB8-A8C1-4846-AA20-C2C567F4B6D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71E4241B-6514-4186-800A-9C3523BBFF0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71E4241B-6514-4186-800A-9C3523BBFF0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71E4241B-6514-4186-800A-9C3523BBFF0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71E4241B-6514-4186-800A-9C3523BBFF0F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF5C1808-974C-4FD3-917F-2F5675104D0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF5C1808-974C-4FD3-917F-2F5675104D0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF5C1808-974C-4FD3-917F-2F5675104D0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF5C1808-974C-4FD3-917F-2F5675104D0A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC42633E-FE74-4503-B761-3CEBF420CB2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC42633E-FE74-4503-B761-3CEBF420CB2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC42633E-FE74-4503-B761-3CEBF420CB2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC42633E-FE74-4503-B761-3CEBF420CB2B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C1C4177-00E9-4ADF-9876-C30B50CEFEA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C1C4177-00E9-4ADF-9876-C30B50CEFEA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C1C4177-00E9-4ADF-9876-C30B50CEFEA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C1C4177-00E9-4ADF-9876-C30B50CEFEA8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
