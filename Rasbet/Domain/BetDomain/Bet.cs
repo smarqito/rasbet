@@ -2,10 +2,10 @@
 
 public abstract class Bet
 {
+    public int Id { get; set; }
     private double amount { get; set; }
     private double wonValue { get; set; }
 
-    public int Id { get; set; }
     public DateTime Start { get; set; }
     public DateTime End { get; set; }
 

@@ -12,4 +12,5 @@ public class Wallet
 		get { return balance; }
 		set { balance = Math.Max(0,value); }
 	}
+	public virtual ICollection<Transaction> Transactions { get; set; }
 }

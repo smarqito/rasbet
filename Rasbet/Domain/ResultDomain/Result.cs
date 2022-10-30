@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.UserDomain;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,4 +14,5 @@ public class Result
     public int NumberOfBets { get; set; }
     public virtual Game Game { get; set; }
     public ResultState State { get; set; }
+    public virtual Specialist Specialist { get; set; }
 }

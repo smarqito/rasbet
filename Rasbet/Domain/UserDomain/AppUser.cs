@@ -12,6 +12,7 @@ public class AppUser : User
     public string NIF { get; set; }
     public DateTime BirthDate { get; set; }
     public virtual Wallet Wallet { get; set; } = new();
+    public virtual ICollection<Bet> BetHistory { get; set; } = new List<Bet>();
 
     public AppUser(string name, string email, string nIF, string phoneNumber) : base(name, email)
     {

@@ -1,4 +1,5 @@
 ﻿using Domain.ResultDomain;
+using Domain.UserDomain;
 
 namespace Domain;
 
@@ -9,4 +10,5 @@ public class Game
     public virtual Sport Sport { get; set; }
     public GameState State { get; set; }
     public virtual ICollection<Result> Results { get; set; } = new List<Result>();
+    public virtual Specialist Specialist { get; set; }
 }
