@@ -12,6 +12,8 @@ public class UserContext : IdentityDbContext<Domain.User>
 
     public DbSet<Wallet> Wallet { get; set; }
 
+    //bets?????????????
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

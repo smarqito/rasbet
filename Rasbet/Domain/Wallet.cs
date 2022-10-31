@@ -7,10 +7,12 @@ public class Wallet
 	private double balance;
 	public int Id { get; set; }
 	public virtual User User { get; set; }
+
 	public double Balance
 	{
 		get { return balance; }
 		set { balance = Math.Max(0,value); }
 	}
+
 	public virtual ICollection<Transaction> Transactions { get; set; }
 }

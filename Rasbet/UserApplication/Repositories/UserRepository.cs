@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using UserApplication.Interfaces;
 using UserPersistence;
 
@@ -8,17 +8,32 @@ public class UserRepository : IUserRepository
 {
     private readonly UserContext context;
     private readonly UserManager<User> userManager;
+    private readonly SignInManager<User> signInManager;
 
-    public UserRepository(UserContext context,
-                          UserManager<User> userManager)
+    public AppUserRepository(UserContext context,
+                            UserManager<User> userManager,
+                            SignInManager<User> signInManager)
     {
         this.context = context;
         this.userManager = userManager;
+        this.signInManager = signInManager;
     }
-    public async Task<User> RegisterUser(string name, string email, string nif, string phoneNumber, DateTime birthDate, string password)
+
+    
+    public async Task<User> Login (string email, string password)
     {
-        User newU = new AppUser(name, email, nif, phoneNumber);
-        var s = await userManager.CreateAsync(newU, password);
-        return newU;
+        var user = await _userManager.FindByEmailAsync(email);
+        var password = await userManager.CheckPasswordAsync(user, password);
+
+        if(password)
+        {
+            var result = await signInManager.SignInAsync(email,password, false);
+
+            if (result.Succeeded)
+            {
+                return RedirectToAction(nameof(EmployeeController.Contact), "Employee");
+            }
+        }
     }
+
 }
