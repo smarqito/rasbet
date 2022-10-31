@@ -19,16 +19,32 @@ public class GameRepository : IGameRepository
         this.gameOddContext = gameOddContext;
     }
 
-    public Task<Game> CreateCollectiveGame(Sport sport, DateTime date, string HomeTeam, string AwayTeam, ICollection<BetType> bets)
+    public async Task<Game> CreateCollectiveGame(Sport sport, DateTime date, string HomeTeam, string AwayTeam, ICollection<BetType> bets)
     {
-        Game g = new CollectiveGame(HomeTeam, AwayTeam, date, sport, bets);
-        throw new NotImplementedException();
+        try
+        {
+            Game g = new CollectiveGame(HomeTeam, AwayTeam, date, sport, bets);
+            await gameOddContext.Games.AddAsync(g);
+            throw new NotImplementedException();
+        }
+        catch (Exception)
+        {
+            throw new Exception("Aconteceu um erro interno");
+        }
 
     }
 
-    public Task<Game> CreateIndividuallGame(Sport sport, DateTime date, ICollection<string> Players, ICollection<BetType> bets)
+    public async Task<Game> CreateIndividuallGame(Sport sport, DateTime date, ICollection<string> Players, ICollection<BetType> bets)
     {
-        Game g = new IndividualGame(Players, date, sport, bets);
-        throw new NotImplementedException();
+        try
+        {
+            Game g = new IndividualGame(Players, date, sport, bets);
+            await gameOddContext.Games.AddAsync(g);
+            throw new NotImplementedException();
+        }
+        catch (Exception)
+        {
+            throw new Exception("Aconteceu um erro interno");
+        }
     }
 }

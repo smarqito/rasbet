@@ -1,4 +1,5 @@
-﻿using GameOddApplication.Interfaces;
+﻿using Domain;
+using GameOddApplication.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,4 +10,8 @@ namespace GameOddApplication.Repositories;
 
 public class SportRepository : ISportRepository
 {
+    public Task<Sport> CreateSport(string name)
+    {
+        throw new NotImplementedException();
+    }
 }
