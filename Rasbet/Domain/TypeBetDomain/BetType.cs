@@ -14,4 +14,11 @@ public class BetType
     public virtual Game Game { get; set; }
     public BetTypeState State { get; set; }
     public virtual Specialist Specialist { get; set; }
+
+    public BetType(Game game)
+    {
+        NumberOfBets = 0;
+        Game = game;
+        State = BetTypeState.UNFINISHED;
+    }
 }

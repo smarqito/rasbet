@@ -8,7 +8,14 @@ namespace Domain.ResultDomain;
 
 public class H2h : BetType
 {
+
     public double OddHomeTeam { get; set; }
-    public double oddDraw { get; set; }
-    public double oddAwayTeam { get; set; }
+    public double OddDraw { get; set; }
+    public double OddAwayTeam { get; set; }
+    public H2h(double oddHomeTeam, double oddDray, double oddAwayTeam,Game game) : base(game)
+    {
+        OddHomeTeam = oddHomeTeam;
+        OddDraw = oddDray;
+        OddAwayTeam = oddAwayTeam;
+    }
 }
