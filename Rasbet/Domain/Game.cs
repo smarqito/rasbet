@@ -9,6 +9,6 @@ public class Game
     public DateTime StartTime { get; set; }
     public virtual Sport Sport { get; set; }
     public GameState State { get; set; }
-    public virtual ICollection<Result> Results { get; set; } = new List<Result>();
+    public virtual ICollection<BetType> Results { get; set; } = new List<BetType>();
     public virtual Specialist Specialist { get; set; }
 }

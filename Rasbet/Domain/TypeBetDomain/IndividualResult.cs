@@ -4,11 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.ResultDomain;
+namespace Domain;
 
-public enum SimpleResultType
+public class IndividualResult
 {
-    X1,
-    X,
-    X2
+    public Dictionary<string, double> PlayerOdds{ get; set; }
 }

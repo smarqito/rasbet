@@ -19,14 +19,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserPersistence", "User.Per
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserApplication", "UserApplication\UserApplication.csproj", "{1C1C4177-00E9-4ADF-9876-C30B50CEFEA8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameOddPersistance", "GameOddPersistance\GameOddPersistance.csproj", "{522A4AAC-A2BB-4F20-9654-AB2CA9B6AC0E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameOddPersistance", "GameOddPersistance\GameOddPersistance.csproj", "{522A4AAC-A2BB-4F20-9654-AB2CA9B6AC0E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameOddApplication", "GameOddApplication\GameOddApplication.csproj", "{5E51E508-27B4-4624-9D1B-FD26133D4FFF}"
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserApplication", "UserApplication\UserApplication.csproj", "{1C1C4177-00E9-4ADF-9876-C30B50CEFEA8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameOddApplication", "GameOddApplication\GameOddApplication.csproj", "{5E51E508-27B4-4624-9D1B-FD26133D4FFF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BetApplication", "BetApplication\BetApplication.csproj", "{49FA2C32-072E-4D2C-A16F-4CA19AF6E1F9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BetApplication", "BetApplication\BetApplication.csproj", "{49FA2C32-072E-4D2C-A16F-4CA19AF6E1F9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BetPersistence", "BetPersistence\BetPersistence.csproj", "{FC1C3D7A-0DEE-49A6-9C81-C8EC92904E1D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BetPersistence", "BetPersistence\BetPersistence.csproj", "{FC1C3D7A-0DEE-49A6-9C81-C8EC92904E1D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

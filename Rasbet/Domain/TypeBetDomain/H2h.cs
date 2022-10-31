@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace Domain.ResultDomain;
 
-public class IndividualResult
+public class H2h : BetType
 {
-    public string PlayerName { get; set; }
+    public double OddHomeTeam { get; set; }
+    public double oddDraw { get; set; }
+    public double oddAwayTeam { get; set; }
 }

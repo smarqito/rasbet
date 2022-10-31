@@ -7,12 +7,11 @@ using System.Threading.Tasks;
 
 namespace Domain.ResultDomain;
 
-public class Result
+public class BetType
 {
     public int Id { get; set; }
-    public double Odd { get; set; }
     public int NumberOfBets { get; set; }
     public virtual Game Game { get; set; }
-    public ResultState State { get; set; }
+    public BetTypeState State { get; set; }
     public virtual Specialist Specialist { get; set; }
 }

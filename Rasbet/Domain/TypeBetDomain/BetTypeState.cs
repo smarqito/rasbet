@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Domain.ResultDomain;
 
-public enum ResultState
+public enum BetTypeState
 {
-    WIN,
-    LOSE,
+    FINISHED,
     UNFINISHED
 }
