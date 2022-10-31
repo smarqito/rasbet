@@ -20,20 +20,9 @@ public class UserRepository : IUserRepository
     }
 
     
-    public async Task<User> Login (string email, string password)
+    public async Task<SignInResult> Login (string email, string password)
     {
-        var user = await _userManager.FindByEmailAsync(email);
-        var password = await userManager.CheckPasswordAsync(user, password);
-
-        if(password)
-        {
-            var result = await signInManager.SignInAsync(email,password, false);
-
-            if (result.Succeeded)
-            {
-                return RedirectToAction(nameof(EmployeeController.Contact), "Employee");
-            }
-        }
+        return signInManager.PasswordSignInAsync(email,password, false, false);
     }
 
 }

@@ -24,7 +24,17 @@ namespace UserAPI.Controllers
         [HttpGet("login")] // id????
         public async Task<IActionResult> Login(int id, [FromBody] LoginUserDTO user)
         {
-            await userRepository.Login(user.Email, user.Password);
+            SignInStatus sign_in_status = await userRepository.Login(user.Email, user.Password);
+
+            switch (sign_in_status)
+            {
+                case SignInStatus.Success:
+                    return Ok();
+                case SignInStatus.Failure:
+                    //erro 
+                default:
+                    return Ok();
+            } 
 
             return Ok();
         }
@@ -67,10 +77,11 @@ namespace UserAPI.Controllers
         /// </summary>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        [HttpGet()]
-        public Task<IActionResult> GetUser()
+        [HttpGet("{id}")]
+        public Task<UserDTO> GetUser(int id)
         {
-            throw new NotImplementedException();
+            UserDTO userDTO = userRepository.GetUser(id);
+            return userDTO;
         }
 
         /// <summary>
@@ -84,6 +95,7 @@ namespace UserAPI.Controllers
         {
             throw new NotImplementedException();
         }
+
         /// <summary>
         /// Update sensitive info
         ///     Expects to be confirmed by a code!
