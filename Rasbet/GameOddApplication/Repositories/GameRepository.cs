@@ -24,7 +24,7 @@ public class GameRepository : IGameRepository
         try
         {
             Game g = new CollectiveGame(HomeTeam, AwayTeam, date, sport, bets);
-            await gameOddContext.Games.AddAsync(g);
+            await gameOddContext.Game.AddAsync(g);
             await gameOddContext.SaveChangesAsync();
             return g;
         }
@@ -40,7 +40,7 @@ public class GameRepository : IGameRepository
         try
         {
             Game g = new IndividualGame(Players, date, sport, bets);
-            await gameOddContext.Games.AddAsync(g);
+            await gameOddContext.Game.AddAsync(g);
             await gameOddContext.SaveChangesAsync();
             return g;
         }

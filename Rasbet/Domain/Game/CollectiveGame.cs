@@ -11,7 +11,7 @@ public class CollectiveGame : Game
 {
     public string HomeTeam { get; set; }
     public string AwayTeam { get; set; }
-    public CollectiveGame(string homeTeam, string awayTeam, DateTime startTime, Sport sport, ICollection<BetType> bets) : base(startTime, sport, bets)
+    public CollectiveGame(string homeTeam, string awayTeam, string idSync, DateTime startTime, Sport sport, ICollection<BetType> bets) : base(idSync, startTime, sport, bets)
     {
         HomeTeam = homeTeam;
         AwayTeam = awayTeam;

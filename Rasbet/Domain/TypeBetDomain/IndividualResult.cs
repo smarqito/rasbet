@@ -15,4 +15,23 @@ public class IndividualResult : BetType
     {
         PlayerOds = playerOds;
     }
+
+    public override ICollection<Odd> GetWinningOdd()
+    {
+        ICollection<Odd> result = new List<Odd>();
+        foreach (Odd odd in PlayerOds)
+        {
+            if (odd.Win)
+            {
+                result.Add(odd);
+                return result;
+            }
+        }
+        return result;
+    }
+
+    public override void SetWinningOdd(string result)
+    {
+        throw new NotImplementedException();
+    }
 }

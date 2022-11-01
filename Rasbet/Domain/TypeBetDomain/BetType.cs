@@ -7,10 +7,9 @@ using System.Threading.Tasks;
 
 namespace Domain.ResultDomain;
 
-public class BetType
+public abstract class BetType
 {
     public int Id { get; set; }
-    public string idSync { get; set; }
     public int NumberOfBets { get; set; }
     public DateTime LastUpdate { get; set; }
     public virtual Game Game { get; set; }
@@ -23,4 +22,7 @@ public class BetType
         Game = game;
         State = BetTypeState.UNFINISHED;
     }
+
+    public abstract ICollection<Odd> GetWinningOdd();
+    public abstract void SetWinningOdd(string result);
 }
