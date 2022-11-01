@@ -25,7 +25,8 @@ public class GameRepository : IGameRepository
         {
             Game g = new CollectiveGame(HomeTeam, AwayTeam, date, sport, bets);
             await gameOddContext.Games.AddAsync(g);
-            throw new NotImplementedException();
+            await gameOddContext.SaveChangesAsync();
+            return g;
         }
         catch (Exception)
         {
@@ -40,7 +41,8 @@ public class GameRepository : IGameRepository
         {
             Game g = new IndividualGame(Players, date, sport, bets);
             await gameOddContext.Games.AddAsync(g);
-            throw new NotImplementedException();
+            await gameOddContext.SaveChangesAsync();
+            return g;
         }
         catch (Exception)
         {
