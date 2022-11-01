@@ -1,40 +1,8 @@
-﻿using GameOddApplication.Repositories;
+﻿using DTO.GetGamesRespDTO;
+using GameOddApplication.Repositories;
 using System.Net.Http.Headers;
 
-namespace GameOddAPI;
 
-public class Outcomes
-{
-    public string Name { get; set; }
-    public double Price { get; set; }
-}
-
-public class Market 
-{
-    public string Key { get; set; }
-    public ICollection<Outcomes> Outcomes { get; set; }
-
-}
-
-public class Bookmaker
-{
-    public string Key { get; set; }
-    public DateTime LastUpdate { get; set; }
-    public ICollection<Market> Markets { get; set; }
-
-}
-
-public class Games
-{
-    public string Id { get; set; }
-    public string HomeTeam { get; set; }
-    public string AwayTeam { get; set; }
-    public DateTime CommenceTime { get; set; }
-    public bool Completed { get; set; }
-    public string Scores { get; set; }
-    public ICollection<Bookmaker> Bookmakers { get; set; }
-
-}
 public class UpdateGames
 {
     static HttpClient client = new HttpClient();
@@ -48,14 +16,14 @@ public class UpdateGames
                 new MediaTypeWithQualityHeaderValue("application/json"));
     }
 
-    static async Task<ICollection<Games>> GetGamesAsync(string path)
+    static async Task<ICollection<GameDTO>> GetGamesAsync(string path)
     {
-        ICollection<Games> games = new List<Games>();
+        ICollection<GameDTO> games = new List<GameDTO>();
         HttpResponseMessage response = await client.GetAsync(path);
-        if (response.IsSuccessStatusCode)
-        {
-            games = await response.Content.ReadAsAsync<ICollection<Games>>();
-        }
+        response.EnsureSuccessStatusCode();
+    
+         games = await response.Content.ReadAsAsync<ICollection<GameDTO>>();
+
         return games;
     }
 
@@ -63,16 +31,17 @@ public class UpdateGames
     {
         try
         {
-            ICollection<Games> g = await GetGamesAsync("games/");
-            foreach(Games game in g)
-            {
-
-            }
+            ICollection<GameDTO> g = await GetGamesAsync("games/");
+            //foreach(Games game in g)
+            //{
+            //
+            //}
         }
-        catch(Exception e)
+        catch (Exception)
         {
-            throw new Exception(e.Message);
+            
         }
+
     }
 
     public void Thread1()

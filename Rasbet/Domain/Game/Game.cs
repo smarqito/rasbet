@@ -10,7 +10,7 @@ public class Game
     public virtual Sport Sport { get; set; }
     public GameState State { get; set; }
     public virtual ICollection<BetType> Bets { get; set; } = new List<BetType>();
-    public virtual Specialist Specialist { get; set; }
+    public string SpecialistId { get; set; }
 
     public Game(DateTime startTime, Sport sport, ICollection<BetType> bets)
     {

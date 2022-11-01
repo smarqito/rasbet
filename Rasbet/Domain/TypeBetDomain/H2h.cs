@@ -9,10 +9,10 @@ namespace Domain.ResultDomain;
 public class H2h : BetType
 {
 
-    public double OddHomeTeam { get; set; }
-    public double OddDraw { get; set; }
-    public double OddAwayTeam { get; set; }
-    public H2h(double oddHomeTeam, double oddDray, double oddAwayTeam,Game game) : base(game)
+    public Odd OddHomeTeam { get; set; }
+    public Odd OddDraw { get; set; }
+    public Odd OddAwayTeam { get; set; }
+    public H2h(Odd oddHomeTeam, Odd oddDray, Odd oddAwayTeam,Game game) : base(game)
     {
         OddHomeTeam = oddHomeTeam;
         OddDraw = oddDray;

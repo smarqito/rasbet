@@ -6,13 +6,8 @@ using Microsoft.EntityFrameworkCore;
 namespace GameOddPersistance;
 public partial class GameOddContext : DbContext
 {
-    public DbSet<Game> Games { get; set; }
-    public DbSet<Sport> Sports { get; set; }
-    public DbSet<BetType> BetsType { get; set; }
+    public DbSet<Game> Game { get; set; }
+    public DbSet<Sport> Sport { get; set; }
+    public DbSet<BetType> BetType { get; set; }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        base.OnModelCreating(modelBuilder);
-
-    }
 }

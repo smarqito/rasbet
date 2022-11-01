@@ -9,10 +9,10 @@ namespace Domain;
 
 public class IndividualResult : BetType
 {
+    public ICollection<Odd> PlayerOds { get; set; }
 
-    public Dictionary<string, double> PlayerOdds{ get; set; }
-    public IndividualResult(Dictionary<string, double> playerOdds, Game game) : base(game)
+    public IndividualResult(ICollection<Odd> playerOds, Game game) : base(game)
     {
-        PlayerOdds = playerOdds;
+        PlayerOds = playerOds;
     }
 }
