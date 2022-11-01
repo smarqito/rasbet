@@ -19,10 +19,30 @@ public class UserRepository : IUserRepository
         this.signInManager = signInManager;
     }
 
-    
+     public async Task<AppUser> RegisterAppUser(string name, string email, string password, string nif, DateTime dob , bool notifications, string language)
+    {
+        AppUser newU = new AppUser(name, email, nif, dob, language, notifications );
+        var s = await userManager.CreateAsync(newU, password);
+        return newU;
+    }
+
+    public async Task<Admin> RegisterAdmin(string name, string email, string password, string language)
+	{
+		Admin newU = new Admin(name, email, language);
+		var s = await userManager.CreateAsync(newU, password);
+		return newU;
+	}
+
+    public async Task<Specialist> RegisterSpecialist(string name, string email, string password, string language)
+	{
+		Specialist newU = new Specialist(name, email,language);
+		var s = await userManager.CreateAsync(newU, password);
+		return newU;
+	}
+
     public async Task<SignInResult> Login (string email, string password)
     {
-        return signInManager.PasswordSignInAsync(email,password, false, false);
+        return await signInManager.PasswordSignInAsync(email,password, false, false);
     }
 
 }
