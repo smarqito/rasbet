@@ -24,7 +24,7 @@ public class WalletRepository : IWalletRepository
     /// <returns></returns>
     public async  Task<Wallet> Get(int userId)
     {
-        Wallet wallet = context.Wallet.Where(w => w.User.Id == userId).First();
+        Wallet wallet = context.Wallet.Where(w => w.User.Id.Equals(userId)).First();
 
         if (wallet == null) throw new Exception("O User id indicado não tem uma carteira associada.");
 

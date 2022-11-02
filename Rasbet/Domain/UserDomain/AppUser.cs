@@ -16,6 +16,10 @@ public class AppUser : User
     public string Coin { get; set; } = "EUR";
     public bool Notifications { get; set; }
 
+    protected AppUser() : base()
+    {
+
+    }
 
     public AppUser(string name, string email, string nIF, DateTime dob, string language, bool notifications) : base(name, email, language)
     {

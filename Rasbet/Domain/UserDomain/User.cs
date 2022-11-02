@@ -4,12 +4,13 @@ namespace Domain;
 
 public class User : IdentityUser
 {
-
-	public int Id { get; set; }
     public string Name { get; set; }
     public string Language { get; set; } 
-    public string Email { get; set; }
 
+    protected User ()
+    {
+
+    }
     public User(string name, string email, string language)
     {
         Name = name;
