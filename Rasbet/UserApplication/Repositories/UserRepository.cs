@@ -1,3 +1,4 @@
+using Domain.UserDomain;
 using Microsoft.AspNetCore.Identity;
 using UserApplication.Interfaces;
 using UserPersistence;
@@ -68,7 +69,7 @@ public class UserRepository : IUserRepository
         var result = await signInManager.PasswordSignInAsync(email,password, false, false);
         if (result == SignInStatus.Sucess)
             return result;
-        throw new Exception("Password incorreta.")
+        throw new Exception("Password incorreta.");
     }
 
     public async Task<User> GetUser (int id)
@@ -102,7 +103,7 @@ public class UserRepository : IUserRepository
         user.IBAN = iban;   
         user.NIF = nif;
         user.PhoneNumber = phoneno;
-        user.D
+        
       
     }
 

@@ -15,6 +15,6 @@ public class User : IdentityUser
         Name = name;
         Email = email;
         Language = language;
-        Username = email;
+        UserName = email;
     }
 }

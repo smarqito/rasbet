@@ -1,4 +1,5 @@
 ﻿using Domain;
+using Domain.UserDomain;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
