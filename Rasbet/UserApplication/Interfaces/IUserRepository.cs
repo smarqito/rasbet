@@ -9,7 +9,7 @@ public interface IUserRepository
 	Task<Admin> RegisterAdmin(string name, string email, string password, string language);
 	Task<Specialist> RegisterSpecialist(string name, string email, string password, string language);
 	Task<User> Login(string email, string password);
-	Task<IActionResult> Logout();
+	Task Logout();
 
     Task<User> GetUser(int id);
 	Task<AppUser> UpdateAppUser(string email, string name, string language, string coin, bool notifications);

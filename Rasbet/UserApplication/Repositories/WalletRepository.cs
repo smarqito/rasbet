@@ -1,5 +1,6 @@
 using Domain;
 using Domain.UserDomain;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using UserApplication.Interfaces;
@@ -36,7 +37,7 @@ public class WalletRepository : IWalletRepository
     /// <param name="value"></param>
     public void DepositFunds(double value)
     {
-        
+       // IHttpContextAccessor
     }
 
     /// <summary>

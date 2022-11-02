@@ -36,7 +36,7 @@ public class UserRepository : IUserRepository
     /// <returns>The user, if the register was successfull.</returns>
     /// <exception>The user is under age or the chosen e-mail is already in use.</exception>
     public async Task<AppUser> RegisterAppUser(string name, string email, string password, string nif, DateTime dob , bool notifications, string language)
-    {   
+    {
         var user = await this.userManager.FindByEmailAsync(email);
 
         var today = DateTime.Today;
@@ -65,10 +65,10 @@ public class UserRepository : IUserRepository
     /// <exception>The chosen e-mail is already in use.</exception>
     public async Task<Admin> RegisterAdmin(string name, string email, string password, string language)
 	{
-        var user = await userManager.FindByEmailAsync(email);
+        User user = await userManager.FindByEmailAsync(email);
 
         if (user == null) { 
-		    Admin newU = new Admin(name, email, language);
+		    Admin newU = new (name, email, language);
 		    var s = await userManager.CreateAsync(newU, password);
 		    return newU;
         }
@@ -118,16 +118,14 @@ public class UserRepository : IUserRepository
     /// Logs out an user.
     /// </summary>
     /// <returns></returns>
-    public async Task<IActionResult> Logout()
+    public async Task Logout()
     {
         try
         {
             await signInManager.SignOutAsync();
-            return Ok();
         }
         catch (Exception e)
         {
-            return BadRequest();
         }
 
     }

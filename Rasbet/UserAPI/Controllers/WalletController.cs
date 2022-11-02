@@ -22,9 +22,9 @@ namespace UserAPI.Controllers;
         /// <param name="userId">Id of the user whose wallet we want to retrieve.</param>
         /// <returns></returns>
         [HttpGet("{userId}")]
-        public string Get(int userId)
+        public async Task<string> Get(int userId)
         {
-            Wallet wallet = walletRepository.Get(userId);
+            Wallet wallet = await walletRepository.Get(userId);
             return wallet.Balance.ToString();
         }
 

@@ -139,7 +139,8 @@ namespace UserAPI.Controllers
         public async Task<IActionResult> GetUser(int id)
         {
             try { 
-               Task<User> user = userRepository.GetUser(id);
+               User user = await userRepository.GetUser(id);
+                user.GetType();
                
                return Ok();
             }
