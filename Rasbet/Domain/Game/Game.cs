@@ -13,6 +13,10 @@ public class Game
     public virtual ICollection<BetType> Bets { get; set; } = new List<BetType>();
     public string SpecialistId { get; set; }
 
+    protected Game()
+    {
+    }
+
     public Game(string idSync, DateTime startTime, Sport sport, ICollection<BetType> bets)
     {
         IdSync = idSync;

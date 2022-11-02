@@ -1,15 +1,19 @@
-﻿using DTO.GetGamesRespDTO;
-using GameOddApplication.Repositories;
+﻿using Domain;
+using Domain.ResultDomain;
+using DTO.GetGamesRespDTO;
+using GameOddApplication.Interfaces;
 using System.Net.Http.Headers;
 
+namespace GameOddAPI;
 
 public class UpdateGames
 {
     static HttpClient client = new HttpClient();
-    private readonly GameRepository gameRepository;
+    readonly IGameOddFacade gameOddFacade;
 
-    public UpdateGames()
+    public UpdateGames(IGameOddFacade gameOddFacade)
     {
+        this.gameOddFacade = gameOddFacade;
         client.BaseAddress = new Uri("http://ucras.di.uminho.pt/v1/");
         client.DefaultRequestHeaders.Accept.Clear();
         client.DefaultRequestHeaders.Accept.Add(
@@ -21,25 +25,23 @@ public class UpdateGames
         ICollection<GameDTO> games = new List<GameDTO>();
         HttpResponseMessage response = await client.GetAsync(path);
         response.EnsureSuccessStatusCode();
-    
-         games = await response.Content.ReadAsAsync<ICollection<GameDTO>>();
+
+        games = await response.Content.ReadAsAsync<ICollection<GameDTO>>();
 
         return games;
     }
 
-    public static async Task Update()
+    public async Task Update()
     {
         try
         {
             ICollection<GameDTO> g = await GetGamesAsync("games/");
-            //foreach(Games game in g)
-            //{
-            //
-            //}
+            await gameOddFacade.UpdateGameOdd(g, "Football");
+
         }
         catch (Exception)
         {
-            
+
         }
 
     }

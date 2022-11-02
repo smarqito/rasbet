@@ -9,34 +9,35 @@ namespace Domain.ResultDomain;
 
 public class H2h : BetType
 {
+    public ICollection<Odd> Odds { get; set; } = new List<Odd>(3);
+    public string AwayTeam { get; set; }
 
-    public Odd OddHomeTeam { get; set; }
-    public Odd OddDraw { get; set; }
-    public Odd OddAwayTeam { get; set; }
-    public H2h(Odd oddHomeTeam, Odd oddDray, Odd oddAwayTeam, Game game) : base(game)
+    protected H2h() : base()
     {
-        OddHomeTeam = oddHomeTeam;
-        OddDraw = oddDray;
-        OddAwayTeam = oddAwayTeam;
+    }
+
+    public H2h(string awayTeam, DateTime lastUpdate) : base(lastUpdate)
+    {
+        AwayTeam = awayTeam;
     }
 
     public override ICollection<Odd> GetWinningOdd()
     {
-        ICollection<Odd> result = new List<Odd>();
-        if (OddHomeTeam.Win)
-        {
-            result.Add(OddHomeTeam);
-        } else if (OddDraw.Win)
-        {
-            result.Add(OddDraw);
-        }
-        else
-        {
-            result.Add(OddAwayTeam);
-        }
-        return result;
+        return Odds.Where(x => x.Win).ToList();
     }
 
+    public Odd GetHomeOdd()
+    {
+        return Odds.Where(x => !x.Name.Equals("Draw") && !x.Name.Equals(AwayTeam)).First();
+    }
+    public Odd GetAwayOdd()
+    {
+        return Odds.Where(x => x.Name.Equals(AwayTeam)).First();
+    }
+    public Odd GetDrawOdd()
+    {
+        return Odds.Where(x => x.Name.Equals("Draw")).First();
+    }
     public override void SetWinningOdd(string result)
     {
         Regex regex = new Regex(@"\s*(\d+)\s*x\s*(\d+)\s*");
@@ -45,15 +46,15 @@ public class H2h : BetType
         {
             if (int.Parse(match.Groups[1].Value) > int.Parse(match.Groups[2].Value))
             {
-                OddHomeTeam.Win = true;
+                GetHomeOdd().Win = true;
             }
             else if(int.Parse(match.Groups[1].Value) < int.Parse(match.Groups[2].Value))
             {
-                OddAwayTeam.Win = true;
+                GetAwayOdd().Win = true;
             }
             else
             {
-                OddDraw.Win = true;
+                GetDrawOdd().Win = true;
             }
         }
     }

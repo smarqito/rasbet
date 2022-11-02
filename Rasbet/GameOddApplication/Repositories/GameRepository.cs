@@ -2,11 +2,8 @@
 using Domain.ResultDomain;
 using GameOddApplication.Interfaces;
 using GameOddPersistance;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace GameOddApplication.Repositories;
 
@@ -19,14 +16,26 @@ public class GameRepository : IGameRepository
         this.gameOddContext = gameOddContext;
     }
 
-    public async Task<Game> CreateCollectiveGame(Sport sport, DateTime date, string HomeTeam, string AwayTeam, ICollection<BetType> bets)
+    public async Task<Unit> ChangeGameState(string idSync, GameState state, string specialistId)
+    {
+        Game g = await GetGame(idSync);
+        if (state != g.State)
+        {
+            g.State = state;
+            g.SpecialistId = specialistId;
+            await gameOddContext.SaveChangesAsync();
+        }
+        return Unit.Value;
+    }
+
+    public async Task<Unit> CreateCollectiveGame(Sport sport, string idSync, DateTime date, string HomeTeam, string AwayTeam, ICollection<BetType> bets)
     {
         try
         {
-            Game g = new CollectiveGame(HomeTeam, AwayTeam, date, sport, bets);
+            Game g = new CollectiveGame(HomeTeam, AwayTeam, idSync, date, sport, bets);
             await gameOddContext.Game.AddAsync(g);
             await gameOddContext.SaveChangesAsync();
-            return g;
+            return Unit.Value;
         }
         catch (Exception)
         {
@@ -35,18 +44,33 @@ public class GameRepository : IGameRepository
 
     }
 
-    public async Task<Game> CreateIndividuallGame(Sport sport, DateTime date, ICollection<string> Players, ICollection<BetType> bets)
+    public async Task<Unit> CreateIndividuallGame(Sport sport, string idSync, DateTime date, ICollection<string> Players, ICollection<BetType> bets)
     {
         try
         {
-            Game g = new IndividualGame(Players, date, sport, bets);
+            Game g = new IndividualGame(Players, idSync, date, sport, bets);
             await gameOddContext.Game.AddAsync(g);
             await gameOddContext.SaveChangesAsync();
-            return g;
+            return Unit.Value;
         }
         catch (Exception)
         {
             throw new Exception("Aconteceu um erro interno");
         }
+    }
+
+    public async Task<Game> GetGame(string idSync)
+    {
+        Game g = await gameOddContext.Game.Where(g => g.IdSync == idSync)
+                                          .FirstOrDefaultAsync();
+        if (g == null)
+            throw new Exception();
+        return g;
+    }
+
+    public async Task<bool> HasGame(string idSync)
+    {
+        return await gameOddContext.Game.Where(g => g.IdSync == idSync)
+                                          .AnyAsync();
     }
 }

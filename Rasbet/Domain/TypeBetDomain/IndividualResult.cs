@@ -9,17 +9,21 @@ namespace Domain;
 
 public class IndividualResult : BetType
 {
-    public ICollection<Odd> PlayerOds { get; set; }
+    public ICollection<Odd> PlayerOdds { get; set; }
 
-    public IndividualResult(ICollection<Odd> playerOds, Game game) : base(game)
+    protected IndividualResult() : base()
     {
-        PlayerOds = playerOds;
+    }
+
+    public IndividualResult(ICollection<Odd> playerOdds, DateTime lastUpdate) : base(lastUpdate)
+    {
+        PlayerOdds = playerOdds;
     }
 
     public override ICollection<Odd> GetWinningOdd()
     {
         ICollection<Odd> result = new List<Odd>();
-        foreach (Odd odd in PlayerOds)
+        foreach (Odd odd in PlayerOdds)
         {
             if (odd.Win)
             {
