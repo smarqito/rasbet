@@ -1,11 +1,10 @@
 ﻿using Domain.ResultDomain;
 
-namespace Domain;
+namespace DTO.BetDTO;
 
-public class Selection
+public class SelectionDTO
 {
     public int OddId { get; set; }
     public double Odd { get; set; }
-    public virtual BetType Result { get; set; }
-
+    public BetType Result { get; set; }
 }

@@ -10,7 +10,7 @@ public abstract class Bet
     public DateTime End { get; set; }
 
     // utilizador que realizou a aposta
-    public virtual User User { get; set; }
+    public virtual AppUser User { get; set; }
 
     public BetState State { get; set; } = BetState.Open;
 
@@ -26,7 +26,7 @@ public abstract class Bet
         set { wonValue = Math.Max(0, value); }
     }
 
-    public Bet(double amount, DateTime start, User user)
+    public Bet(double amount, DateTime start, AppUser user)
     {
         Amount = amount;
         User = user;
