@@ -5,8 +5,10 @@ namespace BetApplication.Interfaces;
 
 public interface IBetRepository
 {
-    Task<BetSimple> CreateBetSimple(double amount, DateTime start, AppUser user, Selection selection);
-    Task<BetMultiple> CreateBetMultiple(double amount, DateTime start, AppUser user, double oddMultiple, ICollection<Selection> selections);
-    Task<ICollection<Bet>> GetUserBetsByState(AppUser user, BetState state);
-    Task<bool> updateBets(Collection<int> bets, BetState state);
+    Task<Bet> GetBetById(int betId);
+    Task<BetSimple> CreateBetSimple(double amount, DateTime start, int user, Selection selection);
+    Task<BetMultiple> CreateBetMultiple(double amount, DateTime start, int user, double oddMultiple, ICollection<Selection> selections);
+    Task<bool> DeleteBet(int betId);
+    Task<ICollection<Bet>> GetUserBetsByState(int user, BetState state);
+    Task<bool> UpdateBets(ICollection<int> bets, BetState state);
 }
