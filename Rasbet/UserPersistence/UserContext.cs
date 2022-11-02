@@ -12,6 +12,7 @@ public class UserContext : IdentityDbContext<Domain.User>
     }
 
     public DbSet<Wallet> Wallet { get; set; }
+    public DbSet<Transaction> Transaction { get; set; }
 
     public DbSet<AppUser> AppUsers { get; set; }
     public DbSet<Specialist> Specialists { get; set;}
@@ -21,6 +22,6 @@ public class UserContext : IdentityDbContext<Domain.User>
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-
+        builder.Entity<User>();
     }
 }
