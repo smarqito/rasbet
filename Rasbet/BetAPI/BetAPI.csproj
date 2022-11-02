@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BetApplication\BetApplication.csproj" />
+    <ProjectReference Include="..\BetFacade\BetFacade.csproj" />
   </ItemGroup>
 
 </Project>
