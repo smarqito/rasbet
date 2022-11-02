@@ -15,6 +15,7 @@ public class AppUser : User
     public virtual ICollection<Bet> BetHistory { get; set; } = new List<Bet>();
     public string Coin { get; set; } = "EUR";
     public bool Notifications { get; set; }
+    public string PhoneNumber { get; set; }
 
 
     public AppUser(string name, string email, string nIF, DateTime dob, string language, bool notifications) : base(name, email, language)

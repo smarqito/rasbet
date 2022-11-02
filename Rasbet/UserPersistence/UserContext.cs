@@ -12,7 +12,10 @@ public class UserContext : IdentityDbContext<Domain.User>
 
     public DbSet<Wallet> Wallet { get; set; }
 
-    //bets?????????????
+    public DbSet<AppUser> AppUsers { get; set; }
+    public DbSet<Specialist> Specialists { get; set;}
+    public DbSet<Admin> Admins { get; set;}
+    
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

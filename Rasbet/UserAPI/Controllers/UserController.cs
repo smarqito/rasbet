@@ -7,20 +7,19 @@ namespace UserAPI.Controllers
 {
     public class UserController : BaseController
     {
-        private readonly IAdminRepository adminRepository;
-        private readonly IAppUserRepository appUserRepository;
-        private readonly ISpecialistRepository specialistRepository;
         private readonly IUserRepository userRepository;
 
 
-        public UserController(IAdminRepository adminRepository, IAppUserRepository appUserRepository, ISpecialistRepository specialistRepository, IUserRepository userRepository)
+        public UserController(IUserRepository userRepository)
         {
-            this.adminRepository = adminRepository;
-            this.appUserRepository = appUserRepository;
-            this.specialistRepository = specialistRepository;
             this.userRepository = userRepository;
         }
 
+        /// <summary>
+        /// Logs in an user.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
         [HttpGet("login")] // id????
         public async Task<IActionResult> Login(int id, [FromBody] LoginUserDTO user)
         {
@@ -31,45 +30,83 @@ namespace UserAPI.Controllers
                 case SignInStatus.Success:
                     return Ok();
                 case SignInStatus.Failure:
-                    //erro 
+                    return BadRequest(); 
                 default:
                     return Ok();
             } 
 
-            return Ok();
+            return Ok()
         }
-
+        
+        /// <summary>
+        /// Register an application user (better).
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
         [HttpPost("user")]
         public async Task<IActionResult> RegisterAppUser([FromBody] RegisterAppUserDTO registerApp)
         {
-            await appUserRepository.RegisterAppUser(registerApp.Name,
+            try
+            {
+                await userRepository.RegisterAppUser(registerApp.Name,
                                                     registerApp.Email,
-                                                    registerApp.Password, 
+                                                    registerApp.Password,
                                                     registerApp.NIF,
                                                     registerApp.DOB,
                                                     registerApp.Notifications,
                                                     registerApp.Language);
-            return Ok();
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+            
         }
 
+        
+        /// <summary>
+        /// Register an Administrator.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
         [HttpPost("admin")]
-        public Task<IActionResult> RegisterAdmin([FromBody] RegisterAdminDTO registerApp)
+        public async Task<IActionResult> RegisterAdmin([FromBody] RegisterAdminDTO registerApp)
         {
-            await adminRepository.RegisterAdmin(registerApp.Name,
+            try
+            {
+                await userRepository.RegisterAdmin(registerApp.Name,
                                                 registerApp.Email,
                                                 registerApp.Password,
                                                 registerApp.Language);
-            return Ok();
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
+        /// <summary>
+        /// Register a Specialist.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
         [HttpPost("specialist")]
-        public Task<IActionResult> RegisterSpecialist([FromBody] RegisterSpecialistDTO registerApp)
+        public async Task<IActionResult> RegisterSpecialist([FromBody] RegisterSpecialistDTO registerApp)
         {
-            await specialistRepository.RegisterSpecialist(registerApp.Name,
+            try
+            {
+                await userRepository.RegisterSpecialist(registerApp.Name,
                                                           registerApp.Email,
                                                           registerApp.Password,
                                                           registerApp.Language);
-            return Ok();
+                return Ok();
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         /// <summary>
@@ -80,8 +117,15 @@ namespace UserAPI.Controllers
         [HttpGet("{id}")]
         public Task<UserDTO> GetUser(int id)
         {
-            UserDTO userDTO = userRepository.GetUser(id);
-            return userDTO;
+            try { 
+                User user = userRepository.GetUser(id);
+
+                return userDTO(user.Name, user.Email, user.Language);
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
         /// <summary>
@@ -91,9 +135,16 @@ namespace UserAPI.Controllers
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
         [HttpPut("user")]
-        public async Task<IActionResult> Update(object userDTO)
+        public async Task<IActionResult> UpdateAppUser([FromBody] AppUserDTO userDTO)
         {
-            throw new NotImplementedException();
+            try { 
+                await userRepository.UpdateAppUser(userDTO.email, userDTO.name, userDTO.language, userDTO.coin, userDTO.notifications);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         /// <summary>
@@ -103,9 +154,15 @@ namespace UserAPI.Controllers
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
         [HttpPut("sensitive")]
-        public Task<IActionResult> UpdateSensitive()
+        public async Task<IActionResult> UpdateSensitive([FromBody] AppUserDTO userDTO)
         {
-            throw new NotImplementedException();
+            try {   
+                await userRepository.UpdateSensitive(userDTO.email, userDTO.IBAN, userDTO.NIF, userDTO.DOB, userDTO.PhoneNumber);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         /// <summary>
