@@ -3,5 +3,5 @@ namespace DTO.BetDTO;
 
 public class GetUserBetsDTO
 {
-    public AppUser User { get; set; } 
+    public int UserId { get; set; } 
 }

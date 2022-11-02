@@ -1,8 +1,10 @@
-﻿using Domain.ResultDomain;
+﻿using Domain;
+using Domain.ResultDomain;
 
 namespace DTO.BetDTO;
 
 public class CreateSelectionDTO
 {
-    public BetType Result { get; set; }
+    public int ResultID { get; set; }
+    public int OddId { get; set; }
 }

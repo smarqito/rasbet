@@ -4,6 +4,6 @@ namespace DTO.BetDTO;
 
 public class CreateBetSimpleDTO : CreateBetDTO
 {
-    public Selection Selection { get; set; }
+    public int SelectionId { get; set; }
 
 }

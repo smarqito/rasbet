@@ -10,4 +10,9 @@ public class Transaction
 {
     public int Id { get; set; }
     public double Balance { get; set; }
+
+    public Transaction(double balance)
+    {
+        Balance = balance;
+    }
 }
