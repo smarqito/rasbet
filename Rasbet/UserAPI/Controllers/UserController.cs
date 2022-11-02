@@ -1,5 +1,7 @@
 using Domain;
+using DTO.LoginUserDTO;
 using DTO.UserDTO;
+using Microsoft.AspNet.Identity.Owin;
 using Microsoft.AspNetCore.Mvc;
 using UserApplication.Interfaces;
 
@@ -18,43 +20,62 @@ namespace UserAPI.Controllers
         /// <summary>
         /// Logs in an user.
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        [HttpGet("login")] // id????
-        public async Task<IActionResult> Login(int id, [FromBody] LoginUserDTO user)
+        /// <param name="user"> Information used to log in an user (e-mail and password).</param>
+        /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
+        [HttpGet("login")] 
+        public async Task<IActionResult> Login([FromBody] LoginUserDTO user)
         {
-            SignInStatus sign_in_status = await userRepository.Login(user.Email, user.Password);
-
-            switch (sign_in_status)
+            try
             {
-                case SignInStatus.Success:
-                    return Ok();
-                case SignInStatus.Failure:
-                    return BadRequest(); 
-                default:
-                    return Ok();
-            } 
-
-            return Ok()
+                User u = await userRepository.Login(user.Email, 
+                                                    user.Password);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
-        
+
         /// <summary>
-        /// Register an application user (better).
+        /// Logs out an user.
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
+        /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
+        [HttpGet("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            try
+            {
+                await userRepository.Logout();
+
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+
+        /// <summary>
+        /// Registers an application user (better).
+        /// </summary>
+        /// <param name="registerApp"> Information used to register in an user (name, e-mail, password,
+        /// NIF, date of birth, preferred language and coin and whether the user wants to receive 
+        /// notifications or not).</param>
+        /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
         [HttpPost("user")]
         public async Task<IActionResult> RegisterAppUser([FromBody] RegisterAppUserDTO registerApp)
         {
             try
             {
                 await userRepository.RegisterAppUser(registerApp.Name,
-                                                    registerApp.Email,
-                                                    registerApp.Password,
-                                                    registerApp.NIF,
-                                                    registerApp.DOB,
-                                                    registerApp.Notifications,
-                                                    registerApp.Language);
+                                                     registerApp.Email,
+                                                     registerApp.Password,
+                                                     registerApp.NIF,
+                                                     registerApp.DOB,
+                                                     registerApp.Notifications,
+                                                     registerApp.Language);
                 return Ok();
             }
             catch (Exception e)
@@ -64,21 +85,21 @@ namespace UserAPI.Controllers
             
         }
 
-        
+
         /// <summary>
-        /// Register an Administrator.
+        /// Registers an Administrator.
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
+        /// <param name="registerApp"> Information used to register an admin (name, e-mail, password and language).</param>
+        /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
         [HttpPost("admin")]
         public async Task<IActionResult> RegisterAdmin([FromBody] RegisterAdminDTO registerApp)
         {
             try
             {
                 await userRepository.RegisterAdmin(registerApp.Name,
-                                                registerApp.Email,
-                                                registerApp.Password,
-                                                registerApp.Language);
+                                                   registerApp.Email,
+                                                   registerApp.Password,
+                                                   registerApp.Language);
                 return Ok();
             }
             catch (Exception e)
@@ -90,17 +111,17 @@ namespace UserAPI.Controllers
         /// <summary>
         /// Register a Specialist.
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
+        /// <param name="registerApp"> Information used to register in a specialist (name, e-mail, password and language).</param>
+        /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
         [HttpPost("specialist")]
         public async Task<IActionResult> RegisterSpecialist([FromBody] RegisterSpecialistDTO registerApp)
         {
             try
             {
                 await userRepository.RegisterSpecialist(registerApp.Name,
-                                                          registerApp.Email,
-                                                          registerApp.Password,
-                                                          registerApp.Language);
+                                                        registerApp.Email,
+                                                        registerApp.Password,
+                                                        registerApp.Language);
                 return Ok();
             }
             catch(Exception e)
@@ -112,33 +133,32 @@ namespace UserAPI.Controllers
         /// <summary>
         /// Retrieve UserDTO based on user id
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
+        /// <param name="id"> Id of the user to be retrieved.</param>
+        /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
         [HttpGet("{id}")]
-        public Task<UserDTO> GetUser(int id)
+        public async Task<IActionResult> GetUser(int id)
         {
             try { 
-                User user = userRepository.GetUser(id);
-
-                return userDTO(user.Name, user.Email, user.Language);
+               Task<User> user = userRepository.GetUser(id);
+               
+               return Ok();
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                return null;
+                return BadRequest(e.Message);
             }
         }
 
         /// <summary>
         /// Update user general info
         /// </summary>
-        /// <param name="userDTO"></param>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
+        /// <param name="userDTO"> Information used to update in an user.</param>
+        /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
         [HttpPut("user")]
         public async Task<IActionResult> UpdateAppUser([FromBody] AppUserDTO userDTO)
         {
             try { 
-                await userRepository.UpdateAppUser(userDTO.email, userDTO.name, userDTO.language, userDTO.coin, userDTO.notifications);
+                await userRepository.UpdateAppUser(userDTO.Email, userDTO.Name, userDTO.Language, userDTO.Coin, userDTO.Notifications);
                 return Ok();
             }
             catch (Exception e)
@@ -151,13 +171,14 @@ namespace UserAPI.Controllers
         /// Update sensitive info
         ///     Expects to be confirmed by a code!
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
+        /// <param name="userDTO"> </param>
+        /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
         [HttpPut("sensitive")]
         public async Task<IActionResult> UpdateSensitive([FromBody] AppUserDTO userDTO)
         {
             try {   
-                await userRepository.UpdateSensitive(userDTO.email, userDTO.IBAN, userDTO.NIF, userDTO.DOB, userDTO.PhoneNumber);
+                await userRepository.UpdateSensitive(userDTO.Email, userDTO.IBAN, userDTO.NIF, userDTO.DOB, userDTO.PhoneNumber);
+                return Ok();
             }
             catch (Exception e)
             {
@@ -168,12 +189,49 @@ namespace UserAPI.Controllers
         /// <summary>
         /// Confirm sensitive info update (previously done)
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
+        /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
         [HttpPut("sensitive/confirm")]
         public Task<IActionResult> UpdateSensitiveConfirm()
         {
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Update specialist general info
+        /// </summary>
+        /// <param name="userDTO">Information needed to update specialist's profile.</param>
+        /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
+        [HttpPut("specialist")]
+        public async Task<IActionResult> UpdateSpecialist([FromBody] UserDTO userDTO)
+        {
+            try
+            {
+                await userRepository.UpdateSpecialist(userDTO.Email, userDTO.Name, userDTO.Language);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        /// <summary>
+        /// Update administrator general info
+        /// </summary>
+        /// <param name="userDTO">Information needed to update admin's profile.</param>
+        /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
+        [HttpPut("administrator")]
+        public async Task<IActionResult> UpdateAdmin([FromBody] UserDTO userDTO)
+        {
+            try
+            {
+                await userRepository.UpdateAdmin(userDTO.Email, userDTO.Name, userDTO.Language);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
     }
 }
