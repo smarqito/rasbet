@@ -16,6 +16,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<UserContext>(opt =>
 {
     opt.UseSqlServer("Server=.\\SQLEXPRESS; Database=rasbet_user; Uid=rasbet; Pwd=Pa$$w0rd");
+    //opt.UseMySql()
 });
 builder.Services.AddIdentityUserConfig();
 //builder.Services.AddScoped<UserManager<Domain.User>>();
