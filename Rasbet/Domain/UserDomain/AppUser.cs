@@ -12,7 +12,7 @@ public class AppUser : User
     public string NIF { get; set; }
     public DateTime DOB { get; set; }
     public virtual Wallet Wallet { get; set; } = new();
-    public virtual ICollection<Bet> BetHistory { get; set; } = new List<Bet>();
+   // public virtual ICollection<Bet> BetHistory { get; set; } = new List<Bet>();
     public string Coin { get; set; } = "EUR";
     public bool Notifications { get; set; }
 
