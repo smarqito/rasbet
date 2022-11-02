@@ -6,14 +6,10 @@ using System.Threading.Tasks;
 
 namespace Domain;
 
-public class Sport
+public class Odd
 {
     public int Id { get; set; }
     public string Name { get; set; }
-
-    public Sport(string name)
-    {
-        Name = name;
-    }
+    public double OddValue { get; set; }
+    public bool Win { get; set; }
 }
-

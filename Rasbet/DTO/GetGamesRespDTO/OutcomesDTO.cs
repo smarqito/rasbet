@@ -4,16 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain;
+namespace DTO.GetGamesRespDTO;
 
-public class Sport
+public class OutcomesDTO
 {
-    public int Id { get; set; }
     public string Name { get; set; }
-
-    public Sport(string name)
-    {
-        Name = name;
-    }
+    public double Price { get; set; }
 }
-
