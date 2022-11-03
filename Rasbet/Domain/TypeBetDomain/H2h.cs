@@ -37,8 +37,9 @@ public class H2h : BetType
     {
         return Odds.Where(x => x.Name.Equals("Draw")).First();
     }
-    public override void SetWinningOdd(string result)
+    public override ICollection<Odd> SetWinningOdd(string result)
     {
+        ICollection<Odd> res = new List<Odd>();
         Regex regex = new Regex(@"\s*(\d+)\s*x\s*(\d+)\s*");
         Match match = regex.Match(result);
         if (match.Success)
@@ -46,15 +47,19 @@ public class H2h : BetType
             if (int.Parse(match.Groups[1].Value) > int.Parse(match.Groups[2].Value))
             {
                 GetHomeOdd().Win = true;
+                res.Add(GetHomeOdd());
             }
             else if(int.Parse(match.Groups[1].Value) < int.Parse(match.Groups[2].Value))
             {
                 GetAwayOdd().Win = true;
+                res.Add(GetAwayOdd());
             }
             else
             {
                 GetDrawOdd().Win = true;
+                res.Add(GetDrawOdd());
             }
         }
+        return res;
     }
 }

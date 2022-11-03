@@ -40,6 +40,18 @@ public class GameRepository : IGameRepository
         return Unit.Value;
     }
 
+    public async Task<Unit> ChangeGameState(string gameId, string specialistId, GameState state)
+    {
+        Game g = await GetGame(gameId);
+        if (state != g.State)
+        {
+            g.State = state;
+            g.SpecialistId = specialistId;
+            await gameOddContext.SaveChangesAsync();
+        }
+        return Unit.Value;
+    }
+
     public async Task<Unit> CreateCollectiveGame(Sport sport, string idSync, DateTime date, string HomeTeam, string AwayTeam, ICollection<BetType> bets)
     {
         try

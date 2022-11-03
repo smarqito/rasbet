@@ -27,7 +27,7 @@ public class IndividualResult : BetType
         return result;
     }
 
-    public override void SetWinningOdd(string result)
+    public override ICollection<Odd> SetWinningOdd(string result)
     {
         throw new NotImplementedException();
     }

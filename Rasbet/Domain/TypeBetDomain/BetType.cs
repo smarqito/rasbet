@@ -26,5 +26,5 @@ public abstract class BetType
     }
 
     public abstract ICollection<Odd> GetWinningOdd();
-    public abstract void SetWinningOdd(string result);
+    public abstract ICollection<Odd> SetWinningOdd(string result);
 }

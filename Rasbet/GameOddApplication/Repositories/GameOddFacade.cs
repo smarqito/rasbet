@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Domain;
 using Domain.ResultDomain;
+using DTO;
 using DTO.GameOddDTO;
 using DTO.GetGamesRespDTO;
 using GameOddApplication.Interfaces;
@@ -35,8 +36,7 @@ public class GameOddFacade : IGameOddFacade
     public async Task<Unit> FinishGame(string id, string result)
     {
         await FinishGame(id, result, null);
-        //enviar info das ods vencedoras à BetAPI
-        throw new NotImplementedException();
+        return Unit.Value;
     }
 
 
@@ -66,24 +66,26 @@ public class GameOddFacade : IGameOddFacade
         return Unit.Value;
     }
 
-    public async Task<Unit> SuspendGame(string specialistId)
+    public async Task<Unit> SuspendGame(string gameId, string specialistId)
     {
-        return await gameRepository.ChangeGameState(specialistId, GameState.Suspended);
+        return await gameRepository.ChangeGameState(gameId, specialistId, GameState.Suspended);
     }
 
     public async Task<Unit> FinishGame(string id, string result, string? specialistId)
     {
+        ICollection<BetsOddsWonDTO> res = new List<BetsOddsWonDTO>();
         Game g = await gameRepository.GetGame(id);
-        await gameRepository.ChangeGameState(id, GameState.Finished);
+        g.State = GameState.Finished;
         foreach (BetType betType in g.Bets)
         {
             if (specialistId != null)
                 betType.SpecialistId = specialistId;
             betType.State = BetTypeState.FINISHED;
-            betType.SetWinningOdd(result);
+            res.Add(new BetsOddsWonDTO(betType.Id , betType.SetWinningOdd(result).Select(x => x.Id).ToList()));
             await gameOddContext.SaveChangesAsync();
         }
-        throw new NotImplementedException();
+
+        return Unit.Value;
     }
 
     public async Task<ICollection<ActiveGameDTO>> GetActiveGames()

@@ -24,9 +24,9 @@ namespace GameOddAPI.Controllers
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
         [HttpPatch("suspend")]
-        public async Task<IActionResult> SuspendGame([FromQuery] string specialistId)
+        public async Task<IActionResult> SuspendGame([FromQuery] string gameId, string specialistId)
         {
-            await gameOddFacade.SuspendGame(specialistId);
+            await gameOddFacade.SuspendGame(gameId, specialistId);
             return Ok();
         }
 
