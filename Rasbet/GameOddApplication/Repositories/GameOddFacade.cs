@@ -71,7 +71,7 @@ public class GameOddFacade : IGameOddFacade
         return await gameRepository.ChangeGameState(specialistId, GameState.Suspended);
     }
 
-    public async Task<Unit> FinishGame(string id, string result, string specialistId)
+    public async Task<Unit> FinishGame(string id, string result, string? specialistId)
     {
         Game g = await gameRepository.GetGame(id);
         await gameRepository.ChangeGameState(id, GameState.Finished);
@@ -93,5 +93,16 @@ public class GameOddFacade : IGameOddFacade
                                                      .Include(g => g.Bets).ThenInclude(o => o.Odds)
                                                      .ToListAsync();
         return mapper.Map<ICollection<ActiveGameDTO>>(games);
+    }
+
+    public async Task<double> GetOddValue(int oddId, int betTypeId)
+    {
+        BetType ?b = await gameOddContext.BetType.FirstOrDefaultAsync(b => b.Id == betTypeId);
+        if (b == null)
+            throw new Exception();
+        Odd ?d = b.Odds.FirstOrDefault(o => o.Id == oddId);
+        if (d == null)
+            throw new Exception();
+        return d.OddValue;
     }
 }

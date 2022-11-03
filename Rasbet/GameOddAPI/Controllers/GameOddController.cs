@@ -51,5 +51,13 @@ namespace GameOddAPI.Controllers
             ICollection<ActiveGameDTO> games = await gameOddFacade.GetActiveGames();
             return Ok(games);
         }
+
+        [HttpGet("odd")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(double))]
+        public async Task<IActionResult> GetOdd([FromQuery] int oddId, int betTypeId)
+        {
+            double d = await gameOddFacade.GetOddValue(oddId, betTypeId);
+            return Ok(d);
+        }
     }
 }
