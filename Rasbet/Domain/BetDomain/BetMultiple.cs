@@ -7,6 +7,10 @@ public class BetMultiple : Bet
     public int OddsFinished { get; set; } = 0;
     public int OddsWon { get; set; } = 0;
 
+    protected BetMultiple() : base()
+    {
+    }
+
     public BetMultiple(double value, DateTime start, int userId, double oddMultiple, ICollection<Selection> selections) : base(value, start, userId)
     {
         OddMultiple = oddMultiple;

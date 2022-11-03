@@ -1,25 +1,25 @@
-﻿using BetApplication.Errors;
-using BetApplication.Repositories;
+﻿using BetApplication.Interfaces;
 using Domain;
 using DTO;
-using GameOddApplication.Repositories;
-using UserApplication.Repositories;
+using GameOddApplication.Interfaces;
+using UserApplication.Errors;
+using UserApplication.Interfaces;
 
 namespace BetFacade;
 
 public class BetFacade : IBetFacade
 {
-    public BetRepository BetRepository;
-    public SelectionRepository SelectionRepository;
-    public TransactionRepository TransactionRepository;
-    public UserRepository UserRepository;
-    public BetTypeRepository BetTypeRepository;
+    public IBetRepository BetRepository;
+    public ISelectionRepository SelectionRepository;
+    public ITransactionRepository TransactionRepository;
+    public IUserRepository UserRepository;
+    public IBetTypeRepository BetTypeRepository;
 
-    public BetFacade(BetRepository betRepository, 
-                     SelectionRepository selectionRepository, 
-                     TransactionRepository transactionRepository, 
-                     UserRepository userRepository,
-                     BetTypeRepository betTypeRepository)
+    public BetFacade(IBetRepository betRepository, 
+                     ISelectionRepository selectionRepository, 
+                     ITransactionRepository transactionRepository, 
+                     IUserRepository userRepository,
+                     IBetTypeRepository betTypeRepository)
     {
         BetRepository = betRepository;
         SelectionRepository = selectionRepository;
@@ -37,9 +37,10 @@ public class BetFacade : IBetFacade
             //Verificar se a odd esta dentro dos parâmetros aceitaveis (comparar com a odd atual do bettype)
 
             //Verificar se o user é válido
+            AppUser user = new AppUser("teste", "teste", "teste", "teste");
 
             BetSimple bet = await BetRepository.CreateBetSimple(amount, start, userId, selection);
-            //await TransactionRepository.WithdrawBalance(user, amount);
+            await TransactionRepository.WithdrawBalance(user, amount);
 
             return bet;
         }
@@ -71,8 +72,11 @@ public class BetFacade : IBetFacade
 
         try
         {
+            //Buscar user por id
+            AppUser user = new AppUser("teste", "teste", "teste", "teste");
+
             BetMultiple bet = await BetRepository.CreateBetMultiple(amount, start, userId, oddMultiple, selections);
-            //await TransactionRepository.WithdrawBalance(user, amount);
+            await TransactionRepository.WithdrawBalance(user, amount);
 
             return bet;
         }

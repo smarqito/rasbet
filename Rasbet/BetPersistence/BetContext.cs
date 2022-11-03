@@ -10,4 +10,11 @@ public partial class BetContext : DbContext
     public BetContext(DbContextOptions<BetContext> options) : base(options)
     {
     }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<BetSimple>();
+        modelBuilder.Entity<BetMultiple>();
+        base.OnModelCreating(modelBuilder);
+    }
 }

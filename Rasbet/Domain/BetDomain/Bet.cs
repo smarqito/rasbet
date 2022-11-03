@@ -7,7 +7,7 @@ public abstract class Bet
     private double wonValue { get; set; }
 
     public DateTime Start { get; set; }
-    public DateTime End { get; set; }
+    public DateTime ?End { get; set; }
 
     // utilizador que realizou a aposta
     public int UserId { get; set; }
@@ -24,6 +24,10 @@ public abstract class Bet
     {
         get { return wonValue; }
         set { wonValue = Math.Max(0, value); }
+    }
+
+    protected Bet()
+    {
     }
 
     public Bet(double amount, DateTime start, int userId)

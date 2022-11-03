@@ -12,13 +12,12 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddScoped<IBetRepository, BetRepository>();
-builder.Services.AddScoped<ISelectionRepository, ISelectionRepository>();
-builder.Services.AddScoped<IBetFacade, BetFacade.BetFacade>();
 builder.Services.AddDbContext<BetContext>(opt =>
 {
     opt.UseSqlServer("Server=.\\SQLEXPRESS; Database=rasbet_bet; Uid=rasbet; Pwd=Pa$$w0rd");
 });
+builder.Services.AddScoped<IBetRepository, BetRepository>();
+builder.Services.AddScoped<ISelectionRepository, SelectionRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

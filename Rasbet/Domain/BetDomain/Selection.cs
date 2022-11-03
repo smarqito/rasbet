@@ -10,6 +10,9 @@ public class Selection
     public int BetTypeId { get; set; }
     public int GameId { get; set; }
     public bool Win { get; set; } = false;
+    protected Selection ()
+    {
+    }
 
     public Selection(int oddId, double odd, int betTypeId, int gameId)
     {
