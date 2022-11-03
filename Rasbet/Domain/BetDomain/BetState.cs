@@ -1,4 +1,5 @@
-﻿public enum BetState
+﻿namespace Domain;
+public enum BetState
 {
     Won,
     Lost,

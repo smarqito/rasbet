@@ -7,7 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Domain\Domain.csproj" />
+    <ProjectReference Include="..\BetApplication\BetApplication.csproj" />
+    <ProjectReference Include="..\GameOddAPI\GameOddAPI.csproj" />
+    <ProjectReference Include="..\UserAPI\UserAPI.csproj" />
   </ItemGroup>
 
 </Project>

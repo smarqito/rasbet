@@ -7,10 +7,10 @@ public abstract class Bet
     private double wonValue { get; set; }
 
     public DateTime Start { get; set; }
-    public DateTime End { get; set; }
+    public DateTime ?End { get; set; }
 
     // utilizador que realizou a aposta
-    public virtual User User { get; set; }
+    public int UserId { get; set; }
 
     public BetState State { get; set; } = BetState.Open;
 
@@ -26,11 +26,20 @@ public abstract class Bet
         set { wonValue = Math.Max(0, value); }
     }
 
-    public Bet(double amount, DateTime start, User user)
+    protected Bet()
     {
-        Amount = amount;
-        User = user;
-        Start = start;
     }
 
+    public Bet(double amount, DateTime start, int userId)
+    {
+        Amount = amount;
+        Start = start;
+        UserId = userId;
+    }
+
+    public abstract void SetFinishBet(int betTypeId, List<int> odds);
+    public void FinishBet(bool won)
+    {
+        State = won ? BetState.Won : BetState.Lost;
+    }
 }

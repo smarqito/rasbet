@@ -8,4 +8,7 @@ namespace Domain;
 
 public class Withdraw : Transaction
 {
+    public Withdraw(double balance) : base(balance)
+    {
+    }
 }
