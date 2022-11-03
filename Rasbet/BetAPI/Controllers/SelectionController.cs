@@ -19,7 +19,7 @@ public class SelectionController : BaseController
     {
         try
         {
-            Selection s = await _betFacade.CreateSelection(create.BetTypeId, create.OddId, create.odd);
+            Selection s = await _betFacade.CreateSelection(create.BetTypeId, create.OddId, create.Odd, create.GameId);
             return Ok(s);
         }
         catch(Exception e)

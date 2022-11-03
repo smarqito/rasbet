@@ -1,5 +1,7 @@
-﻿using BetApplication.Interfaces;
+﻿using BetApplication.Errors;
+using BetApplication.Interfaces;
 using Domain;
+using Domain.ResultDomain;
 using DTO;
 
 
@@ -24,18 +26,28 @@ public class BetFacade : IBetFacade
         try
         {
             Selection selection = await SelectionRepository.GetSelectionById(selectionId);
-            //Verificar se a odd esta dentro dos parâmetros aceitaveis (comparar com a odd atual do bettype)
             double odd = await APIService.GetOdd(selection.BetTypeId, selection.OddId);
+            bool valid = await APIService.WithdrawUserBalance(userId, amount);
 
-            //Buscar user por Id
+            if (valid)
+            {
+                BetSimple bet = await BetRepository.CreateBetSimple(amount, start, userId, selection, odd);
 
-            //Verificar se o user tem dinheiro primeiro
-            BetSimple bet = await BetRepository.CreateBetSimple(amount, start, userId, selection, odd);
-            //await TransactionRepository.WithdrawBalance(user, amount);
-
-            return bet;
+                return bet;
+            }
+            throw new Exception("Ocorreu um erro interno!");
         }
-        catch(Exception e)
+        catch (OddTooDiferentException e)
+        {
+            await APIService.DepositUserBalance(userId, amount);
+            throw new Exception(e.Message);
+        }
+        catch(BetTooLowException e)
+        {
+            await APIService.DepositUserBalance(userId, amount);
+            throw new Exception(e.Message);
+        }
+        catch (Exception e)
         {
             throw new Exception(e.Message);
         }
@@ -56,17 +68,28 @@ public class BetFacade : IBetFacade
                 throw new Exception(e.Message);
             }
         }
-
         try
         {
-            //Buscar user por id
-            AppUser user = new AppUser("teste", "teste", "teste", "teste");
 
-            //Verificar se o User tem dinheiro
-            BetMultiple bet = await BetRepository.CreateBetMultiple(amount, start, userId, oddMultiple, selections);
-            //await TransactionRepository.WithdrawBalance(user, amount);
+            bool valid = await APIService.WithdrawUserBalance(userId, amount);
+            if (valid)
+            {
+                BetMultiple bet = await BetRepository.CreateBetMultiple(amount, start, userId, oddMultiple, selections);
+                return bet;
+            }
 
-            return bet;
+            throw new Exception("Ocorreu um erro interno!");
+
+        }
+        catch (OddTooDiferentException e)
+        {
+            await APIService.DepositUserBalance(userId, amount);
+            throw new Exception(e.Message);
+        }
+        catch (BetTooLowException e)
+        {
+            await APIService.DepositUserBalance(userId, amount);
+            throw new Exception(e.Message);
         }
         catch (Exception e)
         {
@@ -146,22 +169,19 @@ public class BetFacade : IBetFacade
     }
 
     // Métodos para o SelectionRepository
-    public async Task<Selection> CreateSelection(int betTypeId, int oddId, double odd)
+    public async Task<Selection> CreateSelection(int betTypeId, int oddId, double odd, int gameId)
     {
         // pedir GameOddApi com betTypeId + oddId
         // receber odd atual do servidor
         // comparar com odd do cliente e aplicar um threshold max
         //      caso threshold exceda, enviar erro
         //      caso contrario, criar selection
-
-        double serverOdd = await APIService.GetOdd(betTypeId, oddId);
-            
         try
         {
-            //return await SelectionRepository.CreateSelection(serverOdd, odd, betTypeId, oddId, bettype.game.id);
-            throw new NotImplementedException();
+            double serverOdd = await APIService.GetOdd(betTypeId, oddId);
+            return await SelectionRepository.CreateSelection(serverOdd, odd, betTypeId, oddId, gameId);
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             throw new Exception(e.Message);
         }
