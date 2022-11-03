@@ -8,4 +8,8 @@ namespace Domain;
 
 public class Withdraw : Transaction
 {
+    public Withdraw(int id, double balance) : base(id,balance) {
+        Id = id;
+        Balance = balance;
+    }
 }

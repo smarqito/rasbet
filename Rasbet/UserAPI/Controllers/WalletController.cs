@@ -33,9 +33,14 @@ namespace UserAPI.Controllers;
         /// </summary>
         /// <param name="value"></param>
         [HttpPut("deposit")]
-        public void DepositFunds(double value)
+        public async Task<IActionResult> DepositFunds(double value)
         {
-            walletRepository.DepositFunds(value);
+            try {
+                await walletRepository.DepositFunds(value);
+                return Ok();
+            } catch (Exception e) {
+                return BadRequest(e.Message);
+            }
         }
 
         /// <summary>
@@ -43,9 +48,15 @@ namespace UserAPI.Controllers;
         /// </summary>
         /// <param name="value"> Value to withdraw. </param>
         [HttpPut("withdraw")]
-        public void WithdrawFunds(double value)
+        public async Task<IActionResult> WithdrawFunds(double value)
         {
-            walletRepository.WithdrawFunds(value);
+            try {
+                await walletRepository.WithdrawFunds(value);
+                return Ok();
+            } catch(Exception e){
+                return BadRequest(e.Message);
+            }
+            
         }
 
         /// <summary>

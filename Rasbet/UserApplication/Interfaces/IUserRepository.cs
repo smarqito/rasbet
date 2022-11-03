@@ -11,9 +11,21 @@ public interface IUserRepository
 	Task<User> Login(string email, string password);
 	Task Logout();
 
-    Task<User> GetUser(int id);
-	Task<AppUser> UpdateAppUser(string email, string name, string language, string coin, bool notifications);
-	Task<AppUser> UpdateAppUserSensitive(string email, string password, string iban, string phoneno);
+    Task<AppUser> GetAppUser(string id);
+    Task<Specialist> GetSpecialist(string id);
+    Task<Admin> GetAdmin(string id);
+
+    Task<AppUser> UpdateAppUser(string email, string name, string language, string coin, bool notifications);
 	Task<Specialist> UpdateSpecialist(string email, string name, string language);
     Task<Admin> UpdateAdmin(string email, string name, string language);
+
+	Task<AppUser> UpdateAppUserSensitive(string email, string password, string iban, string phoneno);
+	Task<Admin> UpdateAdminSensitive(string email, string password);
+	Task<Specialist> UpdateSpecialistSensitive(string email, string password);
+
+	Task<AppUser> UpdateAppUserSensitiveConfirm(string email, string code);
+	Task<Admin> UpdateAdminSensitiveConfirm(string email, string code);
+	Task<Specialist> UpdateSpecialistSensitiveConfirm(string email, string code);
+
+	
 }

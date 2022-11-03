@@ -1,7 +1,9 @@
 using Domain.UserDomain;
 using Microsoft.AspNetCore.Identity;
+using System.Net.Mail;
 using UserApplication.Interfaces;
 using UserPersistence;
+using IdentityResult = Microsoft.AspNet.Identity.IdentityResult;
 
 namespace UserApplication.Repositories;
 
@@ -10,15 +12,17 @@ public class UserRepository : IUserRepository
     private readonly UserContext context;
     private readonly UserManager<User> userManager;
     private readonly SignInManager<User> signInManager;
-
+    private readonly RoleManager<IdentityRole> roleManager;
    
     public UserRepository(UserContext context,
                           UserManager<User> userManager,
-                          SignInManager<User> signInManager)
+                          SignInManager<User> signInManager,
+                          RoleManager<IdentityRole> roleManager)
     {
         this.context = context;
         this.userManager = userManager;
         this.signInManager = signInManager;
+        this.roleManager = roleManager;
     }
 
     /// <summary>
@@ -48,7 +52,23 @@ public class UserRepository : IUserRepository
          {
             AppUser newU = new AppUser(name, email, nif, dob, language, notifications);
             var s = await userManager.CreateAsync(newU, password);
-            if (s.Succeeded) return newU;
+
+            if (s.Succeeded)
+            {
+                if (!await roleManager.RoleExistsAsync("AppUser"))
+                {
+                    await roleManager.CreateAsync(new IdentityRole("AppUser"));
+                }
+
+                var role = roleManager.FindByNameAsync("AppUser").Result;
+
+                if (role != null)
+                {
+                    await userManager.AddToRoleAsync(newU, role.Name);
+
+                    return newU;
+                }
+            }
             throw new Exception("Erro ao criar utilizador.");
         }
 
@@ -71,7 +91,22 @@ public class UserRepository : IUserRepository
         if (user == null) { 
 		    Admin newU = new (name, email, language);
 		    var s = await userManager.CreateAsync(newU, password);
-		    if (s.Succeeded) return newU;
+            if (s.Succeeded)
+            {
+                if (!await roleManager.RoleExistsAsync("Admin"))
+                {
+                    await roleManager.CreateAsync(new IdentityRole("Admin"));
+                }
+
+                var role = roleManager.FindByNameAsync("Admin").Result;
+
+                if (role != null)
+                {
+                    await userManager.AddToRoleAsync(newU, role.Name);
+
+                    return newU;
+                }
+            }
             throw new Exception("Erro ao criar utilizador.");
         }
 
@@ -93,7 +128,22 @@ public class UserRepository : IUserRepository
         if (user == null) {
 		    Specialist newU = new Specialist(name, email,language);
 		    var s = await userManager.CreateAsync(newU, password);
-		    if (s.Succeeded) return newU;
+            if (s.Succeeded)
+            {
+                if (!await roleManager.RoleExistsAsync("Specialist"))
+                {
+                    await roleManager.CreateAsync(new IdentityRole("Specialist"));
+                }
+
+                var role = roleManager.FindByNameAsync("Specialist").Result;
+
+                if (role != null)
+                {
+                    await userManager.AddToRoleAsync(newU, role.Name);
+
+                    return newU;
+                }
+            }
             throw new Exception("Erro ao criar utilizador.");
         }
         throw new Exception("E-mail já está a ser utilizado.");
@@ -139,13 +189,33 @@ public class UserRepository : IUserRepository
     /// <param name="id"> Id of the user to be retrieved.</param>
     /// <returns>The user, if it exists.</returns>
     /// <exception>The given id doesn't correspond to an user.</exception>
-    public async Task<User> GetUser (int id)
+    public async Task<AppUser> GetAppUser (string id)
     {
-        string st_id = id.ToString();
-        var user = await userManager.FindByIdAsync(st_id);
+        var user = (AppUser) await userManager.FindByIdAsync(id);
 
-        if (user == null) throw new Exception("Utilizador inexistente.");
+        string role_id = context.UserRoles.Where(u => u.UserId.Equals(id)).First().RoleId;
+        IdentityRole role = await roleManager.FindByIdAsync(role_id);
+        string role_name = await roleManager.GetRoleNameAsync(role);
+
+        if (user == null) throw new Exception("Utilizador não encontrado.");
+
+        if (role_name == "AppUser") return user;
+
+        throw new Exception("Utilizador não encontrado.");
+
+    }
+    public  Task<Specialist> GetSpecialist(string id)
+    {
+        AppUser user = context.AppUsers.Where(u => u.Id.Equals(id)).First();
+
+        if (user == null) throw new Exception("Utilizador não encontrado.");
+
         return user;
+
+    }
+    public async Task<Admin> GetAdmin(string id)
+    {
+
     }
 
     /// <summary>
@@ -174,6 +244,23 @@ public class UserRepository : IUserRepository
         return user;
     }
 
+    public void SendEmail(string to, string subject, string body) {
+        try {
+            string from = "rasbet.apostasdesportivas@gmail.com";
+            MailMessage message = new MailMessage(from,to);
+            SmtpClient client = new SmtpClient("smtp.gmail.com");
+            message.Subject = subject;
+            message.Body = body;
+
+            client.EnableSsl = true;
+            client.Port = 465;
+            client.Credentials = new System.Net.NetworkCredential(from,"Ra$bet2022");
+            client.Send(message);
+        } catch(Exception e) {
+            throw new Exception("Envio de email falhou.");
+        }
+    }
+
     /// <summary>
     /// Update sensitive info from an application user (better).
     /// </summary>
@@ -188,11 +275,13 @@ public class UserRepository : IUserRepository
 
         if (user == null) throw new Exception("E-mail inexistente.");
 
-        //string code = generate token.....
-        //UpdateInfo u = new UpdateInfo(email, password, iban, phoneno, code);
-        //context.Updates.Add(u);
-        //await context.SaveChangesAsync();
-        //send email...
+        string code = await userManager.GetAuthenticatorKeyAsync(user);
+        UpdateInfo u = new UpdateInfo(email, password, iban, phoneno, code);
+        context.Updates.Add(u);
+        await context.SaveChangesAsync();
+        string subject = "Confirmação de alterações no perfil";
+        string message = code;
+        SendEmail(email,subject,code);
 
         return null;
     }
@@ -209,12 +298,13 @@ public class UserRepository : IUserRepository
 
         if (user == null) throw new Exception("E-mail inexistente.");
 
-        //string code = generate token.....
-        //UpdateInfo u = new UpdateInfo(email, password, code);
-        //context.Updates.Add(u);
-        //await context.SaveChangesAsync();
-        //send email...
-     
+        string code = await userManager.GetAuthenticatorKeyAsync(user);
+        UpdateInfo u = new UpdateInfo(email, password, code);
+        context.Updates.Add(u);
+        await context.SaveChangesAsync();
+        string subject = "Confirmação de alterações no perfil";
+        string message = code;
+        SendEmail(email,subject,code);
 
         return null;
     }
@@ -223,18 +313,99 @@ public class UserRepository : IUserRepository
     /// Update sensitive info from a specialist.
     /// </summary>
     /// <param name="email"> Specialist's e-mail.</param>
-    /// <param name="password"> Specilist's password. </param>
+    /// <param name="password"> Specialist's password. </param>
     /// <returns>The user if the update was successfull. Null otherwise.</returns>
     /// <exception>The given e-mail doesn't correspond to an user.</exception>
-    public async Task<Specialist> UpdateSpecialistdSensitive(string email, string password){
+    public async Task<Specialist> UpdateSpecialistSensitive(string email, string password){
         Specialist user = context.Specialists.Where(u => u.Email.Equals(email)).First();
 
         if (user == null) throw new Exception("E-mail inexistente.");
 
-        //string code = generate token.....
-        //UpdateInfo u = new UpdateInfo(email, password, code);
-        //await context.SaveChangesAsync();
-        //send email...
+        string code = await userManager.GetAuthenticatorKeyAsync(user);
+        UpdateInfo u = new UpdateInfo(email, password, code);
+        context.Updates.Add(u);
+        await context.SaveChangesAsync();
+        string subject = "Confirmação de alterações no perfil";
+        string message = code;
+        SendEmail(email,subject,code);
+
+        return null;
+    }
+
+    /// <summary>
+    /// Confirm sensitive info update (previously done) from AppUser.
+    /// </summary>
+    /// <param name="email"> User's e-mail.</param>
+    /// <param name="code"> User's confirmation code. </param>
+    /// <returns>The user if the update was successfull. Null otherwise.</returns>
+    /// <exception>The given e-mail doesn't correspond to an user.</exception>
+    public async Task<AppUser> UpdateAppUserSensitiveConfirm(string email, string code){
+        AppUser user = context.AppUsers.Where(u => u.Email.Equals(email)).First();
+        if (user == null) throw new Exception("E-mail inexistente.");
+
+        UpdateInfo info = context.Updates.Where(u => u.Email.Equals(email)).First();
+        if (info== null) throw new Exception("Utilizador não tem updates.");
+        if (code.Equals(info.ConfirmationCode)) {
+            user.IBAN = info.IBAN;
+            await userManager.RemovePasswordAsync(user);
+            await userManager.AddPasswordAsync(user,info.Password);
+            await userManager.SetPhoneNumberAsync(user,info.PhoneNumber);
+            info.Accepted = true;
+            await context.SaveChangesAsync();
+        } else {
+            throw new Exception("Código de confirmação inválido.");
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Confirm sensitive info update (previously done) from Admin.
+    /// </summary>
+    /// <param name="email"> Admin's e-mail.</param>
+    /// <param name="code"> Admin's confirmation code. </param>
+    /// <returns>The user if the update was successfull. Null otherwise.</returns>
+    /// <exception>The given e-mail doesn't correspond to an user.</exception>
+    public async Task<Admin> UpdateAdminSensitiveConfirm(string email, string code){
+        Admin user = context.Admins.Where(u => u.Email.Equals(email)).First();
+        if (user == null) throw new Exception("E-mail inexistente.");
+
+        UpdateInfo info = context.Updates.Where(u => u.Email.Equals(email)).First();
+        if (info == null) throw new Exception("Utilizador não tem updates.");
+
+        if (code.Equals(info.ConfirmationCode)) {
+            await userManager.RemovePasswordAsync(user);
+            await userManager.AddPasswordAsync(user,info.Password);
+            info.Accepted = true;
+            await context.SaveChangesAsync();
+        } else {
+            throw new Exception("Código de confirmação inválido.");
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Confirm sensitive info update (previously done) from Specialist.
+    /// </summary>
+    /// <param name="email"> Specialist's e-mail.</param>
+    /// <param name="code"> Specialist's confirmation code. </param>
+    /// <returns>The user if the update was successfull. Null otherwise.</returns>
+    /// <exception>The given e-mail doesn't correspond to an user.</exception>
+    public async Task<Specialist> UpdateSpecialistSensitiveConfirm(string email, string code){
+        Specialist user = context.Specialists.Where(u => u.Email.Equals(email)).First();
+        if (user == null) throw new Exception("E-mail inexistente.");
+
+        UpdateInfo info = context.Updates.Where(u => u.Email.Equals(email)).First();
+        if (info == null) throw new Exception("Utilizador não tem updates.");
+        if (code.Equals(info.ConfirmationCode)) {
+            await userManager.RemovePasswordAsync(user);
+            await userManager.AddPasswordAsync(user,info.Password);
+            info.Accepted = true;
+            await context.SaveChangesAsync();
+        } else {
+            throw new Exception("Código de confirmação inválido.");
+        }
 
         return null;
     }

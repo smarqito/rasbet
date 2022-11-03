@@ -35,17 +35,35 @@ public class WalletRepository : IWalletRepository
     /// Deposit funds to a user.
     /// </summary>
     /// <param name="value"></param>
-    public void DepositFunds(double value)
+    public async Task<Wallet> DepositFunds(double value)
     {
-       // IHttpContextAccessor
+        int userid = 0; // =.....
+        Deposit d = new Deposit(userid,value);
+        await context.Transactions.AddAsync(d);
+
+        Wallet wallet = context.Wallet.Where(w => w.User.Id.Equals(userid)).First();
+        if (wallet == null) throw new Exception("O User id indicado não tem uma carteira associada.");
+        wallet.Balance += value;
+
+        await context.SaveChangesAsync();
+        return wallet;
     }
 
     /// <summary>
     /// Withdraw money from current user
     /// </summary>
     /// <param name="value"> Value to withdraw. </param>
-    public void WithdrawFunds(double value)
+    public async Task<Wallet> WithdrawFunds(double value)
     {
+        int userid = 0; // =.....
+        Withdraw w = new Withdraw(userid,value);
+        await context.Transactions.AddAsync(w);
+        
+        Wallet wallet = context.Wallet.Where(w => w.User.Id.Equals(userid)).First();
+        if (wallet == null) throw new Exception("O User id indicado não tem uma carteira associada.");
+        wallet.Balance -= value;
 
+        await context.SaveChangesAsync();
+        return wallet;
     }
 }

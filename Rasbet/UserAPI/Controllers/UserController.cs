@@ -1,7 +1,6 @@
 using Domain;
 using DTO.LoginUserDTO;
 using DTO.UserDTO;
-using Microsoft.AspNet.Identity.Owin;
 using Microsoft.AspNetCore.Mvc;
 using UserApplication.Interfaces;
 
@@ -136,17 +135,19 @@ namespace UserAPI.Controllers
         /// <param name="id"> Id of the user to be retrieved.</param>
         /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetUser(int id)
+        public async Task<IActionResult> GetUser(string id)
         {
             try { 
-               User user = await userRepository.GetUser(id);
-                user.GetType();
-               
-               return Ok();
+               var user = await userRepository.GetUser(id);
+               user.GetType();
+                /* UserDTO dto = new UserDTO(user.Name, user.Email, user.Language);
+                 return dto;*/
+                return Ok();
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest();
+                //throw new Exception(e.Message);
             }
         }
 
@@ -169,16 +170,15 @@ namespace UserAPI.Controllers
         }
 
         /// <summary>
-        /// Update sensitive info
-        ///     Expects to be confirmed by a code!
+        /// Update sensitive info from AppUser.
         /// </summary>
-        /// <param name="userDTO"> </param>
+        /// <param name="updateInfo"> </param>
         /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
-        [HttpPut("sensitive")]
-        public async Task<IActionResult> UpdateAppUserSensitive([FromBody] UpdateInfo userDTO)
+        [HttpPut("sensitive_appUser")]
+        public async Task<IActionResult> UpdateAppUserSensitive([FromBody] UpdateInfo updateInfo)
         {
             try {   
-                await userRepository.UpdateAppUserSensitive(userDTO.Email, userDTO.Password, userDTO.IBAN, userDTO.PhoneNumber);
+                await userRepository.UpdateAppUserSensitive(updateInfo.Email, updateInfo.Password, updateInfo.IBAN, updateInfo.PhoneNumber);
                 return Ok();
             }
             catch (Exception e)
@@ -188,13 +188,84 @@ namespace UserAPI.Controllers
         }
 
         /// <summary>
-        /// Confirm sensitive info update (previously done)
+        /// Update sensitive info from Admin.
+        /// </summary>
+        /// <param name="updateInfo"> </param>
+        /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
+        [HttpPut("sensitive_admin")]
+        public async Task<IActionResult> UpdateAdminSensitive([FromBody] UpdateInfo updateInfo)
+        {
+            try {   
+                await userRepository.UpdateAdminSensitive(updateInfo.Email, updateInfo.Password);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        /// <summary>
+        /// Update sensitive info from Specialist.
+        /// </summary>
+        /// <param name="updateInfo"> </param>
+        /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
+        [HttpPut("sensitive_specialist")]
+        public async Task<IActionResult> UpdateSpecialistSensitive([FromBody] UpdateInfo updateInfo)
+        {
+            try {   
+                await userRepository.UpdateSpecialistSensitive(updateInfo.Email, updateInfo.Password);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        /// <summary>
+        /// Confirm sensitive info update (previously done) from AppUser.
         /// </summary>
         /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
-        [HttpPut("sensitive/confirm")]
-        public Task<IActionResult> UpdateSensitiveConfirm()
+        [HttpPut("sensitive_appUser/confirm")]
+        public async Task<IActionResult> UpdateAppUserSensitiveConfirm([FromBody] ConfirmationDTO c)
         {
-            throw new NotImplementedException();
+            try{
+                await userRepository.UpdateAppUserSensitiveConfirm(c.Email, c.Code);
+                return Ok();
+            } catch(Exception e) {
+                return BadRequest(e.Message);
+            }
+        }
+
+        /// <summary>
+        /// Confirm sensitive info update (previously done) from Admin.
+        /// </summary>
+        /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
+        [HttpPut("sensitive_admin/confirm")]
+        public async Task<IActionResult> UpdateAdminSensitiveConfirm([FromBody] ConfirmationDTO c)
+        {
+            try{
+                await userRepository.UpdateAdminSensitiveConfirm(c.Email, c.Code);
+                return Ok();
+            } catch(Exception e) {
+                return BadRequest(e.Message);
+            }
+        }
+
+        /// <summary>
+        /// Confirm sensitive info update (previously done) from Specialist.
+        /// </summary>
+        /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
+        [HttpPut("sensitive_specialist/confirm")]
+        public async Task<IActionResult> UpdateSpecialistSensitiveConfirm([FromBody] ConfirmationDTO c)
+        {
+            try{
+                await userRepository.UpdateSpecialistSensitiveConfirm(c.Email, c.Code);
+                return Ok();
+            } catch(Exception e) {
+                return BadRequest(e.Message);
+            }
         }
 
         /// <summary>

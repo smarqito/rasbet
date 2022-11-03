@@ -8,4 +8,8 @@ namespace Domain;
 
 public class Deposit : Transaction
 {
+    public Deposit(int id, double balance) : base(id,balance) {
+        Id = id;
+        Balance = balance;
+    }
 }

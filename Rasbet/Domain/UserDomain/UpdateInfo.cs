@@ -16,8 +16,7 @@ public class UpdateInfo : User
     public UpdateInfo(string email, string password, string iban, string phoneno, string code) 
     {
         Email = email;
-        
-       // Password = password;
+        Password = password;
         IBAN = iban;
         PhoneNumber = phoneno;
         ConfirmationCode = code;
