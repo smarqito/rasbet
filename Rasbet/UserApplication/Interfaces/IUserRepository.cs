@@ -13,7 +13,7 @@ public interface IUserRepository
 
     Task<User> GetUser(int id);
 	Task<AppUser> UpdateAppUser(string email, string name, string language, string coin, bool notifications);
-	Task<AppUser> UpdateSensitive(string email, string iban, string nif, DateTime dob, string phoneno);
+	Task<AppUser> UpdateAppUserSensitive(string email, string password, string iban, string phoneno);
 	Task<Specialist> UpdateSpecialist(string email, string name, string language);
     Task<Admin> UpdateAdmin(string email, string name, string language);
 }

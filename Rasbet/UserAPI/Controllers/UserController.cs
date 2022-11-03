@@ -22,7 +22,7 @@ namespace UserAPI.Controllers
         /// </summary>
         /// <param name="user"> Information used to log in an user (e-mail and password).</param>
         /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
-        [HttpGet("login")] 
+        [HttpPost("login")] 
         public async Task<IActionResult> Login([FromBody] LoginUserDTO user)
         {
             try
@@ -41,7 +41,7 @@ namespace UserAPI.Controllers
         /// Logs out an user.
         /// </summary>
         /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
-        [HttpGet("logout")]
+        [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
             try
@@ -175,10 +175,10 @@ namespace UserAPI.Controllers
         /// <param name="userDTO"> </param>
         /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
         [HttpPut("sensitive")]
-        public async Task<IActionResult> UpdateSensitive([FromBody] AppUserDTO userDTO)
+        public async Task<IActionResult> UpdateAppUserSensitive([FromBody] UpdateInfo userDTO)
         {
             try {   
-                await userRepository.UpdateSensitive(userDTO.Email, userDTO.IBAN, userDTO.NIF, userDTO.DOB, userDTO.PhoneNumber);
+                await userRepository.UpdateAppUserSensitive(userDTO.Email, userDTO.Password, userDTO.IBAN, userDTO.PhoneNumber);
                 return Ok();
             }
             catch (Exception e)

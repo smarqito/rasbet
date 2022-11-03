@@ -18,6 +18,7 @@ public class UserContext : IdentityDbContext<Domain.User>
     public DbSet<Specialist> Specialists { get; set;}
     public DbSet<Admin> Admins { get; set;}
     
+    public DbSet<UpdateInfo> Updates {get; set;}
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
