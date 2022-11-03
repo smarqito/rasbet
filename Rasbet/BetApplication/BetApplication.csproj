@@ -10,8 +10,6 @@
     <ProjectReference Include="..\BetPersistence\BetPersistence.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
     <ProjectReference Include="..\DTO\DTO.csproj" />
-    <ProjectReference Include="..\GameOddApplication\GameOddApplication.csproj" />
-    <ProjectReference Include="..\UserApplication\UserApplication.csproj" />
   </ItemGroup>
 
 </Project>
