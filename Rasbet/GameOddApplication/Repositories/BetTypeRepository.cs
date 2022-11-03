@@ -5,6 +5,7 @@ using GameOddApplication.Interfaces;
 using GameOddPersistance;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Metadata.Ecma335;
 
 namespace GameOddApplication.Repositories;
 
@@ -31,11 +32,46 @@ public class BetTypeRepository : IBetTypeRepository
 
     public async Task<ICollection<BetType>> CreateBets(ICollection<BookmakerDTO> bookmakers, string awayTeam)
     {
+        List<BetType> betTypes = CalculateOdds(bookmakers, awayTeam);
+        await gameOddContext.BetType.AddRangeAsync(betTypes);
+        await gameOddContext.SaveChangesAsync();
+        return betTypes;
+    }
+
+
+    public async Task<BetType> GetBetType(int id)
+    {
+        BetType bet = await gameOddContext.BetType.Where(g => g.Id == id)
+                                          .FirstOrDefaultAsync();
+        if (bet == null)
+            throw new Exception();
+        return bet;
+    }
+
+    public async Task<Unit> UpdateBets(ICollection<BetType> bets, ICollection<BookmakerDTO> bookmakers)
+    {
+        DateTime lastUpdate = bookmakers.Select(x => x.LastUpdate).Max();
+        foreach(BetType betType in bets)
+        {
+            if(lastUpdate > betType.LastUpdate)
+            {
+                H2h h2h = (H2h)betType;
+                h2h.Odds = (ICollection<Odd>)CalculateOdds(bookmakers, h2h.AwayTeam);
+                betType.LastUpdate = lastUpdate;
+                await gameOddContext.SaveChangesAsync();
+            }
+        }
+        return Unit.Value;
+    }
+
+    public List<BetType> CalculateOdds(ICollection<BookmakerDTO> bookmakers, string awayTeam)
+    {
         List<BetType> betTypes = new();
         DateTime lastUpdate = bookmakers.Select(x => x.LastUpdate).Max();
         IEnumerable<IGrouping<string, MarketDTO>> markets = bookmakers.SelectMany(x => x.Markets).GroupBy(x => x.Key);
         foreach (IGrouping<string, MarketDTO> market_g in markets)
         {
+
             Dictionary<string, Odd> ods = new();
             H2h h2h = new(awayTeam, lastUpdate);
             betTypes.Add(h2h);
@@ -53,23 +89,6 @@ public class BetTypeRepository : IBetTypeRepository
             }
             ((List<Odd>)h2h.Odds).AddRange(ods.Values);
         }
-        await gameOddContext.BetType.AddRangeAsync(betTypes);
-        await gameOddContext.SaveChangesAsync();
         return betTypes;
-    }
-
-
-    public async Task<BetType> GetBetType(int id)
-    {
-        BetType bet = await gameOddContext.BetType.Where(g => g.Id == id)
-                                          .FirstOrDefaultAsync();
-        if (bet == null)
-            throw new Exception();
-        return bet;
-    }
-
-    public Task<Unit> UpdateBets(ICollection<BetType> bets, ICollection<BookmakerDTO> bookmakers)
-    {
-        throw new NotImplementedException();
     }
 }

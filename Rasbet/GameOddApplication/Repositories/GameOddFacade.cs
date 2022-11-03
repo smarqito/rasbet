@@ -61,6 +61,6 @@ public class GameOddFacade : IGameOddFacade
                 await gameRepository.CreateCollectiveGame(sport, game.Id, game.CommenceTime, game.HomeTeam, game.AwayTeam, betTypes);
             }
         }
-        throw new NotImplementedException();
+        return Unit.Value;
     }
 }

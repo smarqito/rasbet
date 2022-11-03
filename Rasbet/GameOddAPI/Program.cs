@@ -17,14 +17,15 @@ builder.Services.AddDbContext<GameOddContext>(opt =>
 {
     opt.UseSqlServer("Server=.\\SQLEXPRESS; Database=rasbet_gameOdd; Uid=rasbet; Pwd=Abc123");
 });
-//builder.Services.AddScoped<GameOddContext>();
 builder.Services.AddScoped<IGameOddFacade, GameOddFacade>();
 builder.Services.AddScoped<IGameRepository, GameRepository>();
 builder.Services.AddScoped<IBetTypeRepository, BetTypeRepository>();
 builder.Services.AddScoped<ISportRepository, SportRepository>();
-var app = builder.Build();
 
-UpdateGames updateGames = new UpdateGames(app.Services.GetRequiredService<GameOddFacade>());
+var app = builder.Build();
+var scope = app.Services.CreateScope();
+var services = scope.ServiceProvider;
+UpdateGames updateGames = new UpdateGames(services.GetRequiredService<IGameOddFacade>());
 Thread thr = new Thread(new ThreadStart(updateGames.Thread1));
 thr.Start();
 

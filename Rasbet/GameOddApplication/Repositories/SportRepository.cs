@@ -21,7 +21,7 @@ public class SportRepository : ISportRepository
 
     public async Task<Sport> GetSport(string Name)
     {
-        Sport s = await gameOddContext.Sport.Where(s => s.Name == Name)
+        Sport s = await gameOddContext.Sport.Where(s => s.Name.Equals(Name))
             .FirstOrDefaultAsync();
         if (s == null)
             throw new Exception();
