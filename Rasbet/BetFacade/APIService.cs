@@ -15,13 +15,20 @@ public class APIService
         _httpClientGameOdd.BaseAddress = new("http://localhost:5002/");
     }
 
+    //HttpResponseMessage resp = await _httpClientGameOdd.PatchAsync($"gameodd/finish?gameId=1&result=1&specialistId=1", null);
+    //return double.Parse(await resp.Content.ReadFromJsonAsync<>());
     public async Task<double> GetOdd(int betTypeId, int oddId)
     {
-        //HttpResponseMessage resp = await _httpClientGameOdd.GetAsync($"gameodd/odd?betTypeId={betTypeId}&oddId={oddId}");
-        HttpResponseMessage resp = await _httpClientGameOdd.PatchAsync($"gameodd/finish?gameId=1&result=1&specialistId=1", null);
+        HttpResponseMessage resp = await _httpClientGameOdd.GetAsync($"gameodd/odd?betTypeId={betTypeId}&oddId={oddId}");
         resp.EnsureSuccessStatusCode();
-        //return double.Parse(await resp.Content.ReadFromJsonAsync<>());
         return double.Parse(await resp.Content.ReadAsStringAsync());
     }
 
+    //get user by id
+
+    // verficar se o user tem dinheiro
+
+    //withdraw dinheiro do user
+
+    //ir buscar bettype por id
 }

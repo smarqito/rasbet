@@ -30,7 +30,7 @@ public class BetFacade : IBetFacade
             //Buscar user por Id
 
             //Verificar se o user tem dinheiro primeiro
-            BetSimple bet = await BetRepository.CreateBetSimple(amount, start, userId, selection);
+            BetSimple bet = await BetRepository.CreateBetSimple(amount, start, userId, selection, odd);
             //await TransactionRepository.WithdrawBalance(user, amount);
 
             return bet;
@@ -158,7 +158,7 @@ public class BetFacade : IBetFacade
             
         try
         {
-            return await SelectionRepository.CreateSelection(serverOdd, odd, betTypeId, oddId, 1);
+            //return await SelectionRepository.CreateSelection(serverOdd, odd, betTypeId, oddId, bettype.game.id);
             throw new NotImplementedException();
         }
         catch(Exception e)

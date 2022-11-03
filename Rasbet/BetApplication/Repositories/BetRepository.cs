@@ -33,8 +33,14 @@ public class BetRepository : IBetRepository
     }
 
     public async Task<BetSimple> CreateBetSimple(
-        double amount, DateTime start, int user, Selection selection)
+        double amount, DateTime start, int user, Selection selection, double serverOdd)
     {
+        double threshold = serverOdd / selection.Odd;
+
+        if (threshold >= 0.05 || threshold <= 0.95 )
+        {
+            throw new OddTooDiferentException("A odd atual diverge demaisado da odd escolhida!");
+        }
         try
         {
             if(amount > 1.20)
@@ -57,10 +63,12 @@ public class BetRepository : IBetRepository
 
     public async Task<BetMultiple> CreateBetMultiple(double amount, DateTime start, int user, double oddMultiple, ICollection<Selection> selections)
     {
+        double oddMultipleChosen = 1.0;
         if(selections.Count > 0) { 
             bool duplicateBets = false;
             foreach (var selection in selections)
             {
+                oddMultipleChosen *= selection.Odd; 
                 foreach(var selection2 in selections)
                 {
                     if(selection2 != selection)
@@ -71,7 +79,14 @@ public class BetRepository : IBetRepository
                 }
             }
 
-            if(!duplicateBets)
+            double threshold = oddMultiple / oddMultipleChosen;
+
+            if (threshold >= 0.05 || threshold <= 0.95)
+            {
+                throw new OddTooDiferentException("A odd atual diverge demaisado da odd escolhida!");
+            }
+
+            if (!duplicateBets)
             {
                 try
                 {

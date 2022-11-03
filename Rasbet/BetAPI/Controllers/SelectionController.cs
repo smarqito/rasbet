@@ -14,15 +14,7 @@ public class SelectionController : BaseController
         _betFacade = betFacade;
     }
 
-    [HttpGet]
-    public async Task<IActionResult> teste()
-    {
-        APIService APIService = new ();
-        var s = await APIService.GetOdd(1, 1);
-        return Ok(s);
-    }
-
-    [HttpPost("selection")]
+    [HttpPost]
     public async Task<IActionResult> CreateSelection([FromBody] CreateSelectionDTO create)
     {
         try

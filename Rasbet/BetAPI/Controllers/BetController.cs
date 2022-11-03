@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BetAPI.Controllers;
 
-public class BetController : Controller
+public class BetController : BaseController
 {
     private readonly IBetFacade BetFacade;
 
@@ -21,7 +21,7 @@ public class BetController : Controller
         try
         {
             BetSimple bet = await BetFacade.CreateBetSimple(create.Amount, create.Start, create.UserId, create.SelectionId);
-            return View(bet);
+            return Ok(bet);
         }
         catch(Exception e)
         {
@@ -39,7 +39,7 @@ public class BetController : Controller
                                                         create.UserId,
                                                         create.OddMultiple,
                                                         create.SelectionIds);
-            return View(bet);
+            return Ok(bet);
         }
         catch (Exception e)
         {
@@ -55,7 +55,7 @@ public class BetController : Controller
         {
             ICollection<Bet> bets = await BetFacade.GetUserBetsByState(get.UserId, BetState.Open);
 
-            return View(bets);
+            return Ok(bets);
 
         }
         catch(Exception e)
@@ -71,7 +71,7 @@ public class BetController : Controller
         {
             ICollection<Bet> bets = await BetFacade.GetUserBetsByState(get.UserId, BetState.Won);
 
-            return View(bets);
+            return Ok(bets);
 
         }
         catch (Exception e)
@@ -86,7 +86,7 @@ public class BetController : Controller
         try
         {
             ICollection<Bet> bets = await BetFacade.GetUserBetsByState(get.UserId, BetState.Lost);
-            return View(bets);
+            return Ok(bets);
 
         }
         catch (Exception e)
@@ -101,7 +101,7 @@ public class BetController : Controller
         try
         {
             ICollection<Bet> bets = await BetFacade.GetUserBetsByAmount(get.UserId, get.value);
-            return View(bets);
+            return Ok(bets);
 
         }
         catch (Exception e)
@@ -116,7 +116,7 @@ public class BetController : Controller
         try
         {
             ICollection<Bet> bets = await BetFacade.GetUserBetsByWonValue(get.UserId, get.value);
-            return View(bets);
+            return Ok(bets);
 
         }
         catch (Exception e)
@@ -131,7 +131,7 @@ public class BetController : Controller
         try
         {
             ICollection<Bet> bets = await BetFacade.GetUserBetsByStart(get.UserId, get.DateTime);
-            return View(bets);
+            return Ok(bets);
 
         }
         catch (Exception e)
@@ -146,7 +146,7 @@ public class BetController : Controller
         try
         {
             ICollection<Bet> bets = await BetFacade.GetUserBetsByStart(get.UserId, get.DateTime);
-            return View(bets);
+            return Ok(bets);
 
         }
         catch (Exception e)
@@ -155,13 +155,13 @@ public class BetController : Controller
         }
     }
 
-    [HttpPut("bet")]
+    [HttpPut]
     public async Task<IActionResult> UpdateBets([FromBody] ICollection<BetsOddsWonDTO> update)
     {
         try
         {
-            _=await BetFacade.UpdateBets(update);
-            return Ok();
+            bool value = await BetFacade.UpdateBets(update);
+            return Ok(value);
         }
         catch(Exception e)
         {
