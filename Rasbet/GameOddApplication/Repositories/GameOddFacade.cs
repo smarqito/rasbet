@@ -89,8 +89,8 @@ public class GameOddFacade : IGameOddFacade
     public async Task<ICollection<ActiveGameDTO>> GetActiveGames()
     {
         ICollection<Game> games = await gameOddContext.Game.Where(g => g.State.Equals(GameState.Open))
-                                                     .Include(g => g.Bets)
-                                                     .ThenInclude(o => o.Odds)
+                                                     .Include(g => g.Sport)
+                                                     .Include(g => g.Bets).ThenInclude(o => o.Odds)
                                                      .ToListAsync();
         return mapper.Map<ICollection<ActiveGameDTO>>(games);
     }

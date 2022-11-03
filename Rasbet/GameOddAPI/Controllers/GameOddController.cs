@@ -23,7 +23,8 @@ namespace GameOddAPI.Controllers
         /// <param name="state"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public async Task<IActionResult> SuspendGame(string specialistId)
+        [HttpPatch("suspend")]
+        public async Task<IActionResult> SuspendGame([FromQuery] string specialistId)
         {
             await gameOddFacade.SuspendGame(specialistId);
             return Ok();
@@ -36,7 +37,8 @@ namespace GameOddAPI.Controllers
         /// <param name="result"></param>
         /// <param name="specialistId"></param>
         /// <returns></returns>
-        public async Task<IActionResult> FinishGame(string gameId, string result, string specialistId)
+        [HttpPatch("finish")]
+        public async Task<IActionResult> FinishGame([FromQuery] string gameId, string result, string specialistId)
         {
             await gameOddFacade.FinishGame(gameId, result, specialistId);
             return Ok();
