@@ -48,7 +48,7 @@ public class BetController : Controller
         throw new NotImplementedException();
     }
 
-    [HttpGet("{userId}")]
+    [HttpGet("open")]
     public async Task<IActionResult> GetUserBetsOpen([FromBody] GetUserBetsDTO get)
     {
         try
@@ -64,7 +64,7 @@ public class BetController : Controller
         }
     }
 
-    [HttpGet("{userId}")]
+    [HttpGet("won")]
     public async Task<IActionResult> GetUserBetsWon([FromBody] GetUserBetsDTO get)
     {
         try
@@ -80,7 +80,7 @@ public class BetController : Controller
         }
     }
 
-    [HttpGet("{userId}")]
+    [HttpGet("lost")]
     public async Task<IActionResult> GetUserBetsLost([FromBody] GetUserBetsDTO get) 
     {
         try
@@ -95,7 +95,7 @@ public class BetController : Controller
         }
     }
 
-    [HttpPut]
+    [HttpPut("bet")]
     public async Task<IActionResult> UpdateBets([FromBody] ICollection<BetsOddsWonDTO> update)
     {
         try

@@ -36,17 +36,14 @@ public class BetFacade : IBetFacade
             Selection selection = await SelectionRepository.GetSelectionById(selectionId);
             //Verificar se a odd esta dentro dos parâmetros aceitaveis (comparar com a odd atual do bettype)
 
-            //Verificar se o user é válido
+            //Buscar user por Id
             AppUser user = new AppUser("teste", "teste", "teste", "teste");
 
+            //Verificar se o user tem dinheiro primeiro
             BetSimple bet = await BetRepository.CreateBetSimple(amount, start, userId, selection);
             await TransactionRepository.WithdrawBalance(user, amount);
 
             return bet;
-        }
-        catch(UserBalanceTooLowException e) {
-            //await BetRepository.DeleteBet(bet.Id);
-            throw new Exception(e.Message);
         }
         catch(Exception e)
         {
@@ -75,15 +72,11 @@ public class BetFacade : IBetFacade
             //Buscar user por id
             AppUser user = new AppUser("teste", "teste", "teste", "teste");
 
+            //Verificar se o User tem dinheiro
             BetMultiple bet = await BetRepository.CreateBetMultiple(amount, start, userId, oddMultiple, selections);
             await TransactionRepository.WithdrawBalance(user, amount);
 
             return bet;
-        }
-        catch(UserBalanceTooLowException e)
-        {
-            //await BetRepository.DeleteBet(bet.Id);
-            throw new Exception(e.Message);
         }
         catch (Exception e)
         {

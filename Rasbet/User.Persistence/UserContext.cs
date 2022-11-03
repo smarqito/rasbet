@@ -11,9 +11,11 @@ public class UserContext : IdentityDbContext<Domain.User>
     }
 
     public DbSet<Wallet> Wallet { get; set; }
-
+    public DbSet<Transaction> Transaction { get; set; }
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        builder.Entity<Deposit>();
+        builder.Entity<Withdraw>();
         base.OnModelCreating(builder);
 
     }
