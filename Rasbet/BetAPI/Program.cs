@@ -1,3 +1,6 @@
+using BetApplication.Interfaces;
+using BetApplication.Repositories;
+using BetFacade;
 using BetPersistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,6 +12,9 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<IBetRepository, BetRepository>();
+builder.Services.AddScoped<ISelectionRepository, ISelectionRepository>();
+builder.Services.AddScoped<IBetFacade, BetFacade.BetFacade>();
 builder.Services.AddDbContext<BetContext>(opt =>
 {
     opt.UseSqlServer("Server=.\\SQLEXPRESS; Database=rasbet_bet; Uid=rasbet; Pwd=Pa$$w0rd");
