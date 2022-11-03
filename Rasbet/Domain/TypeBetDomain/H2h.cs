@@ -9,7 +9,6 @@ namespace Domain.ResultDomain;
 
 public class H2h : BetType
 {
-    public ICollection<Odd> Odds { get; set; } = new List<Odd>(3);
     public string AwayTeam { get; set; }
 
     protected H2h() : base()

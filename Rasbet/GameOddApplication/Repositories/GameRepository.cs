@@ -1,5 +1,6 @@
 ﻿using Domain;
 using Domain.ResultDomain;
+using Domain.UserDomain;
 using GameOddApplication.Interfaces;
 using GameOddPersistance;
 using MediatR;
@@ -23,6 +24,17 @@ public class GameRepository : IGameRepository
         {
             g.State = state;
             g.SpecialistId = specialistId;
+            await gameOddContext.SaveChangesAsync();
+        }
+        return Unit.Value;
+    }
+
+    public async Task<Unit> ChangeGameState(string idSync, GameState state)
+    {
+        Game g = await GetGame(idSync);
+        if (state != g.State)
+        {
+            g.State = state;
             await gameOddContext.SaveChangesAsync();
         }
         return Unit.Value;

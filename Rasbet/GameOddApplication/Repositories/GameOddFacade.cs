@@ -1,9 +1,12 @@
-﻿using Domain;
+﻿using AutoMapper;
+using Domain;
 using Domain.ResultDomain;
+using DTO.GameOddDTO;
 using DTO.GetGamesRespDTO;
 using GameOddApplication.Interfaces;
 using GameOddPersistance;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,25 +21,24 @@ public class GameOddFacade : IGameOddFacade
     private readonly IGameRepository gameRepository;
     private readonly IBetTypeRepository betTypeRepository;
     private readonly ISportRepository sportRepository;
+    readonly IMapper mapper;
 
-    public GameOddFacade(GameOddContext gameOddContext, IGameRepository gameRepository, IBetTypeRepository betTypeRepository, ISportRepository sportRepository)
+    public GameOddFacade(GameOddContext gameOddContext, IGameRepository gameRepository, IBetTypeRepository betTypeRepository, ISportRepository sportRepository, IMapper mapper)
     {
         this.gameOddContext = gameOddContext;
         this.gameRepository = gameRepository;
         this.betTypeRepository = betTypeRepository;
         this.sportRepository = sportRepository;
+        this.mapper = mapper;
     }
 
     public async Task<Unit> FinishGame(string id, string result)
     {
-        Game g = await gameRepository.GetGame(id);
-        foreach(BetType betType in g.Bets)
-        {
-            betType.SetWinningOdd(result);
-        }
+        await FinishGame(id, result, null);
         //enviar info das ods vencedoras à BetAPI
         throw new NotImplementedException();
     }
+
 
     public async Task<Unit> UpdateGameOdd(ICollection<GameDTO> games, string sportName)
     {
@@ -62,5 +64,34 @@ public class GameOddFacade : IGameOddFacade
             }
         }
         return Unit.Value;
+    }
+
+    public async Task<Unit> SuspendGame(string specialistId)
+    {
+        return await gameRepository.ChangeGameState(specialistId, GameState.Suspended);
+    }
+
+    public async Task<Unit> FinishGame(string id, string result, string specialistId)
+    {
+        Game g = await gameRepository.GetGame(id);
+        await gameRepository.ChangeGameState(id, GameState.Finished);
+        foreach (BetType betType in g.Bets)
+        {
+            if (specialistId != null)
+                betType.SpecialistId = specialistId;
+            betType.State = BetTypeState.FINISHED;
+            betType.SetWinningOdd(result);
+            await gameOddContext.SaveChangesAsync();
+        }
+        throw new NotImplementedException();
+    }
+
+    public async Task<ICollection<ActiveGameDTO>> GetActiveGames()
+    {
+        ICollection<Game> games = await gameOddContext.Game.Where(g => g.State.Equals(GameState.Open))
+                                                     .Include(g => g.Bets)
+                                                     .ThenInclude(o => o.Odds)
+                                                     .ToListAsync();
+        return mapper.Map<ICollection<ActiveGameDTO>>(games);
     }
 }

@@ -13,6 +13,7 @@ public abstract class BetType
     public DateTime LastUpdate { get; set; }
     public BetTypeState State { get; set; }
     public string SpecialistId { get; set; }
+    public ICollection<Odd> Odds { get; set; } = new List<Odd>();
 
     protected BetType()
     {

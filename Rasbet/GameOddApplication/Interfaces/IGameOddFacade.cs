@@ -1,4 +1,6 @@
-﻿using DTO.GetGamesRespDTO;
+﻿using Domain;
+using DTO.GameOddDTO;
+using DTO.GetGamesRespDTO;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -12,4 +14,7 @@ public interface IGameOddFacade
 {
     public Task<Unit> UpdateGameOdd(ICollection<GameDTO> games, string sportName);
     public Task<Unit> FinishGame(string id, string result);
+    public Task<Unit> FinishGame(string id, string result, string specialistId);
+    public Task<Unit> SuspendGame(string specialistId);
+    public Task<ICollection<ActiveGameDTO>> GetActiveGames();
 }
