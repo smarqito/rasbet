@@ -33,19 +33,19 @@ public class SelectionRepository : ISelectionRepository
         }
     }
 
-    public async Task<Selection> CreateSelection(Odd serverOdd, double chosenOdd, int betTypeId, int gameId )
+    public async Task<Selection> CreateSelection(double serverOdd, double chosenOdd, int betTypeId, int oddId ,int gameId )
     {
         try
         {
             //threshold 5%
             //Se a odd do servidor divergir da odd escolhida por 5% é lançado erro
 
-            if((serverOdd.OddValue / chosenOdd) * 100 >= 5)
+            if((serverOdd / chosenOdd) * 100 >= 5)
             {
                 throw new OddTooDiferentException("As odds do cliente e servidor) divergem em 5% ou mais!");
             }
 
-            Selection newS = new Selection(serverOdd.Id, chosenOdd, betTypeId, gameId);
+            Selection newS = new Selection(oddId, chosenOdd, betTypeId, gameId);
             await _context.Selections.AddAsync(newS);
             await _context.SaveChangesAsync();
             return newS;

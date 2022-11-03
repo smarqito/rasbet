@@ -1,9 +1,7 @@
 ﻿using BetApplication.Interfaces;
 using Domain;
 using DTO;
-using GameOddApplication.Interfaces;
-using UserApplication.Errors;
-using UserApplication.Interfaces;
+
 
 namespace BetFacade;
 
@@ -11,21 +9,13 @@ public class BetFacade : IBetFacade
 {
     public IBetRepository BetRepository;
     public ISelectionRepository SelectionRepository;
-    public ITransactionRepository TransactionRepository;
-    public IUserRepository UserRepository;
-    public IBetTypeRepository BetTypeRepository;
+    public APIService APIService = new ();
 
     public BetFacade(IBetRepository betRepository, 
-                     ISelectionRepository selectionRepository, 
-                     ITransactionRepository transactionRepository, 
-                     IUserRepository userRepository,
-                     IBetTypeRepository betTypeRepository)
+                     ISelectionRepository selectionRepository)
     {
         BetRepository = betRepository;
         SelectionRepository = selectionRepository;
-        TransactionRepository = transactionRepository;
-        UserRepository = userRepository;
-        BetTypeRepository = betTypeRepository;
     }
 
     // Métodos para o BetController
@@ -35,13 +25,13 @@ public class BetFacade : IBetFacade
         {
             Selection selection = await SelectionRepository.GetSelectionById(selectionId);
             //Verificar se a odd esta dentro dos parâmetros aceitaveis (comparar com a odd atual do bettype)
+            double odd = await APIService.GetOdd(selection.BetTypeId, selection.OddId);
 
             //Buscar user por Id
-            AppUser user = new AppUser("teste", "teste", "teste", "teste");
 
             //Verificar se o user tem dinheiro primeiro
             BetSimple bet = await BetRepository.CreateBetSimple(amount, start, userId, selection);
-            await TransactionRepository.WithdrawBalance(user, amount);
+            //await TransactionRepository.WithdrawBalance(user, amount);
 
             return bet;
         }
@@ -74,7 +64,7 @@ public class BetFacade : IBetFacade
 
             //Verificar se o User tem dinheiro
             BetMultiple bet = await BetRepository.CreateBetMultiple(amount, start, userId, oddMultiple, selections);
-            await TransactionRepository.WithdrawBalance(user, amount);
+            //await TransactionRepository.WithdrawBalance(user, amount);
 
             return bet;
         }
@@ -164,12 +154,11 @@ public class BetFacade : IBetFacade
         //      caso threshold exceda, enviar erro
         //      caso contrario, criar selection
 
-        Odd serverOdd;
-        // get odd by id 
-
+        double serverOdd = await APIService.GetOdd(betTypeId, oddId);
+            
         try
         {
-            //return await SelectionRepository.CreateSelection(serverOdd, odd, betTypeId, bettype.Game.Id);
+            return await SelectionRepository.CreateSelection(serverOdd, odd, betTypeId, oddId, 1);
             throw new NotImplementedException();
         }
         catch(Exception e)

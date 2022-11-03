@@ -95,6 +95,66 @@ public class BetController : Controller
         }
     }
 
+    [HttpGet("amount")]
+    public async Task<IActionResult> GetUserBetsByAmount([FromBody] GetUserBetsByValueDTO get)
+    {
+        try
+        {
+            ICollection<Bet> bets = await BetFacade.GetUserBetsByAmount(get.UserId, get.value);
+            return View(bets);
+
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
+    [HttpGet("wonValue")]
+    public async Task<IActionResult> GetUserBetsByWonValue([FromBody] GetUserBetsByValueDTO get)
+    {
+        try
+        {
+            ICollection<Bet> bets = await BetFacade.GetUserBetsByWonValue(get.UserId, get.value);
+            return View(bets);
+
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
+    [HttpGet("start")]
+    public async Task<IActionResult> GetUserBetsByStart([FromBody] GetUserBetsByDateDTO get)
+    {
+        try
+        {
+            ICollection<Bet> bets = await BetFacade.GetUserBetsByStart(get.UserId, get.DateTime);
+            return View(bets);
+
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
+    [HttpGet("end")]
+    public async Task<IActionResult> GetUserBetsByEnd([FromBody] GetUserBetsByDateDTO get)
+    {
+        try
+        {
+            ICollection<Bet> bets = await BetFacade.GetUserBetsByStart(get.UserId, get.DateTime);
+            return View(bets);
+
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
     [HttpPut("bet")]
     public async Task<IActionResult> UpdateBets([FromBody] ICollection<BetsOddsWonDTO> update)
     {

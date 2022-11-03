@@ -1,11 +1,11 @@
-﻿using BetApplication.Interfaces;
-using BetFacade;
+﻿using BetFacade;
+using Domain;
 using DTO.BetDTO;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BetAPI.Controllers;
 
-public class SelectionController : Controller
+public class SelectionController : BaseController
 {
     private readonly IBetFacade _betFacade;
 
@@ -14,19 +14,53 @@ public class SelectionController : Controller
         _betFacade = betFacade;
     }
 
-    [HttpPost]
-    public async Task<IActionResult> CreateSelection()
+    [HttpGet]
+    public async Task<IActionResult> teste()
     {
-        throw new NotImplementedException();
+        APIService APIService = new ();
+        var s = await APIService.GetOdd(1, 1);
+        return Ok(s);
     }
 
-    public Task<IActionResult> GetSelectionsByGame()
+    [HttpPost("selection")]
+    public async Task<IActionResult> CreateSelection([FromBody] CreateSelectionDTO create)
     {
-        throw new NotImplementedException();
+        try
+        {
+            Selection s = await _betFacade.CreateSelection(create.BetTypeId, create.OddId, create.odd);
+            return Ok(s);
+        }
+        catch(Exception e)
+        {
+            throw new Exception(e.Message);
+        }
     }
 
-    public Task<IActionResult> GetSelectionsByType() 
-    { 
-        throw new NotImplementedException(); 
+    [HttpGet("game")]
+    public async Task<IActionResult> GetSelectionsByGame([FromBody] GetSelectionDTO get)
+    {
+        try
+        {
+            ICollection<Selection> selections = await _betFacade.GetSelectionByGame(get.Id);
+            return Ok(selections);
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
+    [HttpGet("bettype")]
+    public async Task<IActionResult> GetSelectionsByType([FromBody] GetSelectionDTO get) 
+    {
+        try
+        {
+            ICollection<Selection> selections = await _betFacade.GetSelectionByType(get.Id);
+            return Ok(selections);
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
     }
 }

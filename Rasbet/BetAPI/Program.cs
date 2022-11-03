@@ -18,6 +18,7 @@ builder.Services.AddDbContext<BetContext>(opt =>
 });
 builder.Services.AddScoped<IBetRepository, BetRepository>();
 builder.Services.AddScoped<ISelectionRepository, SelectionRepository>();
+builder.Services.AddScoped<IBetFacade, BetFacade.BetFacade>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
