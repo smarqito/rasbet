@@ -1,5 +1,4 @@
-﻿using Domain;
-namespace DTO.BetDTO;
+﻿namespace DTO;
 
 public class GetUserBetsDTO
 {

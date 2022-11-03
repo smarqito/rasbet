@@ -1,11 +1,11 @@
-﻿using BetApplication.Interfaces;
-using BetFacade;
+﻿using BetFacade;
+using Domain;
 using DTO.BetDTO;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BetAPI.Controllers;
 
-public class SelectionController : Controller
+public class SelectionController : BaseController
 {
     private readonly IBetFacade _betFacade;
 
@@ -15,18 +15,44 @@ public class SelectionController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateSelection()
+    public async Task<IActionResult> CreateSelection([FromBody] CreateSelectionDTO create)
     {
-        throw new NotImplementedException();
+        try
+        {
+            Selection s = await _betFacade.CreateSelection(create.BetTypeId, create.OddId, create.odd);
+            return Ok(s);
+        }
+        catch(Exception e)
+        {
+            throw new Exception(e.Message);
+        }
     }
 
-    public Task<IActionResult> GetSelectionsByGame()
+    [HttpGet("game")]
+    public async Task<IActionResult> GetSelectionsByGame([FromBody] GetSelectionDTO get)
     {
-        throw new NotImplementedException();
+        try
+        {
+            ICollection<Selection> selections = await _betFacade.GetSelectionByGame(get.Id);
+            return Ok(selections);
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
     }
 
-    public Task<IActionResult> GetSelectionsByType() 
-    { 
-        throw new NotImplementedException(); 
+    [HttpGet("bettype")]
+    public async Task<IActionResult> GetSelectionsByType([FromBody] GetSelectionDTO get) 
+    {
+        try
+        {
+            ICollection<Selection> selections = await _betFacade.GetSelectionByType(get.Id);
+            return Ok(selections);
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
     }
 }

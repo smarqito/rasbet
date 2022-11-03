@@ -1,6 +1,6 @@
 ﻿using Domain.ResultDomain;
 
-namespace DTO.BetDTO;
+namespace DTO;
 
 public class SelectionDTO
 {
