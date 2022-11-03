@@ -48,7 +48,7 @@ public class UpdateGames
 
     public void Thread1()
     {
-        TimeSpan t = new TimeSpan(0, 1, 0);
+        TimeSpan t = new TimeSpan(0, 0, 10);
         while (true)
         {
             Task.Run(() => Update());

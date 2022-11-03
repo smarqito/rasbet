@@ -1,6 +1,7 @@
 ﻿using Domain;
 using Domain.ResultDomain;
 using Domain.UserDomain;
+using GameOddApplication.Exceptions;
 using GameOddApplication.Interfaces;
 using GameOddPersistance;
 using MediatR;
@@ -85,10 +86,9 @@ public class GameRepository : IGameRepository
 
     public async Task<Game> GetGame(string idSync)
     {
-        Game g = await gameOddContext.Game.Where(g => g.IdSync == idSync)
-                                          .FirstOrDefaultAsync();
+        Game ?g = await gameOddContext.Game.FirstOrDefaultAsync(g => g.IdSync == idSync);
         if (g == null)
-            throw new Exception();
+            throw new GameNotFoundException($"Game with id {idSync} don't exist!");
         return g;
     }
 

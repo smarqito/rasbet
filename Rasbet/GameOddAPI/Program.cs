@@ -17,7 +17,8 @@ builder.Services.AddAutoMapper(typeof(ApplicationServicesProfile));
 
 builder.Services.AddDbContext<GameOddContext>(opt =>
 {
-    opt.UseSqlServer("Server=.\\SQLEXPRESS; Database=rasbet_gameOdd; Uid=rasbet; Pwd=Abc123");
+    opt.UseSqlServer("Server=.\\SQLEXPRESS; Database=rasbet_gameOdd; Uid=rasbet; Pwd=Pa$$w0rd");
+    opt.UseLazyLoadingProxies();
 });
 builder.Services.AddScoped<IGameOddFacade, GameOddFacade>();
 builder.Services.AddScoped<IGameRepository, GameRepository>();

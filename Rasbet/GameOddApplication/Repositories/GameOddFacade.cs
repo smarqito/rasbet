@@ -23,6 +23,7 @@ public class GameOddFacade : IGameOddFacade
     private readonly IBetTypeRepository betTypeRepository;
     private readonly ISportRepository sportRepository;
     readonly IMapper mapper;
+    private APIService API = new();
 
     public GameOddFacade(GameOddContext gameOddContext, IGameRepository gameRepository, IBetTypeRepository betTypeRepository, ISportRepository sportRepository, IMapper mapper)
     {
@@ -84,7 +85,7 @@ public class GameOddFacade : IGameOddFacade
             res.Add(new BetsOddsWonDTO(betType.Id , betType.SetWinningOdd(result).Select(x => x.Id).ToList()));
             await gameOddContext.SaveChangesAsync();
         }
-
+        await API.UpdateBets(res);
         return Unit.Value;
     }
 
