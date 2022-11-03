@@ -9,5 +9,6 @@ namespace GameOddApplication.Interfaces;
 
 public interface ISportRepository
 {
+    public Task<Sport> GetSport(string Name);
     public Task<Sport> CreateSport(string name);
 }

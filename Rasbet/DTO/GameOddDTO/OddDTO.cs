@@ -4,20 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain;
+namespace DTO.GameOddDTO;
 
-public class Sport
+public class OddDTO
 {
     public int Id { get; set; }
     public string Name { get; set; }
-
-    protected Sport()
-    {
-    }
-
-    public Sport(string name)
-    {
-        Name = name;
-    }
+    public double OddValue { get; set; }
 }
-
