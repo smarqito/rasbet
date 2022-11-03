@@ -6,4 +6,8 @@ public partial class BetContext : DbContext
 {
     public DbSet<Bet> Bets { get; set; }
     public DbSet<Selection> Selections { get; set; }
+
+    public BetContext(DbContextOptions<BetContext> options) : base(options)
+    {
+    }
 }

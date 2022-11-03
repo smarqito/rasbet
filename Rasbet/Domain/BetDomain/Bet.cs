@@ -33,4 +33,9 @@ public abstract class Bet
         UserId = userId;
     }
 
+    public abstract void SetFinishBet(int betTypeId, List<int> odds);
+    public void FinishBet(bool won)
+    {
+        State = won ? BetState.Won : BetState.Lost;
+    }
 }
