@@ -1,6 +1,7 @@
 ﻿using Domain;
 using Domain.ResultDomain;
 using DTO.GetGamesRespDTO;
+using GameOddApplication.Exceptions;
 using GameOddApplication.Interfaces;
 using GameOddPersistance;
 using MediatR;
@@ -41,10 +42,9 @@ public class BetTypeRepository : IBetTypeRepository
 
     public async Task<BetType> GetBetType(int id)
     {
-        BetType bet = await gameOddContext.BetType.Where(g => g.Id == id)
-                                          .FirstOrDefaultAsync();
+        BetType? bet = await gameOddContext.BetType.FirstOrDefaultAsync(g => g.Id == id);
         if (bet == null)
-            throw new Exception();
+            throw new BetTypeNotFoundException($"BetType with id {id} don't exist!");
         return bet;
     }
 

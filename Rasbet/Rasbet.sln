@@ -27,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BetApplication", "BetApplic
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BetPersistence", "BetPersistence\BetPersistence.csproj", "{FC1C3D7A-0DEE-49A6-9C81-C8EC92904E1D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BetFacade", "BetFacade\BetFacade.csproj", "{3C686961-44FF-4E77-AE16-C443ED0AEDC6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BetFacade", "BetFacade\BetFacade.csproj", "{3C686961-44FF-4E77-AE16-C443ED0AEDC6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
