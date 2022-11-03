@@ -100,10 +100,12 @@ public class GameOddFacade : IGameOddFacade
 
     public async Task<double> GetOddValue(int oddId, int betTypeId)
     {
-        BetType ?b = await gameOddContext.BetType.FirstOrDefaultAsync(b => b.Id == betTypeId);
+        BetType ?b = await gameOddContext.BetType.Where(b => b.Id == betTypeId)
+                                                 .Include(b => b.Odds)
+                                                 .FirstOrDefaultAsync();
         if (b == null)
             throw new Exception();
-        Odd ?d = b.Odds.FirstOrDefault(o => o.Id == oddId);
+        Odd ?d = b.Odds.Where(o => o.Id == oddId).FirstOrDefault();
         if (d == null)
             throw new Exception();
         return d.OddValue;
