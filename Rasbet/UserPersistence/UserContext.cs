@@ -21,10 +21,17 @@ public class UserContext : IdentityDbContext<Domain.User>
     public DbSet<Admin> Admins { get; set;}
     
     public DbSet<UpdateInfo> Updates {get; set;}
+    public DbSet<AppUserBetHistory> UserBetHistory {get; set;}
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
         builder.Entity<User>();
+
+        builder.Entity<AppUserBetHistory>()
+            .HasKey(x => new { x.UserId, x.BetId });
+
+        builder.Entity<AppUser>().HasMany(x => x.BetHistory).WithOne().HasForeignKey(x => x.UserId);
+
     }
 }

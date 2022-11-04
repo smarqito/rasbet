@@ -1,9 +1,7 @@
 ﻿using Domain;
 using Microsoft.AspNetCore.Mvc;
 using UserApplication.Interfaces;
-using Microsoft.AspNet.Identity.Owin;
 using DTO.UserDTO;
-using BetApplication.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using DTO.BetDTO;
 
@@ -106,7 +104,7 @@ namespace UserAPI.Controllers;
     /// <param name="betId"> Id of the bet.</param>
     /// <param name="value"> Value of the bet.</param>
     /// <param name="odd"> Odd of the bet.</param>
-    [HttpPost("bet/simple")]
+    [HttpPost("bet/multiple")]
     public async Task<IActionResult> RegisterBetMult([FromBody] CreateMultipleBetDTO bet)
     {
         try

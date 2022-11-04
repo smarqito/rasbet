@@ -21,7 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DTO\DTO.csproj" />
     <ProjectReference Include="..\UserApplication\UserApplication.csproj" />
   </ItemGroup>
 

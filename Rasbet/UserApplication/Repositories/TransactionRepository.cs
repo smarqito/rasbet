@@ -1,6 +1,6 @@
-﻿using BetApplication.Interfaces;
-using Domain;
+﻿using Domain;
 using UserApplication.Errors;
+using UserApplication.Interfaces;
 using UserPersistence;
 
 namespace UserApplication.Repositories;
@@ -24,7 +24,7 @@ public class TransactionRepository : ITransactionRepository
 
             //Adicionar balanço ao utilizador
 
-            await _context.Transactions.AddAsync(d);
+            await _context.Transaction.AddAsync(d);
             await _context.SaveChangesAsync();
 
             return d;
@@ -47,7 +47,7 @@ public class TransactionRepository : ITransactionRepository
 
                 //Retirar balanço ao utilizador
 
-                await _context.Transactions.AddAsync(w);
+                await _context.Transaction.AddAsync(w);
                 await _context.SaveChangesAsync();
 
                 return w;

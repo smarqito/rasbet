@@ -40,7 +40,7 @@ namespace UserPersistence.Migrations
 
                     b.HasIndex("WalletId");
 
-                    b.ToTable("Transactions");
+                    b.ToTable("Transaction");
                 });
 
             modelBuilder.Entity("Domain.UpdateInfo", b =>
@@ -156,6 +156,25 @@ namespace UserPersistence.Migrations
                     b.ToTable("AspNetUsers", (string)null);
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("User");
+                });
+
+            modelBuilder.Entity("Domain.UserDomain.AppUserBetHistory", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("BetId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId1")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("UserId", "BetId");
+
+                    b.HasIndex("UserId1");
+
+                    b.ToTable("UserBetHistory");
                 });
 
             modelBuilder.Entity("Domain.Wallet", b =>
@@ -362,6 +381,23 @@ namespace UserPersistence.Migrations
                         .HasForeignKey("WalletId");
                 });
 
+            modelBuilder.Entity("Domain.UserDomain.AppUserBetHistory", b =>
+                {
+                    b.HasOne("Domain.AppUser", null)
+                        .WithMany("BetHistory")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.AppUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId1")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -431,18 +467,7 @@ namespace UserPersistence.Migrations
 
             modelBuilder.Entity("Domain.AppUser", b =>
                 {
-                    b.HasOne("Domain.Wallet", "Wallet")
-                        .WithMany()
-                        .HasForeignKey("WalletId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Wallet");
-                });
-
-            modelBuilder.Entity("Domain.Wallet", b =>
-                {
-                    b.Navigation("Transactions");
+                    b.Navigation("BetHistory");
                 });
 #pragma warning restore 612, 618
         }

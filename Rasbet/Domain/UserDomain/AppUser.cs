@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.UserDomain;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,7 +13,7 @@ public class AppUser : User
     public string NIF { get; set; }
     public DateTime DOB { get; set; }
     public virtual Wallet Wallet { get; set; }
-    public List<int> BetHistory { get; set; } = new List<int>();
+    public virtual List<AppUserBetHistory> BetHistory { get; set; } = new();
     public string Coin { get; set; } = "EUR";
     public bool Notifications { get; set; }
 

@@ -10,12 +10,11 @@ namespace UserApplication.Repositories;
 public class WalletRepository : IWalletRepository
 {
     private readonly UserContext context;
-    private readonly APIService service;
+    private readonly APIService service = new APIService();
 
-    public WalletRepository(UserContext context, APIService service)
+    public WalletRepository(UserContext context)
     {
         this.context = context;
-        this.service = service;
     }
 
     /// <summary>
@@ -78,7 +77,7 @@ public class WalletRepository : IWalletRepository
 
         BetSimple bet = await service.CreateBetSimple(dto);
 
-        user.BetHistory.Append(bet.Id);
+        user.BetHistory.Append(new AppUserBetHistory(user.Id, bet.Id));
 
         await context.SaveChangesAsync();
 
@@ -94,7 +93,7 @@ public class WalletRepository : IWalletRepository
 
         BetMultiple bet = await service.CreateBetMultiple(dto);
 
-        user.BetHistory.Append(bet.Id);
+        user.BetHistory.Append(new AppUserBetHistory(user.Id, bet.Id));
 
         await context.SaveChangesAsync();
 

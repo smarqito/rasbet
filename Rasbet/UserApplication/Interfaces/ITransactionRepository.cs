@@ -1,6 +1,6 @@
 ﻿using Domain;
 
-namespace BetApplication.Interfaces;
+namespace UserApplication.Interfaces;
 
 public interface ITransactionRepository
 {

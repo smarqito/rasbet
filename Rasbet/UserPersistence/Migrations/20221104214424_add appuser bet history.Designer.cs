@@ -12,8 +12,8 @@ using UserPersistence;
 namespace UserPersistence.Migrations
 {
     [DbContext(typeof(UserContext))]
-    [Migration("20221104104303_modificar  update_info")]
-    partial class modificarupdate_info
+    [Migration("20221104214424_add appuser bet history")]
+    partial class addappuserbethistory
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -42,13 +42,16 @@ namespace UserPersistence.Migrations
 
                     b.HasIndex("WalletId");
 
-                    b.ToTable("Transactions");
+                    b.ToTable("Transaction");
                 });
 
             modelBuilder.Entity("Domain.UpdateInfo", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<bool>("Accepted")
                         .HasColumnType("bit");
@@ -157,6 +160,25 @@ namespace UserPersistence.Migrations
                     b.HasDiscriminator<string>("Discriminator").HasValue("User");
                 });
 
+            modelBuilder.Entity("Domain.UserDomain.AppUserBetHistory", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("BetId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId1")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("UserId", "BetId");
+
+                    b.HasIndex("UserId1");
+
+                    b.ToTable("UserBetHistory");
+                });
+
             modelBuilder.Entity("Domain.Wallet", b =>
                 {
                     b.Property<int>("Id")
@@ -169,11 +191,10 @@ namespace UserPersistence.Migrations
                         .HasColumnType("float");
 
                     b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Wallet");
                 });
@@ -362,11 +383,19 @@ namespace UserPersistence.Migrations
                         .HasForeignKey("WalletId");
                 });
 
-            modelBuilder.Entity("Domain.Wallet", b =>
+            modelBuilder.Entity("Domain.UserDomain.AppUserBetHistory", b =>
                 {
-                    b.HasOne("Domain.User", "User")
+                    b.HasOne("Domain.AppUser", null)
+                        .WithMany("BetHistory")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.AppUser", "User")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId1")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -436,6 +465,11 @@ namespace UserPersistence.Migrations
             modelBuilder.Entity("Domain.Wallet", b =>
                 {
                     b.Navigation("Transactions");
+                });
+
+            modelBuilder.Entity("Domain.AppUser", b =>
+                {
+                    b.Navigation("BetHistory");
                 });
 #pragma warning restore 612, 618
         }

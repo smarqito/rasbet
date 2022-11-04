@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Identity;
 using System.Net.Mail;
 using UserApplication.Interfaces;
 using UserPersistence;
-using IdentityResult = Microsoft.AspNet.Identity.IdentityResult;
 
 namespace UserApplication.Repositories;
 
