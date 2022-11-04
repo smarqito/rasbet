@@ -2,6 +2,6 @@
 
 public class GetUserBetsByDateDTO
 {
-    public int UserId { get; set; }
+    public string UserId { get; set; }
     public DateTime DateTime { get; set; } 
 }

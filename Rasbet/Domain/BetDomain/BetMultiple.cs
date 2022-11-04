@@ -11,7 +11,7 @@ public class BetMultiple : Bet
     {
     }
 
-    public BetMultiple(double value, DateTime start, int userId, double oddMultiple, ICollection<Selection> selections) : base(value, start, userId)
+    public BetMultiple(double value, DateTime start, string userId, double oddMultiple, ICollection<Selection> selections) : base(value, start, userId)
     {
         OddMultiple = oddMultiple;
         Selections = selections;
@@ -28,6 +28,14 @@ public class BetMultiple : Bet
             item.Win = true;
         }
         if (OddsFinished == Selections.Count)
+        {
             base.FinishBet(OddsFinished == OddsWon);
+
+            if(OddsFinished == OddsWon)
+            {
+                WonValue = OddMultiple * Amount;
+            }
+
+        }
     }
 }

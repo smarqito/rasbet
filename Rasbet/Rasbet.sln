@@ -29,6 +29,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserPersistence", "UserPers
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BetFacade", "BetFacade\BetFacade.csproj", "{3C686961-44FF-4E77-AE16-C443ED0AEDC6}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserPersistence", "UserPersistence\UserPersistence.csproj", "{AA07DC9D-1A58-446C-8456-3030FDCBEC45}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

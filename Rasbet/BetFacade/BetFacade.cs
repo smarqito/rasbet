@@ -1,7 +1,8 @@
 ﻿using BetApplication.Interfaces;
 using Domain;
 using DTO;
-
+using DTO.BetDTO;
+using DTO.UserDTO;
 
 namespace BetFacade;
 
@@ -19,37 +20,52 @@ public class BetFacade : IBetFacade
     }
 
     // Métodos para o BetController
-    public async Task<BetSimple> CreateBetSimple(double amount, DateTime start, int userId, int selectionId)
+    public async Task<BetSimple> CreateBetSimple(double amount,
+                                                 DateTime start,
+                                                 string userId,
+                                                 CreateSelectionDTO selectionDTO)
     {
+        BetSimple? bet;
         try
         {
-            Selection selection = await SelectionRepository.GetSelectionById(selectionId);
-            //Verificar se a odd esta dentro dos parâmetros aceitaveis (comparar com a odd atual do bettype)
-            double odd = await APIService.GetOdd(selection.BetTypeId, selection.OddId);
+            Selection newS = await CreateSelection(selectionDTO.BetTypeId, selectionDTO.OddId, selectionDTO.Odd, selectionDTO.GameId);
+            double odd = await APIService.GetOdd(selectionDTO.BetTypeId, selectionDTO.OddId);
 
-            //Buscar user por Id
-
-            //Verificar se o user tem dinheiro primeiro
-            BetSimple bet = await BetRepository.CreateBetSimple(amount, start, userId, selection, odd);
-            //await TransactionRepository.WithdrawBalance(user, amount);
-
+            bet = await BetRepository.CreateBetSimple(amount, start, userId, newS, odd);
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+        try 
+        {
+            await APIService.WithdrawUserBalance(new TransactionDTO(userId,amount));
             return bet;
         }
         catch(Exception e)
         {
+            await BetRepository.DeleteBet(bet.Id);
             throw new Exception(e.Message);
         }
     }
 
-    public async Task<BetMultiple> CreateBetMultiple(double amount, DateTime start, int userId, double oddMultiple, ICollection<int> selectionIds)
+    public async Task<BetMultiple> CreateBetMultiple(double amount,
+                                                     DateTime start,
+                                                     string userId,
+                                                     ICollection<CreateSelectionDTO> selectionDTOs)
     {
         ICollection<Selection> selections = new List<Selection>();
-        foreach (int selectionId in selectionIds)
+        double oddMultiple = 1.0;
+        foreach (var selectionDTO in selectionDTOs)
         {
             try
             {
-                var selection = await SelectionRepository.GetSelectionById(selectionId);
-                selections.Add(selection);
+                Selection newS = await CreateSelection(selectionDTO.BetTypeId,
+                                                       selectionDTO.OddId,
+                                                       selectionDTO.Odd,
+                                                       selectionDTO.GameId);
+                selections.Add(newS);
+                oddMultiple *= newS.Odd;
             }
             catch(Exception e)
             {
@@ -57,24 +73,32 @@ public class BetFacade : IBetFacade
             }
         }
 
+        BetMultiple? bet;
         try
         {
-            //Buscar user por id
-            AppUser user = new AppUser("teste", "teste", "teste", "teste");
-
-            //Verificar se o User tem dinheiro
-            BetMultiple bet = await BetRepository.CreateBetMultiple(amount, start, userId, oddMultiple, selections);
-            //await TransactionRepository.WithdrawBalance(user, amount);
-
-            return bet;
+            bet = await BetRepository.CreateBetMultiple(amount,
+                                                        start,
+                                                        userId,
+                                                        oddMultiple,
+                                                        selections);
         }
         catch (Exception e)
         {
             throw new Exception(e.Message);
         }
+        try
+        {
+            await APIService.WithdrawUserBalance(new TransactionDTO(userId, amount));
+            return bet;
+        }
+        catch(Exception e)
+        {
+            await BetRepository.DeleteBet(bet.Id);
+            throw new Exception(e.Message);
+        }
     }
 
-    public async Task<ICollection<Bet>> GetUserBetsByState(int user, BetState state)
+    public async Task<ICollection<Bet>> GetUserBetsByState(string user, BetState state)
     {
         try
         {
@@ -85,7 +109,7 @@ public class BetFacade : IBetFacade
             throw new Exception(e.Message);
         }
     }
-    public async Task<ICollection<Bet>> GetUserBetsByStart(int user, DateTime start)
+    public async Task<ICollection<Bet>> GetUserBetsByStart(string user, DateTime start)
     {
         try
         {
@@ -97,7 +121,7 @@ public class BetFacade : IBetFacade
         }
     }
 
-    public async Task<ICollection<Bet>> GetUserBetsByAmount(int user, double amount)
+    public async Task<ICollection<Bet>> GetUserBetsByAmount(string user, double amount)
     {
         try
         {
@@ -109,7 +133,7 @@ public class BetFacade : IBetFacade
         }
     }
 
-    public async Task<ICollection<Bet>> GetUserBetsByEnd(int user, DateTime end)
+    public async Task<ICollection<Bet>> GetUserBetsByEnd(string user, DateTime end)
     {
         try
         {
@@ -121,7 +145,7 @@ public class BetFacade : IBetFacade
         }
     }
 
-    public async Task<ICollection<Bet>> GetUserBetsByWonValue(int user, double wonValue)
+    public async Task<ICollection<Bet>> GetUserBetsByWonValue(string user, double wonValue)
     {
         try
         {
@@ -133,11 +157,22 @@ public class BetFacade : IBetFacade
         }
     }
 
+    //o método retorna true se existirem apostas vencedoras no update
     public async Task<bool> UpdateBets(ICollection<BetsOddsWonDTO> finishedGames)
     {
         try
         {
-            return await BetRepository.UpdateBets(finishedGames);
+            ICollection<Bet> won_bets = await BetRepository.UpdateBets(finishedGames);
+
+            if(won_bets.Count > 0)
+            {
+                foreach(var bet in won_bets)
+                {
+                    await APIService.DepositUserBalance(new TransactionDTO(bet.UserId, bet.WonValue));
+                }
+                return true;
+            }
+            return false;
         }
         catch(Exception e)
         {
@@ -146,22 +181,19 @@ public class BetFacade : IBetFacade
     }
 
     // Métodos para o SelectionRepository
-    public async Task<Selection> CreateSelection(int betTypeId, int oddId, double odd)
+    public async Task<Selection> CreateSelection(int betTypeId, int oddId, double odd, int gameId)
     {
         // pedir GameOddApi com betTypeId + oddId
         // receber odd atual do servidor
         // comparar com odd do cliente e aplicar um threshold max
         //      caso threshold exceda, enviar erro
         //      caso contrario, criar selection
-
-        double serverOdd = await APIService.GetOdd(betTypeId, oddId);
-            
         try
         {
-            //return await SelectionRepository.CreateSelection(serverOdd, odd, betTypeId, oddId, bettype.game.id);
-            throw new NotImplementedException();
+            double serverOdd = await APIService.GetOdd(betTypeId, oddId);
+            return await SelectionRepository.CreateSelection(serverOdd, odd, betTypeId, oddId, gameId);
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             throw new Exception(e.Message);
         }
@@ -181,7 +213,14 @@ public class BetFacade : IBetFacade
 
     public async Task<ICollection<Selection>> GetSelectionByType(int bettype)
     {
-        return await SelectionRepository.GetSelectionByType(bettype);
+        try
+        {
+            return await SelectionRepository.GetSelectionByType(bettype);
+        }
+        catch(Exception e)
+        {
+            throw new Exception(e.Message);
+        }
     }
 
 }

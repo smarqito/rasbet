@@ -2,6 +2,8 @@
 using Domain.UserDomain;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
+using System;
 
 namespace UserPersistence;
 
@@ -18,11 +20,10 @@ public class UserContext : IdentityDbContext<Domain.User>
     public DbSet<Specialist> Specialists { get; set;}
     public DbSet<Admin> Admins { get; set;}
     
+    public DbSet<UpdateInfo> Updates {get; set;}
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        builder.Entity<Deposit>();
-        builder.Entity<Withdraw>();
         base.OnModelCreating(builder);
         builder.Entity<User>();
     }

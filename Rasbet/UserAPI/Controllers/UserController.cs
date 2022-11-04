@@ -1,7 +1,7 @@
 using Domain;
+using Domain.UserDomain;
 using DTO.LoginUserDTO;
 using DTO.UserDTO;
-using Microsoft.AspNet.Identity.Owin;
 using Microsoft.AspNetCore.Mvc;
 using UserApplication.Interfaces;
 
@@ -22,7 +22,7 @@ namespace UserAPI.Controllers
         /// </summary>
         /// <param name="user"> Information used to log in an user (e-mail and password).</param>
         /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
-        [HttpGet("login")] 
+        [HttpPost("login")] 
         public async Task<IActionResult> Login([FromBody] LoginUserDTO user)
         {
             try
@@ -41,7 +41,7 @@ namespace UserAPI.Controllers
         /// Logs out an user.
         /// </summary>
         /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
-        [HttpGet("logout")]
+        [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
             try
@@ -135,18 +135,68 @@ namespace UserAPI.Controllers
         /// </summary>
         /// <param name="id"> Id of the user to be retrieved.</param>
         /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetUser(int id)
+        [HttpGet("appuser/{id}")]
+        public async Task<AppUserDTO> GetAppUser(string id)
         {
             try { 
-               User user = await userRepository.GetUser(id);
-                user.GetType();
-               
-               return Ok();
+               AppUser user = await userRepository.GetAppUser(id);
+               AppUserDTO dto = new AppUserDTO(user.Name, 
+                                               user.Language, 
+                                               user.Email, 
+                                               user.IBAN, 
+                                               user.NIF, 
+                                               user.DOB,
+                                               user.PhoneNumber,
+                                               user.Notifications,
+                                               user.Coin);
+               return dto;
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return null;
+                //throw new Exception(e.Message);
+            }
+        }
+
+        /// <summary>
+        /// Retrieve UserDTO based on user id
+        /// </summary>
+        /// <param name="id"> Id of the user to be retrieved.</param>
+        /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
+        [HttpGet("specialist/{id}")]
+        public async Task<UserDTO> GetSpecialist(string id)
+        {
+            try
+            {
+                Specialist user = await userRepository.GetSpecialist(id);
+                UserDTO dto = new UserDTO(user.Name, user.Email, user.Language);
+                return dto;
+            }
+            catch (Exception e)
+            {
+                return null;
+                //throw new Exception(e.Message);
+            }
+        }
+
+        /// <summary>
+        /// Retrieve UserDTO based on user id
+        /// </summary>
+        /// <param name="id"> Id of the user to be retrieved.</param>
+        /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
+        [HttpGet("admin/{id}")]
+        public async Task<UserDTO> GetAdmin(string id)
+        {
+            try
+            {
+                Admin user = await userRepository.GetAdmin(id);
+                UserDTO dto = new UserDTO(user.Name, user.Email, user.Language);
+                return dto;
+            }
+            catch (Exception e)
+            {
+                return null;
+                //throw new Exception(e.Message);
             }
         }
 
@@ -155,8 +205,8 @@ namespace UserAPI.Controllers
         /// </summary>
         /// <param name="userDTO"> Information used to update in an user.</param>
         /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
-        [HttpPut("user")]
-        public async Task<IActionResult> UpdateAppUser([FromBody] AppUserDTO userDTO)
+        [HttpPut("update/user")]
+        public async Task<IActionResult> UpdateAppUser([FromBody] UpdateAppUserDTO userDTO)
         {
             try { 
                 await userRepository.UpdateAppUser(userDTO.Email, userDTO.Name, userDTO.Language, userDTO.Coin, userDTO.Notifications);
@@ -169,16 +219,14 @@ namespace UserAPI.Controllers
         }
 
         /// <summary>
-        /// Update sensitive info
-        ///     Expects to be confirmed by a code!
+        /// Update sensitive info from AppUser.
         /// </summary>
-        /// <param name="userDTO"> </param>
+        /// <param name="updateInfo"> </param>
         /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
-        [HttpPut("sensitive")]
-        public async Task<IActionResult> UpdateSensitive([FromBody] AppUserDTO userDTO)
-        {
+        [HttpPut("sensitive/user")]
+        public async Task<IActionResult> UpdateAppUserSensitive([FromBody] SensitiveAppUserDTO updateInfo){
             try {   
-                await userRepository.UpdateSensitive(userDTO.Email, userDTO.IBAN, userDTO.NIF, userDTO.DOB, userDTO.PhoneNumber);
+                await userRepository.UpdateAppUserSensitive(updateInfo.Email, updateInfo.Password, updateInfo.IBAN, updateInfo.PhoneNumber);
                 return Ok();
             }
             catch (Exception e)
@@ -188,13 +236,84 @@ namespace UserAPI.Controllers
         }
 
         /// <summary>
-        /// Confirm sensitive info update (previously done)
+        /// Update sensitive info from Admin.
+        /// </summary>
+        /// <param name="updateInfo"> </param>
+        /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
+        [HttpPut("sensitive/admin")]
+        public async Task<IActionResult> UpdateAdminSensitive([FromBody] UpdatePasswordDTO updateInfo)
+        {
+            try {   
+                await userRepository.UpdateAdminSensitive(updateInfo.Email, updateInfo.Password);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        /// <summary>
+        /// Update sensitive info from Specialist.
+        /// </summary>
+        /// <param name="updateInfo"> </param>
+        /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
+        [HttpPut("sensitive/specialist")]
+        public async Task<IActionResult> UpdateSpecialistSensitive([FromBody] UpdatePasswordDTO updateInfo)
+        {
+            try {   
+                await userRepository.UpdateSpecialistSensitive(updateInfo.Email, updateInfo.Password);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        /// <summary>
+        /// Confirm sensitive info update (previously done) from AppUser.
         /// </summary>
         /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
-        [HttpPut("sensitive/confirm")]
-        public Task<IActionResult> UpdateSensitiveConfirm()
+        [HttpPut("sensitive/user/confirm")]
+        public async Task<IActionResult> UpdateAppUserSensitiveConfirm([FromBody] ConfirmationDTO c)
         {
-            throw new NotImplementedException();
+            try{
+                await userRepository.UpdateAppUserSensitiveConfirm(c.Email, c.Code);
+                return Ok();
+            } catch(Exception e) {
+                return BadRequest(e.Message);
+            }
+        }
+
+        /// <summary>
+        /// Confirm sensitive info update (previously done) from Admin.
+        /// </summary>
+        /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
+        [HttpPut("sensitive/admin/confirm")]
+        public async Task<IActionResult> UpdateAdminSensitiveConfirm([FromBody] ConfirmationDTO c)
+        {
+            try{
+                await userRepository.UpdateAdminSensitiveConfirm(c.Email, c.Code);
+                return Ok();
+            } catch(Exception e) {
+                return BadRequest(e.Message);
+            }
+        }
+
+        /// <summary>
+        /// Confirm sensitive info update (previously done) from Specialist.
+        /// </summary>
+        /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
+        [HttpPut("sensitive/specialist/confirm")]
+        public async Task<IActionResult> UpdateSpecialistSensitiveConfirm([FromBody] ConfirmationDTO c)
+        {
+            try{
+                await userRepository.UpdateSpecialistSensitiveConfirm(c.Email, c.Code);
+                return Ok();
+            } catch(Exception e) {
+                return BadRequest(e.Message);
+            }
         }
 
         /// <summary>
@@ -202,8 +321,8 @@ namespace UserAPI.Controllers
         /// </summary>
         /// <param name="userDTO">Information needed to update specialist's profile.</param>
         /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
-        [HttpPut("specialist")]
-        public async Task<IActionResult> UpdateSpecialist([FromBody] UserDTO userDTO)
+        [HttpPut("update/specialist")]
+        public async Task<IActionResult> UpdateSpecialist([FromBody] UpdateSpecialistDTO userDTO)
         {
             try
             {
@@ -221,8 +340,8 @@ namespace UserAPI.Controllers
         /// </summary>
         /// <param name="userDTO">Information needed to update admin's profile.</param>
         /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
-        [HttpPut("administrator")]
-        public async Task<IActionResult> UpdateAdmin([FromBody] UserDTO userDTO)
+        [HttpPut("update/admin")]
+        public async Task<IActionResult> UpdateAdmin([FromBody] UpdateAdminDTO userDTO)
         {
             try
             {

@@ -10,6 +10,6 @@ public class BetDTO
     public DateTime Start { get; set; }
     public DateTime End { get; set; }
     public BetState State { get; set; }
-    public AppUser User { get; set; }
+    public string User { get; set; }
     
 }
