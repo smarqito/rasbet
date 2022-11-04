@@ -6,7 +6,6 @@ using GameOddApplication.Interfaces;
 using GameOddPersistance;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Metadata.Ecma335;
 
 namespace GameOddApplication.Repositories;
 
