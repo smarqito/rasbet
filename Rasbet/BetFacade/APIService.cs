@@ -60,12 +60,4 @@ public class APIService
         resp.EnsureSuccessStatusCode();
         return await resp.Content.ReadFromJsonAsync<bool>();
     }
-
-    //Verificar se o user tem dinheiro
-    public async Task<bool> VerifyUserBalance(int userId, double amount)
-    {
-        HttpResponseMessage resp = await _httpClientUser.GetAsync($"user/verify?userId={userId}&amount={amount}");
-        resp.EnsureSuccessStatusCode();
-        return await resp.Content.ReadFromJsonAsync<bool>();
-    }
 }

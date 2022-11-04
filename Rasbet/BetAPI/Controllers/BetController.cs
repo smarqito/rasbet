@@ -16,11 +16,14 @@ public class BetController : BaseController
     }
 
     [HttpPost("simple")]
-    public async Task<IActionResult> CreateBetSimple([FromBody] CreateBetSimpleDTO create )
+    public async Task<IActionResult> CreateBetSimple([FromBody] CreateBetDTO create)
     {
         try
         {
-            BetSimple bet = await BetFacade.CreateBetSimple(create.Amount, create.Start, create.UserId, create.SelectionId);
+            BetSimple bet = await BetFacade.CreateBetSimple(create.Amount,
+                                                            create.Start,
+                                                            create.UserId,
+                                                            create.selectionDTO);
             return Ok(bet);
         }
         catch(Exception e)
@@ -30,14 +33,14 @@ public class BetController : BaseController
     }
 
     [HttpPost("multiple")]
-    public async Task<IActionResult> CreateBetMultiple([FromBody] CreateBetMultipleDTO create) 
+    public async Task<IActionResult> CreateBetMultiple([FromBody] CreateMultipleSelectionsDTO create) 
     {
         try
         {
             BetMultiple bet = await BetFacade.CreateBetMultiple(create.Amount,
                                                         create.Start,
                                                         create.UserId,
-                                                        create.SelectionIds);
+                                                        create.selections);
             return Ok(bet);
         }
         catch (Exception e)

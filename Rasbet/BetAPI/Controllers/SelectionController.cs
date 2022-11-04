@@ -14,20 +14,6 @@ public class SelectionController : BaseController
         _betFacade = betFacade;
     }
 
-    [HttpPost]
-    public async Task<IActionResult> CreateSelection([FromBody] CreateSelectionDTO create)
-    {
-        try
-        {
-            Selection s = await _betFacade.CreateSelection(create.BetTypeId, create.OddId, create.Odd, create.GameId);
-            return Ok(s);
-        }
-        catch(Exception e)
-        {
-            throw new Exception(e.Message);
-        }
-    }
-
     [HttpGet("game")]
     public async Task<IActionResult> GetSelectionsByGame([FromBody] GetSelectionDTO get)
     {

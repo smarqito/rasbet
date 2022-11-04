@@ -3,7 +3,7 @@ using BetApplication.Interfaces;
 using Domain;
 using Domain.ResultDomain;
 using DTO;
-
+using DTO.BetDTO;
 
 namespace BetFacade;
 
@@ -24,22 +24,17 @@ public class BetFacade : IBetFacade
     public async Task<BetSimple> CreateBetSimple(double amount,
                                                  DateTime start,
                                                  int userId,
-                                                 int selectionId)
+                                                 CreateSelectionDTO selectionDTO)
     {
         try
         {
-            Selection selection = await SelectionRepository.GetSelectionById(selectionId);
-            double odd = await APIService.GetOdd(selection.BetTypeId, selection.OddId);
-            //bool valid = await APIService.VerifyUserBalance(userId, amount);
+            Selection newS = await CreateSelection(selectionDTO.BetTypeId, selectionDTO.OddId, selectionDTO.Odd, selectionDTO.GameId);
+            double odd = await APIService.GetOdd(selectionDTO.BetTypeId, selectionDTO.OddId);
 
-            //if (valid)
-            //{
-                BetSimple bet = await BetRepository.CreateBetSimple(amount, start, userId, selection, odd);
-                //await APIService.WithdrawUserBalance(userId, amount);
+            BetSimple bet = await BetRepository.CreateBetSimple(amount, start, userId, newS, odd);
+            await APIService.WithdrawUserBalance(userId, amount);
 
-                return bet;
-            //}
-            //throw new Exception("Ocorreu um erro interno!");
+            return bet;
         }
         
         catch (Exception e)
@@ -51,17 +46,20 @@ public class BetFacade : IBetFacade
     public async Task<BetMultiple> CreateBetMultiple(double amount,
                                                      DateTime start,
                                                      int userId,
-                                                     ICollection<int> selectionIds)
+                                                     ICollection<CreateSelectionDTO> selectionDTOs)
     {
         ICollection<Selection> selections = new List<Selection>();
         double oddMultiple = 1.0;
-        foreach (int selectionId in selectionIds)
+        foreach (var selectionDTO in selectionDTOs)
         {
             try
             {
-                var selection = await SelectionRepository.GetSelectionById(selectionId);
-                selections.Add(selection);
-                oddMultiple *= selection.Odd;
+                Selection newS = await CreateSelection(selectionDTO.BetTypeId,
+                                                       selectionDTO.OddId,
+                                                       selectionDTO.Odd,
+                                                       selectionDTO.GameId);
+                selections.Add(newS);
+                oddMultiple *= newS.Odd;
             }
             catch(Exception e)
             {
@@ -151,7 +149,7 @@ public class BetFacade : IBetFacade
         }
     }
 
-    //o método retorna true se exstiram apostas vencedoras no update
+    //o método retorna true se existirem apostas vencedoras no update
     public async Task<bool> UpdateBets(ICollection<BetsOddsWonDTO> finishedGames)
     {
         try
