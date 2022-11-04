@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace Domain;
 
-public class Deposit : Transaction
+public class Withdraw : Transaction
 {
-    public Deposit(int id, double balance) : base(id,balance) {
-        Id = id;
-        Balance = balance;
+    public Withdraw(double balance) : base(balance)
+    {
     }
 }

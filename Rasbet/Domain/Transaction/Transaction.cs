@@ -6,10 +6,13 @@ using System.Threading.Tasks;
 
 namespace Domain;
 
-public class Withdraw : Transaction
+public class Transaction
 {
-    public Withdraw(int id, double balance) : base(id,balance) {
-        Id = id;
+    public int Id { get; set; }
+    public double Balance { get; set; }
+
+    public Transaction(double balance)
+    {
         Balance = balance;
     }
 }

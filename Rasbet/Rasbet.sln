@@ -25,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BetApplication", "BetApplic
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BetPersistence", "BetPersistence\BetPersistence.csproj", "{FC1C3D7A-0DEE-49A6-9C81-C8EC92904E1D}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BetFacade", "BetFacade\BetFacade.csproj", "{3C686961-44FF-4E77-AE16-C443ED0AEDC6}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserPersistence", "UserPersistence\UserPersistence.csproj", "{AA07DC9D-1A58-446C-8456-3030FDCBEC45}"
 EndProject
 Global
@@ -77,6 +79,10 @@ Global
 		{FC1C3D7A-0DEE-49A6-9C81-C8EC92904E1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FC1C3D7A-0DEE-49A6-9C81-C8EC92904E1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FC1C3D7A-0DEE-49A6-9C81-C8EC92904E1D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C686961-44FF-4E77-AE16-C443ED0AEDC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C686961-44FF-4E77-AE16-C443ED0AEDC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C686961-44FF-4E77-AE16-C443ED0AEDC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C686961-44FF-4E77-AE16-C443ED0AEDC6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AA07DC9D-1A58-446C-8456-3030FDCBEC45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AA07DC9D-1A58-446C-8456-3030FDCBEC45}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AA07DC9D-1A58-446C-8456-3030FDCBEC45}.Release|Any CPU.ActiveCfg = Release|Any CPU

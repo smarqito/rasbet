@@ -4,14 +4,21 @@ namespace Domain;
 
 public class Selection
 {
+    public int Id { get; set; }
+    public int OddId { get; set; }
     public double Odd { get; set; }
-    public virtual BetType Result { get; set; }
-
-    public Selection(double odd, BetType result)
+    public int BetTypeId { get; set; }
+    public int GameId { get; set; }
+    public bool Win { get; set; } = false;
+    protected Selection ()
     {
-        Odd = odd;
-        Result = result;
     }
 
-
+    public Selection(int oddId, double odd, int betTypeId, int gameId)
+    {
+        OddId = oddId;
+        Odd = odd;
+        BetTypeId = betTypeId;
+        GameId = gameId;
+    }
 }

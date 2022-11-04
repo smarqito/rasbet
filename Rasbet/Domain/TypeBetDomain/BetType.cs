@@ -7,11 +7,24 @@ using System.Threading.Tasks;
 
 namespace Domain.ResultDomain;
 
-public class BetType
+public abstract class BetType
 {
     public int Id { get; set; }
-    public int NumberOfBets { get; set; }
-    public virtual Game Game { get; set; }
+    public DateTime LastUpdate { get; set; }
     public BetTypeState State { get; set; }
-    public virtual Specialist Specialist { get; set; }
+    public string SpecialistId { get; set; }
+    public ICollection<Odd> Odds { get; set; } = new List<Odd>();
+
+    protected BetType()
+    {
+    }
+
+    public BetType(DateTime lastUpdate)
+    {
+        LastUpdate = lastUpdate;
+        State = BetTypeState.UNFINISHED;
+    }
+
+    public abstract ICollection<Odd> GetWinningOdd();
+    public abstract ICollection<Odd> SetWinningOdd(string result);
 }
