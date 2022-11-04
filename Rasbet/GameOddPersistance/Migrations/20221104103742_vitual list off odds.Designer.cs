@@ -4,6 +4,7 @@ using GameOddPersistance;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GameOddPersistance.Migrations
 {
     [DbContext(typeof(GameOddContext))]
-    partial class GameOddContextModelSnapshot : ModelSnapshot
+    [Migration("20221104103742_vitual list off odds")]
+    partial class vituallistoffodds
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,13 +32,9 @@ namespace GameOddPersistance.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("IdSync")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SpecialistId")
                         .HasColumnType("nvarchar(max)");
@@ -52,13 +50,9 @@ namespace GameOddPersistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IdSync");
-
                     b.HasIndex("SportId");
 
                     b.ToTable("Game");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("Game");
                 });
 
             modelBuilder.Entity("Domain.Odd", b =>
@@ -101,7 +95,7 @@ namespace GameOddPersistance.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("GameId")
+                    b.Property<int?>("GameId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("LastUpdate")
@@ -137,28 +131,6 @@ namespace GameOddPersistance.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Sport");
-                });
-
-            modelBuilder.Entity("Domain.CollectiveGame", b =>
-                {
-                    b.HasBaseType("Domain.Game");
-
-                    b.Property<string>("AwayTeam")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("HomeTeam")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasDiscriminator().HasValue("CollectiveGame");
-                });
-
-            modelBuilder.Entity("Domain.IndividualGame", b =>
-                {
-                    b.HasBaseType("Domain.Game");
-
-                    b.HasDiscriminator().HasValue("IndividualGame");
                 });
 
             modelBuilder.Entity("Domain.IndividualResult", b =>
@@ -201,9 +173,7 @@ namespace GameOddPersistance.Migrations
                 {
                     b.HasOne("Domain.Game", null)
                         .WithMany("Bets")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("GameId");
                 });
 
             modelBuilder.Entity("Domain.Game", b =>

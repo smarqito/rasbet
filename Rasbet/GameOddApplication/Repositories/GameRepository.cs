@@ -53,14 +53,14 @@ public class GameRepository : IGameRepository
         return Unit.Value;
     }
 
-    public async Task<Unit> CreateCollectiveGame(Sport sport, string idSync, DateTime date, string HomeTeam, string AwayTeam, ICollection<BetType> bets)
+    public async Task<Game> CreateCollectiveGame(Sport sport, string idSync, DateTime date, string HomeTeam, string AwayTeam)
     {
         try
         {
-            Game g = new CollectiveGame(HomeTeam, AwayTeam, idSync, date, sport, bets);
+            Game g = new CollectiveGame(HomeTeam, AwayTeam, idSync, date, sport);
             await gameOddContext.Game.AddAsync(g);
             await gameOddContext.SaveChangesAsync();
-            return Unit.Value;
+            return g;
         }
         catch (Exception)
         {
@@ -73,7 +73,7 @@ public class GameRepository : IGameRepository
     {
         try
         {
-            Game g = new IndividualGame(Players, idSync, date, sport, bets);
+            Game g = new IndividualGame(Players, idSync, date, sport);
             await gameOddContext.Game.AddAsync(g);
             await gameOddContext.SaveChangesAsync();
             return Unit.Value;
@@ -82,6 +82,15 @@ public class GameRepository : IGameRepository
         {
             throw new Exception("Aconteceu um erro interno");
         }
+    }
+
+    public async Task<CollectiveGame> GetCollectiveGame(string idSync)
+    {
+        CollectiveGame g = await gameOddContext.Game.OfType<CollectiveGame>()
+                                                    .FirstOrDefaultAsync(g => g.IdSync == idSync);
+        if (g == null)
+            throw new GameNotFoundException($"Game with id {idSync} don't exist!");
+        return g;
     }
 
     public async Task<Game> GetGame(string idSync)

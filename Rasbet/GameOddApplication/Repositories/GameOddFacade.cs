@@ -4,6 +4,7 @@ using Domain.ResultDomain;
 using DTO;
 using DTO.GameOddDTO;
 using DTO.GetGamesRespDTO;
+using GameOddApplication.Exceptions;
 using GameOddApplication.Interfaces;
 using GameOddPersistance;
 using MediatR;
@@ -53,15 +54,15 @@ public class GameOddFacade : IGameOddFacade
                 }
                 else //O jogo ainda não acabou, atualizar as odds se necessário
                 {
-                    Game g = await gameRepository.GetGame(game.Id);
-                    await betTypeRepository.UpdateBets(g.Bets, game.Bookmakers);
+                    CollectiveGame g = await gameRepository.GetCollectiveGame(game.Id);
+                    await betTypeRepository.UpdateBets(game.Bookmakers, g.AwayTeam, g.Id);
                 }
             }
             else if (game.Completed == false)
             {
-                ICollection<BetType> betTypes = await betTypeRepository.CreateBets(game.Bookmakers, game.AwayTeam);
                 Sport sport = await sportRepository.GetSport(sportName);
-                await gameRepository.CreateCollectiveGame(sport, game.Id, game.CommenceTime, game.HomeTeam, game.AwayTeam, betTypes);
+                Game g = await gameRepository.CreateCollectiveGame(sport, game.Id, game.CommenceTime, game.HomeTeam, game.AwayTeam);
+                ICollection<BetType> betTypes = await betTypeRepository.CreateBets(game.Bookmakers, game.AwayTeam, g.Id);
             }
         }
         return Unit.Value;
@@ -104,10 +105,10 @@ public class GameOddFacade : IGameOddFacade
                                                  .Include(b => b.Odds)
                                                  .FirstOrDefaultAsync();
         if (b == null)
-            throw new Exception();
+            throw new BetTypeNotFoundException($"BetType {betTypeId} dont exist!");
         Odd ?d = b.Odds.Where(o => o.Id == oddId).FirstOrDefault();
         if (d == null)
-            throw new Exception();
+            throw new OddNotFoundException($"Odd {oddId} dont exist!");
         return d.OddValue;
     }
 }

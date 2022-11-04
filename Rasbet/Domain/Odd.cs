@@ -28,6 +28,13 @@ public class Odd
         Win = false;
     }
 
+    public void ResetOdd()
+    {
+        OddNum = 0;
+        OddSum = 0;
+        OddValue = 0;
+    }
+
     public void UpdateOdd(double odd)
     {
         OddSum += odd;

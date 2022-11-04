@@ -19,6 +19,7 @@ builder.Services.AddDbContext<GameOddContext>(opt =>
 {
     opt.UseSqlServer("Server=.\\SQLEXPRESS; Database=rasbet_gameOdd; Uid=rasbet; Pwd=Pa$$w0rd");
     opt.UseLazyLoadingProxies();
+    opt.EnableSensitiveDataLogging(true);
 });
 builder.Services.AddScoped<IGameOddFacade, GameOddFacade>();
 builder.Services.AddScoped<IGameRepository, GameRepository>();
