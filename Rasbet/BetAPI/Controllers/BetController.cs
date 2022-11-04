@@ -37,7 +37,6 @@ public class BetController : BaseController
             BetMultiple bet = await BetFacade.CreateBetMultiple(create.Amount,
                                                         create.Start,
                                                         create.UserId,
-                                                        create.OddMultiple,
                                                         create.SelectionIds);
             return Ok(bet);
         }

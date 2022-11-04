@@ -15,7 +15,7 @@ public class APIService
         _httpClientUser = new ();
         _httpClientUser.BaseAddress = new("http://localhost:5000/");
         _httpClientGameOdd = new ();
-        _httpClientGameOdd.BaseAddress = new("http://localhost:7141/");
+        _httpClientGameOdd.BaseAddress = new("http://localhost:5002/");
     }
 
     //HttpResponseMessage resp = await _httpClientGameOdd.PatchAsync($"gameodd/finish?gameId=1&result=1&specialistId=1", null);
@@ -61,5 +61,11 @@ public class APIService
         return await resp.Content.ReadFromJsonAsync<bool>();
     }
 
-
+    //Verificar se o user tem dinheiro
+    public async Task<bool> VerifyUserBalance(int userId, double amount)
+    {
+        HttpResponseMessage resp = await _httpClientUser.GetAsync($"user/verify?userId={userId}&amount={amount}");
+        resp.EnsureSuccessStatusCode();
+        return await resp.Content.ReadFromJsonAsync<bool>();
+    }
 }

@@ -27,69 +27,54 @@ public class BetFacade : IBetFacade
         {
             Selection selection = await SelectionRepository.GetSelectionById(selectionId);
             double odd = await APIService.GetOdd(selection.BetTypeId, selection.OddId);
-            bool valid = await APIService.WithdrawUserBalance(userId, amount);
+            //bool valid = await APIService.VerifyUserBalance(userId, amount);
 
-            if (valid)
-            {
+            //if (valid)
+            //{
                 BetSimple bet = await BetRepository.CreateBetSimple(amount, start, userId, selection, odd);
+                //await APIService.WithdrawUserBalance(userId, amount);
 
                 return bet;
-            }
-            throw new Exception("Ocorreu um erro interno!");
+            //}
+            //throw new Exception("Ocorreu um erro interno!");
         }
-        catch (OddTooDiferentException e)
-        {
-            await APIService.DepositUserBalance(userId, amount);
-            throw new Exception(e.Message);
-        }
-        catch(BetTooLowException e)
-        {
-            await APIService.DepositUserBalance(userId, amount);
-            throw new Exception(e.Message);
-        }
+        
         catch (Exception e)
         {
             throw new Exception(e.Message);
         }
     }
 
-    public async Task<BetMultiple> CreateBetMultiple(double amount, DateTime start, int userId, double oddMultiple, ICollection<int> selectionIds)
+    public async Task<BetMultiple> CreateBetMultiple(double amount, DateTime start, int userId, ICollection<int> selectionIds)
     {
         ICollection<Selection> selections = new List<Selection>();
+        double oddMultiple = 1.0;
         foreach (int selectionId in selectionIds)
         {
             try
             {
                 var selection = await SelectionRepository.GetSelectionById(selectionId);
                 selections.Add(selection);
+                oddMultiple *= selection.Odd;
             }
             catch(Exception e)
             {
                 throw new Exception(e.Message);
             }
         }
+
         try
         {
-
-            bool valid = await APIService.WithdrawUserBalance(userId, amount);
+            bool valid = await APIService.VerifyUserBalance(userId, amount);
             if (valid)
             {
                 BetMultiple bet = await BetRepository.CreateBetMultiple(amount, start, userId, oddMultiple, selections);
+                await APIService.WithdrawUserBalance(userId, amount);
                 return bet;
             }
 
             throw new Exception("Ocorreu um erro interno!");
 
-        }
-        catch (OddTooDiferentException e)
-        {
-            await APIService.DepositUserBalance(userId, amount);
-            throw new Exception(e.Message);
-        }
-        catch (BetTooLowException e)
-        {
-            await APIService.DepositUserBalance(userId, amount);
-            throw new Exception(e.Message);
         }
         catch (Exception e)
         {

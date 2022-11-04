@@ -36,24 +36,33 @@ public class BetRepository : IBetRepository
         double amount, DateTime start, int user, Selection selection, double serverOdd)
     {
         double threshold = serverOdd / selection.Odd;
+        BetSimple b;
 
-        if (threshold >= 0.05 || threshold <= 0.95 )
+        if (threshold >= 0.05 && threshold <= 0.95 )
         {
             throw new OddTooDiferentException("A odd atual diverge demaisado da odd escolhida!");
         }
-        try
+        if(amount > 0.10 )
         {
-            if(amount > 1.20)
+            if(selection.Odd > 0.1)
             {
-                BetSimple b = new BetSimple(selection, amount, start, user);
+                b = new BetSimple(selection, amount, start, user);
                 await _context.Bets.AddAsync(b);    
-                await _context.SaveChangesAsync();
-                return b;
             }
             else
             {
-                throw new BetTooLowException("A aposta tem um valor muito baixo!");
+                throw new OddTooLowException("A odd da seleção é demasiado baixa!");
             }
+        }
+        else
+        {
+            throw new BetTooLowException("O valor da aposta tem um valor muito baixo!");
+        }
+
+        try
+        {
+                await _context.SaveChangesAsync();
+                return b;
         } 
         catch(Exception)
         {
@@ -81,7 +90,7 @@ public class BetRepository : IBetRepository
 
             double threshold = oddMultiple / oddMultipleChosen;
 
-            if (threshold >= 0.05 || threshold <= 0.95)
+            if (threshold >= 0.05 && threshold <= 0.95)
             {
                 throw new OddTooDiferentException("A odd atual diverge demaisado da odd escolhida!");
             }
@@ -90,13 +99,19 @@ public class BetRepository : IBetRepository
             {
                 try
                 {
-                    if(amount > 1.20)
+                    if(amount > 0.10)
                     {
-                        BetMultiple b = new BetMultiple(amount, start, user, oddMultiple, selections);
-                        await _context.Bets.AddAsync(b);
-                        await _context.SaveChangesAsync();
-                        return b;
-
+                        if(oddMultiple > 1.20)
+                        {
+                            BetMultiple b = new BetMultiple(amount, start, user, oddMultiple, selections);
+                            await _context.Bets.AddAsync(b);
+                            await _context.SaveChangesAsync();
+                            return b;
+                        }
+                        else
+                        {
+                            throw new OddTooLowException("A odd da seleção é demasiado baixa!");
+                        }
                     }
                     else
                     {

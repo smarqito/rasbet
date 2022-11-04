@@ -40,7 +40,7 @@ public class SelectionRepository : ISelectionRepository
             //threshold 5%
             //Se a odd do servidor divergir da odd escolhida por 5% é lançado erro
             double threshold = serverOdd / chosenOdd;
-            if (threshold >= 0.05 || threshold <= 0.95 )
+            if (threshold >= 0.05 && threshold <= 0.95 )
             {
                 throw new OddTooDiferentException("As odds do cliente e servidor) divergem em 5% ou mais!");
             }
