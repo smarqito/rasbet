@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UserPersistence;
 
@@ -11,9 +12,10 @@ using UserPersistence;
 namespace UserPersistence.Migrations
 {
     [DbContext(typeof(UserContext))]
-    partial class UserContextModelSnapshot : ModelSnapshot
+    [Migration("20221104142132_udpdate wallet v2")]
+    partial class udpdatewalletv2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,12 +35,12 @@ namespace UserPersistence.Migrations
                     b.Property<double>("Balance")
                         .HasColumnType("float");
 
-                    b.Property<int?>("WalletId")
-                        .HasColumnType("int");
+                    b.Property<string>("WalletUserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("WalletId");
+                    b.HasIndex("WalletUserId");
 
                     b.ToTable("Transactions");
                 });
@@ -160,20 +162,13 @@ namespace UserPersistence.Migrations
 
             modelBuilder.Entity("Domain.Wallet", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<double>("Balance")
                         .HasColumnType("float");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
+                    b.HasKey("UserId");
 
                     b.ToTable("Wallet");
                 });
@@ -333,10 +328,11 @@ namespace UserPersistence.Migrations
                     b.Property<bool>("Notifications")
                         .HasColumnType("bit");
 
-                    b.Property<int>("WalletId")
-                        .HasColumnType("int");
+                    b.Property<string>("WalletUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
-                    b.HasIndex("WalletId");
+                    b.HasIndex("WalletUserId");
 
                     b.HasDiscriminator().HasValue("AppUser");
                 });
@@ -359,7 +355,7 @@ namespace UserPersistence.Migrations
                 {
                     b.HasOne("Domain.Wallet", null)
                         .WithMany("Transactions")
-                        .HasForeignKey("WalletId");
+                        .HasForeignKey("WalletUserId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -417,7 +413,7 @@ namespace UserPersistence.Migrations
                 {
                     b.HasOne("Domain.Wallet", "Wallet")
                         .WithMany()
-                        .HasForeignKey("WalletId")
+                        .HasForeignKey("WalletUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

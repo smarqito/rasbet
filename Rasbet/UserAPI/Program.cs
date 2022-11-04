@@ -22,6 +22,7 @@ builder.Services.AddIdentityUserConfig();
 
 //builder.Services.AddScoped<UserManager<Domain.User>>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IWalletRepository, WalletRepository>();
 //builder.Services.AddHttpContextAccessor();
 var app = builder.Build();
 

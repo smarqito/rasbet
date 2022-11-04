@@ -1,11 +1,4 @@
-using Domain;
-using Domain.UserDomain;
 using DTO.UserDTO;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using UserApplication.Interfaces;
 using UserPersistence;
 
@@ -14,13 +7,10 @@ namespace UserApplication.Repositories;
 public class WalletRepository : IWalletRepository
 {
     private readonly UserContext context;
-    private readonly Microsoft.AspNetCore.Identity.UserManager<User> userManager;
 
-    public WalletRepository(UserContext context,
-                            Microsoft.AspNetCore.Identity.UserManager<User> usermanager)
+    public WalletRepository(UserContext context)
     {
         this.context = context;
-        this.userManager = userManager;
     }
 
     /// <summary>
@@ -28,13 +18,13 @@ public class WalletRepository : IWalletRepository
     /// </summary>
     /// <param name="userId">Id of the user whose wallet we want to retrieve.</param>
     /// <returns></returns>
-    public  async Task<WalletDTO> Get(int id)
+    public  async Task<WalletDTO> Get(string id)
     {
-        Wallet wallet = context.Wallet.Where(w => w.Id == id).First();
+        Wallet wallet = context.Wallet.Where(w => w.UserId.Equals(id)).First();
 
         if (wallet == null) throw new Exception("O User id indicado não tem uma carteira associada.");
 
-        WalletDTO dto = new WalletDTO(wallet.Id, wallet.Balance); 
+        WalletDTO dto = new WalletDTO(wallet.UserId, wallet.Balance); 
 
         return dto;
     }
@@ -43,11 +33,11 @@ public class WalletRepository : IWalletRepository
     /// Deposit funds to a user.
     /// </summary>
     /// <param name="value"></param>
-    public async Task<Wallet> DepositFunds(int id, double value)
+    public async Task<Wallet> DepositFunds(string id, double value)
     {
         //Transações
 
-        Wallet wallet = context.Wallet.Where(w => w.Id == id).First();
+        Wallet wallet = context.Wallet.Where(w => w.UserId.Equals(id)).First();
         if (wallet == null) throw new Exception("O User id indicado não tem uma carteira associada.");
         wallet.Balance += value;
 
@@ -59,12 +49,12 @@ public class WalletRepository : IWalletRepository
     /// Withdraw money from current user
     /// </summary>
     /// <param name="value"> Value to withdraw. </param>
-    public async Task<Wallet> WithdrawFunds(int id, double value)
+    public async Task<Wallet> WithdrawFunds(string id, double value)
     {
        // Withdraw w = new Withdraw(userid,value);
         //await context.Transactions.AddAsync(w);
         
-        Wallet wallet = context.Wallet.Where(w => w.Id == id).First();
+        Wallet wallet = context.Wallet.Where(w => w.UserId.Equals(id)).First();
         if (wallet == null) throw new Exception("O User id indicado não tem uma carteira associada.");
         wallet.Balance -= value;
 

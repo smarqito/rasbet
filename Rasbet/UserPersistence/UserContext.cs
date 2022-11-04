@@ -26,10 +26,10 @@ public class UserContext : IdentityDbContext<Domain.User>
     {
         base.OnModelCreating(builder);
         builder.Entity<User>();
-        builder.Entity<UpdateInfo>()
+        builder.Entity<Wallet>()
             .Property(f => f.Id)
             .ValueGeneratedOnAdd();
-        builder.Entity<Wallet>()
+        builder.Entity<UpdateInfo>()
             .Property(f => f.Id)
             .ValueGeneratedOnAdd();
         builder.Entity<Transaction>()

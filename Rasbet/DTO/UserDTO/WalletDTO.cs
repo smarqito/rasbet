@@ -9,16 +9,16 @@ namespace DTO.UserDTO;
 public class WalletDTO
 {
     public double Balance { get; set; }
-    public int Id { get; set; }
+    public string UserId { get; set; }
 
 
     protected WalletDTO()
     {
 
     }
-    public WalletDTO(int id, double balance)
+    public WalletDTO(String id, double balance)
     {
-        Id = id;
+        UserId = id;
         Balance = balance;
     }
 }
