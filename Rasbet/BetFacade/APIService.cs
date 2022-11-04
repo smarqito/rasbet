@@ -33,7 +33,7 @@ public class APIService
     //ir buscar bettype por id
     public async Task<BetType> GetBetType(int betTypeId)
     {
-        HttpResponseMessage resp = await _httpClientGameOdd.GetAsync($"gameodd/bettype?betTypeId={betTypeId}");
+        HttpResponseMessage resp = await _httpClientGameOdd.GetAsync($"GameOdd/bettype?betTypeId={betTypeId}");
         resp.EnsureSuccessStatusCode();
         return await resp.Content.ReadFromJsonAsync<BetType>();
     }
@@ -41,7 +41,7 @@ public class APIService
     //get user by id
     public async Task<User> GetUser(int userId)
     {
-        HttpResponseMessage resp = await _httpClientUser.GetAsync($"user?userId={userId}");
+        HttpResponseMessage resp = await _httpClientUser.GetAsync($"User?userId={userId}");
         resp.EnsureSuccessStatusCode();
         return await resp.Content.ReadFromJsonAsync<User>();
     }
@@ -50,7 +50,7 @@ public class APIService
     public async Task WithdrawUserBalance(TransactionDTO dto)
     {
         StringContent content = new(JsonSerializer.Serialize(dto));
-        HttpResponseMessage resp = await _httpClientUser.PutAsync($"user/withdraw", content);
+        HttpResponseMessage resp = await _httpClientUser.PutAsync($"User/withdraw", content);
         resp.EnsureSuccessStatusCode();
     }
 
@@ -58,7 +58,7 @@ public class APIService
     public async Task DepositUserBalance(TransactionDTO dto)
     {
         StringContent content = new(JsonSerializer.Serialize(dto));
-        HttpResponseMessage resp = await _httpClientUser.PutAsync($"user/deposit", content);
+        HttpResponseMessage resp = await _httpClientUser.PutAsync($"User/deposit", content);
         resp.EnsureSuccessStatusCode();
     }
 }
