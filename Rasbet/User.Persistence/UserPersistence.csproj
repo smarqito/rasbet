@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -17,11 +17,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EditorConfigFiles Remove="C:\work stuff\22-23\RAS\rasbet\Rasbet\User.Persistence\.editorconfig" />
+    <EditorConfigFiles Remove="C:\work stuff\22-23\RAS\rasbet\Rasbet\UserPersistence\.editorconfig" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="C:\work stuff\22-23\RAS\rasbet\Rasbet\User.Persistence\.editorconfig" />
+    <None Include="C:\work stuff\22-23\RAS\rasbet\Rasbet\UserPersistence\.editorconfig" />
   </ItemGroup>
 
 </Project>
