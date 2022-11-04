@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Domain.UserDomain;
 
-public class Administrator : User
+public class Admin : User
 {
-    public Administrator(string name, string email) : base(name, email)
+    public Admin(string name, string email, string language) : base(name, email, language)
     {
     }
 }

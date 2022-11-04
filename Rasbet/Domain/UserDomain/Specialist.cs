@@ -8,7 +8,7 @@ namespace Domain.UserDomain;
 
 public class Specialist : User
 {
-    public Specialist(string name, string email) : base(name, email)
+    public Specialist(string name, string email, string language) : base(name, email, language)
     {
     }
 }

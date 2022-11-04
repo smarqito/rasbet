@@ -1,66 +1,79 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Domain;
+using Microsoft.AspNetCore.Mvc;
+using UserApplication.Interfaces;
+using Microsoft.AspNet.Identity.Owin;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace UserAPI.Controllers;
 
-public class WalletController : BaseController
-{
-    /// <summary>
-    /// Get user wallet
-    /// </summary>
-    /// <param name="userId"></param>
-    /// <returns></returns>
-    [HttpGet("{userId}")]
-    public string Get(int userId)
+    public class WalletController : BaseController
     {
-        return "value";
-    }
+        private readonly IWalletRepository walletRepository;
 
-    /// <summary>
-    /// Deposit funds to a user
-    ///     use HttpAccessor to access user token and retrieve current user
-    /// </summary>
-    /// <param name="value"></param>
-    [HttpPut("deposit")]
-    public void DepositFunds(double value)
-    {
-    }
 
-    /// <summary>
-    /// Withdraw money from current user
-    /// </summary>
-    /// <param name="value"></param>
-    [HttpPut("withdraw")]
-    public void WitdhdrawFunds(double value)
-    {
-    }
+        public WalletController(IWalletRepository walletRepository)
+        {
+            this.walletRepository = walletRepository;
+        }
 
-    /// <summary>
-    /// Register a bet to users wallet history
-    ///     - update account balance
-    ///     - insert into wallet history
-    ///     - keep the bet in open state until POST bet/result
-    /// </summary>
-    /// <param name="userId"></param>
-    /// <param name="betId"></param>
-    /// <param name="value"></param>
-    /// <param name="odd"></param>
-    [HttpPost("bet")]
-    public void RegisterBet(int userId, int betId, double value, double odd)
-    {
-    }
+        /// <summary>
+        /// Get user wallet.
+        /// </summary>
+        /// <param name="userId">Id of the user whose wallet we want to retrieve.</param>
+        /// <returns></returns>
+        [HttpGet("{userId}")]
+        public async Task<string> Get(int userId)
+        {
+            Wallet wallet = await walletRepository.Get(userId);
+            return wallet.Balance.ToString();
+        }
 
-    /// <summary>
-    /// Update previously registered bet
-    ///     - update account balance (if applies...)
-    ///     - update bet status
-    /// </summary>
-    /// <param name="userId"></param>
-    /// <param name="betId"></param>
-    /// <param name="win"></param>
-    [HttpPost("bet/result")]
-    public void RegisterBetResult(int userId, int betId, bool win)
-    {
+        /// <summary>
+        /// Deposit funds to a user.
+        /// </summary>
+        /// <param name="value"></param>
+        [HttpPut("deposit")]
+        public void DepositFunds(double value)
+        {
+            walletRepository.DepositFunds(value);
+        }
+
+        /// <summary>
+        /// Withdraw money from current user
+        /// </summary>
+        /// <param name="value"> Value to withdraw. </param>
+        [HttpPut("withdraw")]
+        public void WithdrawFunds(double value)
+        {
+            walletRepository.WithdrawFunds(value);
+        }
+
+        /// <summary>
+        /// Register a bet to users wallet history
+        ///     - update account balance
+        ///     - insert into wallet history
+        ///     - keep the bet in open state until POST bet/result
+        /// </summary>
+        /// <param name="userId"> Id of the user who made the bet.</param>
+        /// <param name="betId"> Id of the bet.</param>
+        /// <param name="value"> Value of the bet.</param>
+        /// <param name="odd"> Odd of the bet.</param>
+        [HttpPost("bet")]
+        public void RegisterBet(int userId, int betId, double value, double odd)
+        {
+
+        }
+
+        /// <summary>
+        /// Update previously registered bet
+        ///     - update account balance (if applies...)
+        ///     - update bet status
+        /// </summary>
+        /// <param name="userId"> Id of the user who made the bet.</param>
+        /// <param name="betId"> Id of the bet to update.</param>
+        /// <param name="win"> Indicates whether the user won the bet or not.</param>
+        [HttpPost("bet/result")]
+        public void RegisterBetResult(int userId, int betId, bool win)
+        {
+        }
     }
-}

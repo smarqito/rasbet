@@ -16,7 +16,7 @@ public static class IdentityUserConfig
         var identityBuilder = new IdentityBuilder(builder.UserType, builder.RoleType, builder.Services);
         identityBuilder.AddEntityFrameworkStores<UserContext>();
         identityBuilder.AddSignInManager<SignInManager<Domain.User>>();
-        //identityBuilder.AddUserManager(UserManager<Domain.User>);
+        identityBuilder.AddUserManager<UserManager<Domain.User>>();
         identityBuilder.AddDefaultTokenProviders();
 
     }
