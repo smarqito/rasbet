@@ -13,15 +13,17 @@ public abstract class BetType
     public DateTime LastUpdate { get; set; }
     public BetTypeState State { get; set; }
     public string SpecialistId { get; set; }
-    public ICollection<Odd> Odds { get; set; } = new List<Odd>();
+    public int GameId { get; set; }
+    public virtual ICollection<Odd> Odds { get; set; } = new List<Odd>();
 
     protected BetType()
     {
     }
 
-    public BetType(DateTime lastUpdate)
+    public BetType(DateTime lastUpdate, int gameId)
     {
         LastUpdate = lastUpdate;
+        GameId = gameId;
         State = BetTypeState.UNFINISHED;
     }
 

@@ -15,7 +15,7 @@ public class IndividualGame : Game
     {
     }
 
-    public IndividualGame(ICollection<string> players, string idSync, DateTime startTime, Sport sport, ICollection<BetType> bets) : base(idSync, startTime, sport, bets)
+    public IndividualGame(ICollection<string> players, string idSync, DateTime startTime, Sport sport) : base(idSync, startTime, sport)
     {
         Players = players;
     }

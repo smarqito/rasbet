@@ -4,6 +4,7 @@ using Domain.ResultDomain;
 using DTO;
 using DTO.GameOddDTO;
 using DTO.GetGamesRespDTO;
+using GameOddApplication.Exceptions;
 using GameOddApplication.Interfaces;
 using GameOddPersistance;
 using MediatR;
@@ -36,7 +37,11 @@ public class GameOddFacade : IGameOddFacade
 
     public async Task<Unit> FinishGame(string id, string result)
     {
-        await FinishGame(id, result, null);
+        Game game = await gameRepository.GetGame(id);
+        if(game.State != GameState.Finished)
+        {
+            await FinishGame(id, result, null);
+        }
         return Unit.Value;
     }
 
@@ -53,15 +58,15 @@ public class GameOddFacade : IGameOddFacade
                 }
                 else //O jogo ainda não acabou, atualizar as odds se necessário
                 {
-                    Game g = await gameRepository.GetGame(game.Id);
-                    await betTypeRepository.UpdateBets(g.Bets, game.Bookmakers);
+                    CollectiveGame g = await gameRepository.GetCollectiveGame(game.Id);
+                    await betTypeRepository.UpdateBets(game.Bookmakers, g.AwayTeam, g.Id);
                 }
             }
             else if (game.Completed == false)
             {
-                ICollection<BetType> betTypes = await betTypeRepository.CreateBets(game.Bookmakers, game.AwayTeam);
                 Sport sport = await sportRepository.GetSport(sportName);
-                await gameRepository.CreateCollectiveGame(sport, game.Id, game.CommenceTime, game.HomeTeam, game.AwayTeam, betTypes);
+                Game g = await gameRepository.CreateCollectiveGame(sport, game.Id, game.CommenceTime, game.HomeTeam, game.AwayTeam);
+                ICollection<BetType> betTypes = await betTypeRepository.CreateBets(game.Bookmakers, game.AwayTeam, g.Id);
             }
         }
         return Unit.Value;
@@ -75,8 +80,8 @@ public class GameOddFacade : IGameOddFacade
     public async Task<Unit> FinishGame(string id, string result, string? specialistId)
     {
         ICollection<BetsOddsWonDTO> res = new List<BetsOddsWonDTO>();
+        await gameRepository.ChangeGameState(id, specialistId, GameState.Finished);
         Game g = await gameRepository.GetGame(id);
-        g.State = GameState.Finished;
         foreach (BetType betType in g.Bets)
         {
             if (specialistId != null)
@@ -104,10 +109,24 @@ public class GameOddFacade : IGameOddFacade
                                                  .Include(b => b.Odds)
                                                  .FirstOrDefaultAsync();
         if (b == null)
-            throw new Exception();
+            throw new BetTypeNotFoundException($"BetType {betTypeId} dont exist!");
         Odd ?d = b.Odds.Where(o => o.Id == oddId).FirstOrDefault();
         if (d == null)
-            throw new Exception();
+            throw new OddNotFoundException($"Odd {oddId} dont exist!");
         return d.OddValue;
+    }
+
+
+    public async Task<Unit> ChangeOdds(string specialistId, int betTypeId, Dictionary<int, double> newOdds)
+    {
+        BetType bet = await betTypeRepository.GetBetType(betTypeId);
+        bet.SpecialistId = specialistId;
+        foreach(var item in newOdds)
+        {
+            Odd d = bet.Odds.FirstOrDefault(o => o.Id == item.Key);
+            d.OddValue = item.Value;
+        }
+        await gameOddContext.SaveChangesAsync();
+        return Unit.Value;
     }
 }

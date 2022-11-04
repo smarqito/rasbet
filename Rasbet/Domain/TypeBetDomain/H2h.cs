@@ -15,7 +15,7 @@ public class H2h : BetType
     {
     }
 
-    public H2h(string awayTeam, DateTime lastUpdate) : base(lastUpdate)
+    public H2h(string awayTeam, DateTime lastUpdate, int gameId) : base(lastUpdate, gameId)
     {
         AwayTeam = awayTeam;
     }

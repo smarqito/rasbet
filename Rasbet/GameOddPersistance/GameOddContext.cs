@@ -20,6 +20,11 @@ public partial class GameOddContext : DbContext
         modelBuilder.Entity<H2h>();
         modelBuilder.Entity<IndividualResult>();
 
+        modelBuilder.Entity<CollectiveGame>();
+        modelBuilder.Entity<IndividualGame>();
+
+        modelBuilder.Entity<Game>().HasIndex(x => x.IdSync);
+
         modelBuilder.Entity<BetType>().Property(b => b.SpecialistId).IsRequired(false);
         modelBuilder.Entity<Game>().Property(b => b.SpecialistId).IsRequired(false);
         base.OnModelCreating(modelBuilder);

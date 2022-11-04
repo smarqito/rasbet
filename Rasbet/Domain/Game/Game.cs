@@ -17,12 +17,12 @@ public class Game
     {
     }
 
-    public Game(string idSync, DateTime startTime, Sport sport, ICollection<BetType> bets)
+    public Game(string idSync, DateTime startTime, Sport sport)
     {
         IdSync = idSync;
         StartTime = startTime;
         Sport = sport;
-        Bets = bets;
+        Bets = new List<BetType>();
         State = GameState.Open;
     }
 }
