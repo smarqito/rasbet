@@ -1,12 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿
+using System.ComponentModel.DataAnnotations;
 
 namespace Domain;
 
 public class Wallet
 {
 	private double balance;
+
+	[Key]
 	public int Id { get; set; }
 	public virtual User User { get; set; }
+	
 
 	public double Balance
 	{
@@ -15,4 +19,10 @@ public class Wallet
 	}
 
 	public virtual ICollection<Transaction> Transactions { get; set; }
+
+
+	public Wallet ()
+	{
+		Balance = 0;
+	}
 }

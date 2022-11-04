@@ -18,7 +18,6 @@ public class AppUser : User
 
     protected AppUser() : base()
     {
-
     }
 
     public AppUser(string name, string email, string nIF, DateTime dob, string language, bool notifications) : base(name, email, language)

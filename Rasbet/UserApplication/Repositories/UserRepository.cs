@@ -191,7 +191,7 @@ public class UserRepository : IUserRepository
     /// <exception>The given id doesn't correspond to an user.</exception>
     public async Task<AppUser> GetAppUser (string id)
     {
-        var user = (AppUser) await userManager.FindByIdAsync(id);
+        var user = await userManager.FindByIdAsync(id);
 
         string role_id = context.UserRoles.Where(u => u.UserId.Equals(id)).First().RoleId;
         IdentityRole role = await roleManager.FindByIdAsync(role_id);
@@ -199,23 +199,39 @@ public class UserRepository : IUserRepository
 
         if (user == null) throw new Exception("Utilizador não encontrado.");
 
-        if (role_name == "AppUser") return user;
+        if (role_name == "AppUser") return (AppUser) user;
 
         throw new Exception("Utilizador não encontrado.");
 
     }
-    public  Task<Specialist> GetSpecialist(string id)
+    public async Task<Specialist> GetSpecialist(string id)
     {
-        AppUser user = context.AppUsers.Where(u => u.Id.Equals(id)).First();
+        var user = await userManager.FindByIdAsync(id);
+
+        string role_id = context.UserRoles.Where(u => u.UserId.Equals(id)).First().RoleId;
+        IdentityRole role = await roleManager.FindByIdAsync(role_id);
+        string role_name = await roleManager.GetRoleNameAsync(role);
 
         if (user == null) throw new Exception("Utilizador não encontrado.");
 
-        return user;
+        if (role_name == "Specialist") return (Specialist) user;
+
+        throw new Exception("Utilizador não encontrado.");
 
     }
     public async Task<Admin> GetAdmin(string id)
     {
+        var user = await userManager.FindByIdAsync(id);
 
+        string role_id = context.UserRoles.Where(u => u.UserId.Equals(id)).First().RoleId;
+        IdentityRole role = await roleManager.FindByIdAsync(role_id);
+        string role_name = await roleManager.GetRoleNameAsync(role);
+
+        if (user == null) throw new Exception("Utilizador não encontrado.");
+
+        if (role_name == "Admin") return (Admin) user;
+
+        throw new Exception("Utilizador não encontrado.");
     }
 
     /// <summary>
@@ -247,17 +263,18 @@ public class UserRepository : IUserRepository
     public void SendEmail(string to, string subject, string body) {
         try {
             string from = "rasbet.apostasdesportivas@gmail.com";
-            MailMessage message = new MailMessage(from,to);
+            MailMessage message = new MailMessage(from,to, subject, body);
             SmtpClient client = new SmtpClient("smtp.gmail.com");
-            message.Subject = subject;
-            message.Body = body;
 
             client.EnableSsl = true;
             client.Port = 465;
+            client.UseDefaultCredentials = false;
+            client.DeliveryMethod = SmtpDeliveryMethod.Network;
             client.Credentials = new System.Net.NetworkCredential(from,"Ra$bet2022");
             client.Send(message);
+            client.Dispose();
         } catch(Exception e) {
-            throw new Exception("Envio de email falhou.");
+            throw new Exception( e.Message);
         }
     }
 
@@ -275,9 +292,9 @@ public class UserRepository : IUserRepository
 
         if (user == null) throw new Exception("E-mail inexistente.");
 
-        string code = await userManager.GetAuthenticatorKeyAsync(user);
-        UpdateInfo u = new UpdateInfo(email, password, iban, phoneno, code);
-        context.Updates.Add(u);
+        string code = userManager.GenerateNewAuthenticatorKey();
+        UpdateInfo update = new UpdateInfo(email, password, iban, phoneno, code);
+        await context.Updates.AddAsync(update);
         await context.SaveChangesAsync();
         string subject = "Confirmação de alterações no perfil";
         string message = code;

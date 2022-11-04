@@ -2,6 +2,8 @@
 using Domain.UserDomain;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
+using System;
 
 namespace UserPersistence;
 
@@ -24,5 +26,15 @@ public class UserContext : IdentityDbContext<Domain.User>
     {
         base.OnModelCreating(builder);
         builder.Entity<User>();
+        builder.Entity<UpdateInfo>()
+            .Property(f => f.Id)
+            .ValueGeneratedOnAdd();
+        builder.Entity<Wallet>()
+            .Property(f => f.Id)
+            .ValueGeneratedOnAdd();
+        builder.Entity<Transaction>()
+            .Property(f => f.Id)
+            .ValueGeneratedOnAdd();
+
     }
 }

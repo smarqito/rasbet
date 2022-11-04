@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using UserApplication.Interfaces;
 using Microsoft.AspNet.Identity.Owin;
-
+using DTO.UserDTO;
 
 namespace UserAPI.Controllers;
 
@@ -21,11 +21,12 @@ namespace UserAPI.Controllers;
         /// </summary>
         /// <param name="userId">Id of the user whose wallet we want to retrieve.</param>
         /// <returns></returns>
-        [HttpGet("{userId}")]
-        public async Task<string> Get(int userId)
+        [HttpGet("{id}")]
+        public async Task<WalletDTO> Get(int id)
         {
-            Wallet wallet = await walletRepository.Get(userId);
-            return wallet.Balance.ToString();
+            WalletDTO dto = await walletRepository.Get(id);
+
+        return dto;
         }
 
         /// <summary>
@@ -33,10 +34,10 @@ namespace UserAPI.Controllers;
         /// </summary>
         /// <param name="value"></param>
         [HttpPut("deposit")]
-        public async Task<IActionResult> DepositFunds(double value)
+        public async Task<IActionResult> DepositFunds([FromBody] TransactionDTO transaction)
         {
             try {
-                await walletRepository.DepositFunds(value);
+                await walletRepository.DepositFunds(transaction.Id, transaction.Value);
                 return Ok();
             } catch (Exception e) {
                 return BadRequest(e.Message);
@@ -48,10 +49,10 @@ namespace UserAPI.Controllers;
         /// </summary>
         /// <param name="value"> Value to withdraw. </param>
         [HttpPut("withdraw")]
-        public async Task<IActionResult> WithdrawFunds(double value)
+        public async Task<IActionResult> WithdrawFunds([FromBody] TransactionDTO transaction)
         {
             try {
-                await walletRepository.WithdrawFunds(value);
+                await walletRepository.WithdrawFunds(transaction.Id, transaction.Value);
                 return Ok();
             } catch(Exception e){
                 return BadRequest(e.Message);
