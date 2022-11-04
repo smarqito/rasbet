@@ -2,5 +2,5 @@
 
 public class GetUserBetsDTO
 {
-    public int UserId { get; set; } 
+    public string UserId { get; set; } 
 }

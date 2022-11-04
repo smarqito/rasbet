@@ -1,9 +1,8 @@
-﻿using BetApplication.Errors;
-using BetApplication.Interfaces;
+﻿using BetApplication.Interfaces;
 using Domain;
-using Domain.ResultDomain;
 using DTO;
 using DTO.BetDTO;
+using DTO.UserDTO;
 
 namespace BetFacade;
 
@@ -23,29 +22,36 @@ public class BetFacade : IBetFacade
     // Métodos para o BetController
     public async Task<BetSimple> CreateBetSimple(double amount,
                                                  DateTime start,
-                                                 int userId,
+                                                 string userId,
                                                  CreateSelectionDTO selectionDTO)
     {
+        BetSimple? bet;
         try
         {
             Selection newS = await CreateSelection(selectionDTO.BetTypeId, selectionDTO.OddId, selectionDTO.Odd, selectionDTO.GameId);
             double odd = await APIService.GetOdd(selectionDTO.BetTypeId, selectionDTO.OddId);
 
-            BetSimple bet = await BetRepository.CreateBetSimple(amount, start, userId, newS, odd);
-            await APIService.WithdrawUserBalance(userId, amount);
-
-            return bet;
+            bet = await BetRepository.CreateBetSimple(amount, start, userId, newS, odd);
         }
-        
         catch (Exception e)
         {
+            throw new Exception(e.Message);
+        }
+        try 
+        {
+            await APIService.WithdrawUserBalance(new TransactionDTO(userId,amount));
+            return bet;
+        }
+        catch(Exception e)
+        {
+            await BetRepository.DeleteBet(bet.Id);
             throw new Exception(e.Message);
         }
     }
 
     public async Task<BetMultiple> CreateBetMultiple(double amount,
                                                      DateTime start,
-                                                     int userId,
+                                                     string userId,
                                                      ICollection<CreateSelectionDTO> selectionDTOs)
     {
         ICollection<Selection> selections = new List<Selection>();
@@ -67,30 +73,32 @@ public class BetFacade : IBetFacade
             }
         }
 
+        BetMultiple? bet;
         try
         {
-            //bool valid = await APIService.VerifyUserBalance(userId, amount);
-            //if (valid)
-            //{
-                BetMultiple bet = await BetRepository.CreateBetMultiple(amount,
-                                                                        start,
-                                                                        userId,
-                                                                        oddMultiple,
-                                                                        selections);
-                //await APIService.WithdrawUserBalance(userId, amount);
-                return bet;
-            //}
-
-            throw new Exception("Ocorreu um erro interno!");
-
+            bet = await BetRepository.CreateBetMultiple(amount,
+                                                        start,
+                                                        userId,
+                                                        oddMultiple,
+                                                        selections);
         }
         catch (Exception e)
         {
             throw new Exception(e.Message);
         }
+        try
+        {
+            await APIService.WithdrawUserBalance(new TransactionDTO(userId, amount));
+            return bet;
+        }
+        catch(Exception e)
+        {
+            await BetRepository.DeleteBet(bet.Id);
+            throw new Exception(e.Message);
+        }
     }
 
-    public async Task<ICollection<Bet>> GetUserBetsByState(int user, BetState state)
+    public async Task<ICollection<Bet>> GetUserBetsByState(string user, BetState state)
     {
         try
         {
@@ -101,7 +109,7 @@ public class BetFacade : IBetFacade
             throw new Exception(e.Message);
         }
     }
-    public async Task<ICollection<Bet>> GetUserBetsByStart(int user, DateTime start)
+    public async Task<ICollection<Bet>> GetUserBetsByStart(string user, DateTime start)
     {
         try
         {
@@ -113,7 +121,7 @@ public class BetFacade : IBetFacade
         }
     }
 
-    public async Task<ICollection<Bet>> GetUserBetsByAmount(int user, double amount)
+    public async Task<ICollection<Bet>> GetUserBetsByAmount(string user, double amount)
     {
         try
         {
@@ -125,7 +133,7 @@ public class BetFacade : IBetFacade
         }
     }
 
-    public async Task<ICollection<Bet>> GetUserBetsByEnd(int user, DateTime end)
+    public async Task<ICollection<Bet>> GetUserBetsByEnd(string user, DateTime end)
     {
         try
         {
@@ -137,7 +145,7 @@ public class BetFacade : IBetFacade
         }
     }
 
-    public async Task<ICollection<Bet>> GetUserBetsByWonValue(int user, double wonValue)
+    public async Task<ICollection<Bet>> GetUserBetsByWonValue(string user, double wonValue)
     {
         try
         {
@@ -160,7 +168,7 @@ public class BetFacade : IBetFacade
             {
                 foreach(var bet in won_bets)
                 {
-                    //await APIService.DepositUserBalance(bet.UserId, bet.WonValue);
+                    await APIService.DepositUserBalance(new TransactionDTO(bet.UserId, bet.WonValue));
                 }
                 return true;
             }

@@ -10,7 +10,7 @@ public abstract class Bet
     public DateTime ?End { get; set; }
 
     // utilizador que realizou a aposta
-    public int UserId { get; set; }
+    public string UserId { get; set; }
 
     public BetState State { get; set; } = BetState.Open;
 
@@ -30,7 +30,7 @@ public abstract class Bet
     {
     }
 
-    public Bet(double amount, DateTime start, int userId)
+    public Bet(double amount, DateTime start, string userId)
     {
         Amount = amount;
         Start = start;

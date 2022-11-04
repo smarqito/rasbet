@@ -34,8 +34,11 @@ public class BetRepository : IBetRepository
         throw new BetNotFoundException("Não foi possível encontrar a aposta!");
     }
 
-    public async Task<BetSimple> CreateBetSimple(
-        double amount, DateTime start, int user, Selection selection, double serverOdd)
+    public async Task<BetSimple> CreateBetSimple(double amount,
+                                                 DateTime start,
+                                                 string user,
+                                                 Selection selection,
+                                                 double serverOdd)
     {
         double threshold = serverOdd / selection.Odd;
         BetSimple b;
@@ -72,7 +75,11 @@ public class BetRepository : IBetRepository
         }
     }
 
-    public async Task<BetMultiple> CreateBetMultiple(double amount, DateTime start, int user, double oddMultiple, ICollection<Selection> selections)
+    public async Task<BetMultiple> CreateBetMultiple(double amount,
+                                                     DateTime start,
+                                                     string user,
+                                                     double oddMultiple,
+                                                     ICollection<Selection> selections)
     {
         double oddMultipleChosen = 1.0;
         if(selections.Count > 1) { 
@@ -135,7 +142,7 @@ public class BetRepository : IBetRepository
             throw new InvalidSelectionsException("Não existem pelo menos 2 seleções!");
     }
 
-    public async Task<ICollection<Bet>> GetUserBetsByState(int user, BetState state)
+    public async Task<ICollection<Bet>> GetUserBetsByState(string user, BetState state)
     {
         ICollection<Bet> bets = await _context.Bets.Where(b => b.UserId == user && b.State == state).ToListAsync();
 
@@ -147,7 +154,7 @@ public class BetRepository : IBetRepository
         return bets;
     }
 
-    public async Task<ICollection<Bet>> GetUserBetsByStart(int user, DateTime start)
+    public async Task<ICollection<Bet>> GetUserBetsByStart(string user, DateTime start)
     {
         ICollection<Bet> bets = await _context.Bets.Where(b => b.UserId == user && b.Start == start).ToListAsync();
 
@@ -160,7 +167,7 @@ public class BetRepository : IBetRepository
     }
 
     //Via buscar todas as bets com aquele amount ou menos
-    public async Task<ICollection<Bet>> GetUserBetsByAmount(int user, double amount)
+    public async Task<ICollection<Bet>> GetUserBetsByAmount(string user, double amount)
     {
         ICollection<Bet> bets = await _context.Bets.Where(b => b.UserId == user && b.Amount <= amount).ToListAsync();
 
@@ -172,7 +179,7 @@ public class BetRepository : IBetRepository
         return bets;
     }
 
-    public async Task<ICollection<Bet>> GetUserBetsByEnd(int user, DateTime end)
+    public async Task<ICollection<Bet>> GetUserBetsByEnd(string user, DateTime end)
     {
         ICollection<Bet> bets = await _context.Bets.Where(b => b.UserId == user && b.State != BetState.Open && b.End <= end).ToListAsync();
 
@@ -184,7 +191,7 @@ public class BetRepository : IBetRepository
         return bets;
     }
 
-    public async Task<ICollection<Bet>> GetUserBetsByWonValue(int user, double wonValue)
+    public async Task<ICollection<Bet>> GetUserBetsByWonValue(string user, double wonValue)
     {
         ICollection<Bet> bets = await _context.Bets.Where(b => b.UserId == user && b.State != BetState.Open && b.WonValue == wonValue).ToListAsync();
 

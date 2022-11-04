@@ -1,7 +1,10 @@
 ﻿using Domain;
 using Domain.ResultDomain;
+using DTO.UserDTO;
 using System.Net.Http.Json;
 using System.Security.Cryptography;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace BetFacade;
 
@@ -44,20 +47,18 @@ public class APIService
     }
 
     //withdraw dinheiro do user
-    public async Task<bool> WithdrawUserBalance(int userId, double amount)
+    public async Task WithdrawUserBalance(TransactionDTO dto)
     {
-        StringContent content = new(amount.ToString());
-        HttpResponseMessage resp = await _httpClientUser.PatchAsync($"user/withdraw?userId={userId}", content);
+        StringContent content = new(JsonSerializer.Serialize(dto));
+        HttpResponseMessage resp = await _httpClientUser.PutAsync($"user/withdraw", content);
         resp.EnsureSuccessStatusCode();
-        return await resp.Content.ReadFromJsonAsync<bool>();
     }
 
     //deposit dinheiro no user
-    public async Task<bool> DepositUserBalance(int userId, double amount)
+    public async Task DepositUserBalance(TransactionDTO dto)
     {
-        StringContent content = new(amount.ToString());
-        HttpResponseMessage resp = await _httpClientUser.PatchAsync($"user/deposit?userId={userId}", content);
+        StringContent content = new(JsonSerializer.Serialize(dto));
+        HttpResponseMessage resp = await _httpClientUser.PutAsync($"user/deposit", content);
         resp.EnsureSuccessStatusCode();
-        return await resp.Content.ReadFromJsonAsync<bool>();
     }
 }
