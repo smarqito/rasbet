@@ -1,12 +1,13 @@
 ﻿using Domain;
 using DTO;
+using DTO.BetDTO;
 
 namespace BetFacade;
 
 public interface IBetFacade
 {
-    Task<BetSimple> CreateBetSimple(double amount, DateTime start, int userId, int selectionId);
-    Task<BetMultiple> CreateBetMultiple(double amount, DateTime start, int userId, ICollection<int> selectionIds);
+    Task<BetSimple> CreateBetSimple(double amount, DateTime start, int userId, CreateSelectionDTO selectionDTO);
+    Task<BetMultiple> CreateBetMultiple(double amount, DateTime start, int userId, ICollection<CreateSelectionDTO> selectionsDTOS);
     Task<ICollection<Bet>> GetUserBetsByState(int user, BetState state);
     Task<ICollection<Bet>> GetUserBetsByStart(int user, DateTime start);
     Task<ICollection<Bet>> GetUserBetsByAmount(int user, double amount);
