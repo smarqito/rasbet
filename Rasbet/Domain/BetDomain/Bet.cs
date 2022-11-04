@@ -17,7 +17,7 @@ public abstract class Bet
     public double Amount
     {
         get { return amount; }
-        set { amount = Math.Max(1.20, value); }
+        set { amount = Math.Max(0.1, value); }
     }
 
     public double WonValue

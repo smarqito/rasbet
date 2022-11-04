@@ -196,8 +196,9 @@ public class BetRepository : IBetRepository
         return bets;
     }
 
-    public async Task<bool> UpdateBets(ICollection<BetsOddsWonDTO> finishedGames)
+    public async Task<ICollection<Bet>> UpdateBets(ICollection<BetsOddsWonDTO> finishedGames)
     {
+        ICollection<Bet> won_bets = new List<Bet>();
         if(finishedGames.Count != 0)
         {
             var bets = await _context.Bets.ToListAsync();
@@ -207,14 +208,16 @@ public class BetRepository : IBetRepository
                 {
                     bet.SetFinishBet(finished.BetTypeId, finished.WinnerOddIds.ToList());
                 }
+
+                if(bet.State == BetState.Won) won_bets.Add(bet);
             }
 
             await _context.SaveChangesAsync();
 
-            return true;
-
         }
-        return false;
+        else throw new FinishedGamesInvalidException("Os jogo enviados não são válidos!");
+
+        return won_bets;
     }
 
     public async Task<bool> DeleteBet(int betId)

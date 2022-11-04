@@ -151,11 +151,22 @@ public class BetFacade : IBetFacade
         }
     }
 
+    //o método retorna true se exstiram apostas vencedoras no update
     public async Task<bool> UpdateBets(ICollection<BetsOddsWonDTO> finishedGames)
     {
         try
         {
-            return await BetRepository.UpdateBets(finishedGames);
+            ICollection<Bet> won_bets = await BetRepository.UpdateBets(finishedGames);
+
+            if(won_bets.Count > 0)
+            {
+                foreach(var bet in won_bets)
+                {
+                    //await APIService.DepositUserBalance(bet.UserId, bet.WonValue);
+                }
+                return true;
+            }
+            return false;
         }
         catch(Exception e)
         {

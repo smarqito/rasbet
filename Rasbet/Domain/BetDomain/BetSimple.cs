@@ -20,6 +20,8 @@ public class BetSimple : Bet
             bool won = odds.Contains(Selection.OddId);
             Selection.Win = won;
             base.FinishBet(won);
+
+            if (won) WonValue = Selection.Odd * Amount;
         }
     }
 }

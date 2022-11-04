@@ -15,5 +15,5 @@ public interface IBetRepository
     Task<ICollection<Bet>> GetUserBetsByAmount(int user, double amount);
     Task<ICollection<Bet>> GetUserBetsByEnd(int user, DateTime end);
     Task<ICollection<Bet>> GetUserBetsByWonValue(int user, double wonValue);
-    Task<bool> UpdateBets(ICollection<BetsOddsWonDTO> finishedGames);
+    Task<ICollection<Bet>> UpdateBets(ICollection<BetsOddsWonDTO> finishedGames);
 }

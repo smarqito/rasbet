@@ -28,6 +28,14 @@ public class BetMultiple : Bet
             item.Win = true;
         }
         if (OddsFinished == Selections.Count)
+        {
             base.FinishBet(OddsFinished == OddsWon);
+
+            if(OddsFinished == OddsWon)
+            {
+                WonValue = OddMultiple * Amount;
+            }
+
+        }
     }
 }
