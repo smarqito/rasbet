@@ -3,17 +3,26 @@ using Microsoft.AspNetCore.Mvc;
 using UserApplication.Interfaces;
 using Microsoft.AspNet.Identity.Owin;
 using DTO.UserDTO;
+using BetApplication.Interfaces;
+using Microsoft.AspNetCore.Identity;
 
 namespace UserAPI.Controllers;
 
     public class WalletController : BaseController
     {
         private readonly IWalletRepository walletRepository;
+        private readonly ITransactionRepository transactionRepository;
+        private readonly UserManager<User> userManager;
+    
 
 
-        public WalletController(IWalletRepository walletRepository)
+        public WalletController(IWalletRepository walletRepository,
+                                ITransactionRepository transactionRepository,
+                                UserManager<User> userManager)
         {
             this.walletRepository = walletRepository;
+            this.transactionRepository = transactionRepository;
+            this.userManager = userManager; 
         }
 
         /// <summary>
@@ -37,7 +46,8 @@ namespace UserAPI.Controllers;
         public async Task<IActionResult> DepositFunds([FromBody] TransactionDTO transaction)
         {
             try {
-                await walletRepository.DepositFunds(transaction.Id, transaction.Value);
+                AppUser user = await walletRepository.DepositFunds(transaction.UserId, transaction.Value);
+                await transactionRepository.MakeDeposit(user, transaction.Value);
                 return Ok();
             } catch (Exception e) {
                 return BadRequest(e.Message);
@@ -52,8 +62,9 @@ namespace UserAPI.Controllers;
         public async Task<IActionResult> WithdrawFunds([FromBody] TransactionDTO transaction)
         {
             try {
-                await walletRepository.WithdrawFunds(transaction.Id, transaction.Value);
-                return Ok();
+                AppUser user = await walletRepository.WithdrawFunds(transaction.UserId, transaction.Value);
+                await transactionRepository.WithdrawBalance(user, transaction.Value);
+            return Ok();
             } catch(Exception e){
                 return BadRequest(e.Message);
             }
@@ -70,10 +81,18 @@ namespace UserAPI.Controllers;
         /// <param name="betId"> Id of the bet.</param>
         /// <param name="value"> Value of the bet.</param>
         /// <param name="odd"> Odd of the bet.</param>
-        [HttpPost("bet")]
-        public void RegisterBet(int userId, int betId, double value, double odd)
+        [HttpPost("bet/simple")]
+        public async Task<IActionResult> RegisterBetSimple([FromBody] BetDTO bet) 
         {
-
+            try
+            {
+                await walletRepository.RegisterBet(bet.UserId, bet.BetId, bet.Value, bet.Odd);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         /// <summary>
@@ -83,9 +102,10 @@ namespace UserAPI.Controllers;
         /// </summary>
         /// <param name="userId"> Id of the user who made the bet.</param>
         /// <param name="betId"> Id of the bet to update.</param>
-        /// <param name="win"> Indicates whether the user won the bet or not.</param>
         [HttpPost("bet/result")]
-        public void RegisterBetResult(int userId, int betId, bool win)
+        public Task<IActionResult> RegisterBetResult(int userId, int betId)
         {
+            walletRepository.Register
+
         }
-    }
+}

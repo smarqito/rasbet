@@ -9,7 +9,7 @@ namespace DTO.UserDTO;
 public class TransactionDTO
 {
     public double Value { get; set; }
-    public string Id { get; set; }
+    public string UserId { get; set; }
 
 
     protected TransactionDTO()
@@ -18,7 +18,7 @@ public class TransactionDTO
     }
     public TransactionDTO(string id, double value)
     {
-        Id = id;
+        UserId = id;
         Value = value;
     }
 }

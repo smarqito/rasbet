@@ -1,3 +1,5 @@
+using Domain;
+using DTO.BetDTO;
 using DTO.UserDTO;
 using UserApplication.Interfaces;
 using UserPersistence;
@@ -7,10 +9,12 @@ namespace UserApplication.Repositories;
 public class WalletRepository : IWalletRepository
 {
     private readonly UserContext context;
+    private readonly APIService service;
 
-    public WalletRepository(UserContext context)
+    public WalletRepository(UserContext context, APIService service)
     {
         this.context = context;
+        this.service = service;
     }
 
     /// <summary>
@@ -33,7 +37,7 @@ public class WalletRepository : IWalletRepository
     /// Deposit funds to a user.
     /// </summary>
     /// <param name="value"></param>
-    public async Task<Wallet> DepositFunds(string id, double value)
+    public async Task<AppUser> DepositFunds(string id, double value)
     {
         //Transações
 
@@ -42,23 +46,46 @@ public class WalletRepository : IWalletRepository
         wallet.Balance += value;
 
         await context.SaveChangesAsync();
-        return wallet;
+
+        AppUser user = context.AppUsers.Where(u => u.Id.Equals(id)).First();
+        return user;
     }
 
     /// <summary>
     /// Withdraw money from current user
     /// </summary>
     /// <param name="value"> Value to withdraw. </param>
-    public async Task<Wallet> WithdrawFunds(string id, double value)
+    public async Task<AppUser> WithdrawFunds(string id, double value)
     {
-       // Withdraw w = new Withdraw(userid,value);
-        //await context.Transactions.AddAsync(w);
         
         Wallet wallet = context.Wallet.Where(w => w.UserId.Equals(id)).First();
         if (wallet == null) throw new Exception("O User id indicado não tem uma carteira associada.");
         wallet.Balance -= value;
 
         await context.SaveChangesAsync();
-        return wallet;
+
+        AppUser user = context.AppUsers.Where(u => u.Id.Equals(id)).First();
+        return user;
     }
+
+    public async Task<AppUser> RegisterBet(string userId, int betId, double value, double odd)
+    {
+        AppUser user = context.AppUsers.Where(u => u.Id.Equals(userId)).First();
+
+        if (user == null) throw new Exception("Utilizador não encontrado.");
+
+        CreateSelectionDTO sel_dto = 
+
+        CreateBetDTO bet_dto = new CreateBetDTO();
+         Amount  Start UserId  selectionDTO { get; set; }
+
+    await service.CreateBetSimple()
+
+        user.BetHistory.Append(betId);
+
+        await context.SaveChangesAsync();
+
+        return user;
+    }
+
 }

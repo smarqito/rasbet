@@ -5,6 +5,7 @@ namespace UserApplication.Interfaces;
 public interface IWalletRepository
 {
     Task<WalletDTO> Get(string id);
-    Task<Wallet> DepositFunds(string id, double value);
-    Task<Wallet> WithdrawFunds(string id, double value);
+    Task<AppUser> DepositFunds(string id, double value);
+    Task<AppUser> WithdrawFunds(string id, double value);
+    Task<AppUser> RegisterBet(string userId, int betId, double value, double odd);
 }
