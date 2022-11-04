@@ -18,18 +18,20 @@ public class BetRepository : IBetRepository
 
     public async Task<Bet> GetBetById(int betId)
     {
+        Bet? bet;
         try
         {
-            var bet = await _context.Bets.FindAsync(betId);
-            if(bet != null)
-                return bet;
-
-            throw new BetNotFoundException("Não foi possível encontrar a aposta!");
+            bet = await _context.Bets.FindAsync(betId);
         }
         catch (Exception)
         {
             throw new Exception("Ocorreu um erro interno!");
         }
+
+        if(bet != null)
+            return bet;
+
+        throw new BetNotFoundException("Não foi possível encontrar a aposta!");
     }
 
     public async Task<BetSimple> CreateBetSimple(
@@ -73,7 +75,7 @@ public class BetRepository : IBetRepository
     public async Task<BetMultiple> CreateBetMultiple(double amount, DateTime start, int user, double oddMultiple, ICollection<Selection> selections)
     {
         double oddMultipleChosen = 1.0;
-        if(selections.Count > 0) { 
+        if(selections.Count > 1) { 
             bool duplicateBets = false;
             foreach (var selection in selections)
             {
@@ -97,27 +99,28 @@ public class BetRepository : IBetRepository
 
             if (!duplicateBets)
             {
-                try
+                BetMultiple b;
+                if (amount > 0.10)
                 {
-                    if(amount > 0.10)
+                    if(oddMultiple > 1.20)
                     {
-                        if(oddMultiple > 1.20)
-                        {
-                            BetMultiple b = new BetMultiple(amount, start, user, oddMultiple, selections);
-                            await _context.Bets.AddAsync(b);
-                            await _context.SaveChangesAsync();
-                            return b;
-                        }
-                        else
-                        {
-                            throw new OddTooLowException("A odd da seleção é demasiado baixa!");
-                        }
+                        b = new BetMultiple(amount, start, user, oddMultiple, selections);
+                        await _context.Bets.AddAsync(b);
                     }
                     else
                     {
-                        throw new BetTooLowException("A aposta tem um valor demasiado baixo!");
+                        throw new OddTooLowException("A odd da seleção é demasiado baixa!");
                     }
+                }
+                else
+                {
+                    throw new BetTooLowException("A aposta tem um valor demasiado baixo!");
+                }
 
+                try
+                {
+                    await _context.SaveChangesAsync();
+                    return b;
                 }
                 catch (Exception) 
                 {
@@ -125,11 +128,11 @@ public class BetRepository : IBetRepository
 
                 }
             }
-
-            throw new BetsInTheSameGameException("Apostas efetuadas no mesmo jogo!");
+            else
+                throw new BetsInTheSameGameException("Apostas efetuadas no mesmo jogo!");
         }
-
-        throw new InvalidSelectionsException("As selecções estão inválidas!");
+        else
+            throw new InvalidSelectionsException("Não existem pelo menos 2 seleções!");
     }
 
     public async Task<ICollection<Bet>> GetUserBetsByState(int user, BetState state)
@@ -216,17 +219,19 @@ public class BetRepository : IBetRepository
 
     public async Task<bool> DeleteBet(int betId)
     {
+        var bet = await _context.Bets.FindAsync(betId);
+
+        if(bet != null)
+        {
+            _context.Bets.Remove(bet);
+        }
+        else
+            throw new BetNotFoundException("A aposta não foi localizada!");
+
         try
         {
-            var bet = await _context.Bets.FindAsync(betId);
-
-            if(bet != null)
-            {
-                _context.Bets.Remove(bet);
-                return true;
-            }
-
-            throw new BetNotFoundException("A aposta não foi localizada!");
+            await _context.SaveChangesAsync();
+            return true;
         }
         catch (Exception)
         {

@@ -21,7 +21,10 @@ public class BetFacade : IBetFacade
     }
 
     // Métodos para o BetController
-    public async Task<BetSimple> CreateBetSimple(double amount, DateTime start, int userId, int selectionId)
+    public async Task<BetSimple> CreateBetSimple(double amount,
+                                                 DateTime start,
+                                                 int userId,
+                                                 int selectionId)
     {
         try
         {
@@ -45,7 +48,10 @@ public class BetFacade : IBetFacade
         }
     }
 
-    public async Task<BetMultiple> CreateBetMultiple(double amount, DateTime start, int userId, ICollection<int> selectionIds)
+    public async Task<BetMultiple> CreateBetMultiple(double amount,
+                                                     DateTime start,
+                                                     int userId,
+                                                     ICollection<int> selectionIds)
     {
         ICollection<Selection> selections = new List<Selection>();
         double oddMultiple = 1.0;
@@ -65,13 +71,17 @@ public class BetFacade : IBetFacade
 
         try
         {
-            bool valid = await APIService.VerifyUserBalance(userId, amount);
-            if (valid)
-            {
-                BetMultiple bet = await BetRepository.CreateBetMultiple(amount, start, userId, oddMultiple, selections);
-                await APIService.WithdrawUserBalance(userId, amount);
+            //bool valid = await APIService.VerifyUserBalance(userId, amount);
+            //if (valid)
+            //{
+                BetMultiple bet = await BetRepository.CreateBetMultiple(amount,
+                                                                        start,
+                                                                        userId,
+                                                                        oddMultiple,
+                                                                        selections);
+                //await APIService.WithdrawUserBalance(userId, amount);
                 return bet;
-            }
+            //}
 
             throw new Exception("Ocorreu um erro interno!");
 
@@ -186,7 +196,14 @@ public class BetFacade : IBetFacade
 
     public async Task<ICollection<Selection>> GetSelectionByType(int bettype)
     {
-        return await SelectionRepository.GetSelectionByType(bettype);
+        try
+        {
+            return await SelectionRepository.GetSelectionByType(bettype);
+        }
+        catch(Exception e)
+        {
+            throw new Exception(e.Message);
+        }
     }
 
 }
