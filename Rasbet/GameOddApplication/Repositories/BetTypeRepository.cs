@@ -73,7 +73,7 @@ public class BetTypeRepository : IBetTypeRepository
             betTypes.Add(h2h);
             BetType bet = await gameOddContext.BetType.FromSqlRaw($"SELECT * FROM dbo.BetType WHERE LOWER(Discriminator) LIKE LOWER('{market_g.Key}') AND GameId = {gameId}")
                                                       .FirstOrDefaultAsync();
-            if (lastUpdate > bet.LastUpdate)
+            if (lastUpdate > bet.LastUpdate && bet.SpecialistId != null)
             {
 
                 foreach (MarketDTO market in market_g)

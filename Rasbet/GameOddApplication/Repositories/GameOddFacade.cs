@@ -37,7 +37,11 @@ public class GameOddFacade : IGameOddFacade
 
     public async Task<Unit> FinishGame(string id, string result)
     {
-        await FinishGame(id, result, null);
+        Game game = await gameRepository.GetGame(id);
+        if(game.State != GameState.Finished)
+        {
+            await FinishGame(id, result, null);
+        }
         return Unit.Value;
     }
 
@@ -76,8 +80,8 @@ public class GameOddFacade : IGameOddFacade
     public async Task<Unit> FinishGame(string id, string result, string? specialistId)
     {
         ICollection<BetsOddsWonDTO> res = new List<BetsOddsWonDTO>();
+        await gameRepository.ChangeGameState(id, specialistId, GameState.Finished);
         Game g = await gameRepository.GetGame(id);
-        g.State = GameState.Finished;
         foreach (BetType betType in g.Bets)
         {
             if (specialistId != null)
@@ -110,5 +114,19 @@ public class GameOddFacade : IGameOddFacade
         if (d == null)
             throw new OddNotFoundException($"Odd {oddId} dont exist!");
         return d.OddValue;
+    }
+
+
+    public async Task<Unit> ChangeOdds(string specialistId, int betTypeId, Dictionary<int, double> newOdds)
+    {
+        BetType bet = await betTypeRepository.GetBetType(betTypeId);
+        bet.SpecialistId = specialistId;
+        foreach(var item in newOdds)
+        {
+            Odd d = bet.Odds.FirstOrDefault(o => o.Id == item.Key);
+            d.OddValue = item.Value;
+        }
+        await gameOddContext.SaveChangesAsync();
+        return Unit.Value;
     }
 }

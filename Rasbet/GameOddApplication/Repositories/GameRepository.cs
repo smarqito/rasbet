@@ -32,23 +32,22 @@ public class GameRepository : IGameRepository
 
     public async Task<Unit> ChangeGameState(string idSync, GameState state)
     {
-        Game g = await GetGame(idSync);
-        if (state != g.State)
-        {
-            g.State = state;
-            await gameOddContext.SaveChangesAsync();
-        }
-        return Unit.Value;
+        return await ChangeGameState(idSync, null, state);
     }
 
-    public async Task<Unit> ChangeGameState(string gameId, string specialistId, GameState state)
+    public async Task<Unit> ChangeGameState(string gameId, string? specialistId, GameState state)
     {
         Game g = await GetGame(gameId);
         if (state != g.State)
         {
             g.State = state;
-            g.SpecialistId = specialistId;
+            if (specialistId != null)
+                g.SpecialistId = specialistId;
             await gameOddContext.SaveChangesAsync();
+        }
+        else
+        {
+            throw new SameGameStateException("Game has already that state");
         }
         return Unit.Value;
     }

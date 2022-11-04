@@ -1,4 +1,5 @@
 ﻿using Domain;
+using DTO;
 using DTO.GameOddDTO;
 using DTO.GetGamesRespDTO;
 using GameOddApplication.Interfaces;
@@ -58,6 +59,13 @@ namespace GameOddAPI.Controllers
         {
             double d = await gameOddFacade.GetOddValue(oddId, betTypeId);
             return Ok(d);
+        }
+
+        [HttpPatch("odds")]
+        public async Task<IActionResult> ChangeOdds([FromBody] ChangeOddsDTO odds)
+        {
+            await gameOddFacade.ChangeOdds(odds.SpecialistId, odds.BetTypeId, odds.NewOdds);
+            return Ok();
         }
     }
 }
