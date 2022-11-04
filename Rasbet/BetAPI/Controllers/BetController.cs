@@ -16,7 +16,7 @@ public class BetController : BaseController
     }
 
     [HttpPost("simple")]
-    public async Task<IActionResult> CreateBetSimple([FromBody] CreateBetDTO create)
+    public async Task<IActionResult> CreateBetSimple([FromBody] CreateSimpleBetDTO create)
     {
         try
         {
@@ -33,7 +33,7 @@ public class BetController : BaseController
     }
 
     [HttpPost("multiple")]
-    public async Task<IActionResult> CreateBetMultiple([FromBody] CreateMultipleSelectionsDTO create) 
+    public async Task<IActionResult> CreateBetMultiple([FromBody] CreateMultipleBetDTO create) 
     {
         try
         {

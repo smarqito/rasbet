@@ -1,4 +1,5 @@
 using Domain;
+using DTO;
 using DTO.BetDTO;
 using DTO.UserDTO;
 using UserApplication.Interfaces;
@@ -68,24 +69,35 @@ public class WalletRepository : IWalletRepository
         return user;
     }
 
-    public async Task<AppUser> RegisterBet(string userId, int betId, double value, double odd)
+    public async Task<AppUser> RegisterBetSimple(CreateSimpleBetDTO dto)
     {
-        AppUser user = context.AppUsers.Where(u => u.Id.Equals(userId)).First();
+        AppUser user = context.AppUsers.Where(u => u.Id.Equals(dto.UserId)).First();
 
         if (user == null) throw new Exception("Utilizador não encontrado.");
 
-        CreateSelectionDTO sel_dto = 
 
-        CreateBetDTO bet_dto = new CreateBetDTO();
-         Amount  Start UserId  selectionDTO { get; set; }
+        BetSimple bet = await service.CreateBetSimple(dto);
 
-    await service.CreateBetSimple()
-
-        user.BetHistory.Append(betId);
+        user.BetHistory.Append(bet.Id);
 
         await context.SaveChangesAsync();
 
         return user;
     }
 
+    public async Task<AppUser> RegisterBetMult(CreateMultipleBetDTO dto)
+    {
+        AppUser user = context.AppUsers.Where(u => u.Id.Equals(dto.UserId)).First();
+
+        if (user == null) throw new Exception("Utilizador não encontrado.");
+
+
+        BetMultiple bet = await service.CreateBetMultiple(dto);
+
+        user.BetHistory.Append(bet.Id);
+
+        await context.SaveChangesAsync();
+
+        return user;
+    }
 }

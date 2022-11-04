@@ -1,10 +1,11 @@
-﻿using Domain;
-
+﻿
 namespace DTO.BetDTO;
-public abstract class CreateBetDTO 
+
+public class CreateMultipleBetDTO 
 {
     public double Amount { get; set; }
     public DateTime Start { get; set; }
     public int UserId { get; set; }
-    public CreateSelectionDTO selectionDTO { get; set; }
+
+    public ICollection<CreateSelectionDTO> selections;
 }

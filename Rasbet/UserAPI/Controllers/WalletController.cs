@@ -5,6 +5,7 @@ using Microsoft.AspNet.Identity.Owin;
 using DTO.UserDTO;
 using BetApplication.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using DTO.BetDTO;
 
 namespace UserAPI.Controllers;
 
@@ -82,30 +83,41 @@ namespace UserAPI.Controllers;
         /// <param name="value"> Value of the bet.</param>
         /// <param name="odd"> Odd of the bet.</param>
         [HttpPost("bet/simple")]
-        public async Task<IActionResult> RegisterBetSimple([FromBody] BetDTO bet) 
+        public async Task<IActionResult> RegisterBetSimple([FromBody] CreateSimpleBetDTO bet) 
         {
             try
             {
-                await walletRepository.RegisterBet(bet.UserId, bet.BetId, bet.Value, bet.Odd);
+                await walletRepository.RegisterBetSimple(bet);
                 return Ok();
-            }
+}
             catch (Exception e)
             {
                 return BadRequest(e.Message);
             }
         }
 
-        /// <summary>
-        /// Update previously registered bet
-        ///     - update account balance (if applies...)
-        ///     - update bet status
-        /// </summary>
-        /// <param name="userId"> Id of the user who made the bet.</param>
-        /// <param name="betId"> Id of the bet to update.</param>
-        [HttpPost("bet/result")]
-        public Task<IActionResult> RegisterBetResult(int userId, int betId)
+    /// <summary>
+    /// Register a bet to users wallet history
+    ///     - update account balance
+    ///     - insert into wallet history
+    ///     - keep the bet in open state until POST bet/result
+    /// </summary>
+    /// <param name="userId"> Id of the user who made the bet.</param>
+    /// <param name="betId"> Id of the bet.</param>
+    /// <param name="value"> Value of the bet.</param>
+    /// <param name="odd"> Odd of the bet.</param>
+    [HttpPost("bet/simple")]
+    public async Task<IActionResult> RegisterBetMult([FromBody] CreateMultipleBetDTO bet)
+    {
+        try
         {
-            walletRepository.Register
-
+            await walletRepository.RegisterBetMult(bet);
+            return Ok();
         }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
+
 }

@@ -21,11 +21,19 @@ public class APIService
         _httpClientBet.BaseAddress = new("http://localhost:5001/");
     }
 
-    public async Task<BetSimple> CreateBetSimple(CreateBetDTO bet)
+    public async Task<BetSimple> CreateBetSimple(CreateSimpleBetDTO bet)
     {
         StringContent content = new StringContent(JsonSerializer.Serialize(bet));
-        HttpResponseMessage resp = await _httpClientBet.PostAsync($"bet/simple", content);
+        HttpResponseMessage resp = await _httpClientBet.PostAsync($"Bet/simple", content);
         resp.EnsureSuccessStatusCode();
         return await resp.Content.ReadFromJsonAsync<BetSimple>();
+    }
+
+    public async Task<BetMultiple> CreateBetMultiple(CreateMultipleBetDTO bets)
+    {
+        StringContent content = new StringContent(JsonSerializer.Serialize(bets));
+        HttpResponseMessage resp = await _httpClientBet.PostAsync($"Bet/multiple", content);
+        resp.EnsureSuccessStatusCode();
+        return await resp.Content.ReadFromJsonAsync<BetMultiple>();
     }
 }
