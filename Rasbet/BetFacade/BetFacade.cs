@@ -10,9 +10,9 @@ public class BetFacade : IBetFacade
 {
     public IBetRepository BetRepository;
     public ISelectionRepository SelectionRepository;
-    public APIService APIService = new ();
+    public APIService APIService = new();
 
-    public BetFacade(IBetRepository betRepository, 
+    public BetFacade(IBetRepository betRepository,
                      ISelectionRepository selectionRepository)
     {
         BetRepository = betRepository;
@@ -28,24 +28,26 @@ public class BetFacade : IBetFacade
         BetSimple? bet;
         try
         {
-            Selection newS = await CreateSelection(selectionDTO.BetTypeId, selectionDTO.OddId, selectionDTO.Odd, selectionDTO.GameId);
-            double odd = await APIService.GetOdd(selectionDTO.BetTypeId, selectionDTO.OddId);
+            double server_odd = await APIService.GetOdd(selectionDTO.BetTypeId, selectionDTO.OddId);
+            
+            Selection newS = await CreateSelection(selectionDTO.BetTypeId, selectionDTO.OddId, selectionDTO.Odd, selectionDTO.GameId, server_odd);
 
-            bet = await BetRepository.CreateBetSimple(amount, start, userId, newS, odd);
+            bet = await BetRepository.CreateBetSimple(amount, start, userId, newS, server_odd);
         }
         catch (Exception e)
         {
-            throw new Exception(e.Message);
+            throw;
         }
-        try 
+
+        try
         {
-            await APIService.WithdrawUserBalance(new TransactionDTO(userId,amount));
+            await APIService.WithdrawUserBalance(new TransactionDTO(userId, amount));
             return bet;
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             await BetRepository.DeleteBet(bet.Id);
-            throw new Exception(e.Message);
+            throw;
         }
     }
 
@@ -60,14 +62,17 @@ public class BetFacade : IBetFacade
         {
             try
             {
+                double server_odd = await APIService.GetOdd(selectionDTO.BetTypeId, selectionDTO.OddId);
+
                 Selection newS = await CreateSelection(selectionDTO.BetTypeId,
                                                        selectionDTO.OddId,
                                                        selectionDTO.Odd,
-                                                       selectionDTO.GameId);
+                                                       selectionDTO.GameId,
+                                                       server_odd);
                 selections.Add(newS);
                 oddMultiple *= newS.Odd;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw new Exception(e.Message);
             }
@@ -91,7 +96,7 @@ public class BetFacade : IBetFacade
             await APIService.WithdrawUserBalance(new TransactionDTO(userId, amount));
             return bet;
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             await BetRepository.DeleteBet(bet.Id);
             throw new Exception(e.Message);
@@ -104,7 +109,7 @@ public class BetFacade : IBetFacade
         {
             return await BetRepository.GetUserBetsByState(user, state);
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             throw new Exception(e.Message);
         }
@@ -117,7 +122,7 @@ public class BetFacade : IBetFacade
         }
         catch (Exception e)
         {
-            throw new Exception(e.Message); 
+            throw new Exception(e.Message);
         }
     }
 
@@ -164,9 +169,9 @@ public class BetFacade : IBetFacade
         {
             ICollection<Bet> won_bets = await BetRepository.UpdateBets(finishedGames);
 
-            if(won_bets.Count > 0)
+            if (won_bets.Count > 0)
             {
-                foreach(var bet in won_bets)
+                foreach (var bet in won_bets)
                 {
                     await APIService.DepositUserBalance(new TransactionDTO(bet.UserId, bet.WonValue));
                 }
@@ -174,29 +179,21 @@ public class BetFacade : IBetFacade
             }
             return false;
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             throw new Exception(e.Message);
         }
     }
 
     // Métodos para o SelectionRepository
-    public async Task<Selection> CreateSelection(int betTypeId, int oddId, double odd, int gameId)
+    public async Task<Selection> CreateSelection(int betTypeId, int oddId, double odd, int gameId, double serverOdd)
     {
         // pedir GameOddApi com betTypeId + oddId
         // receber odd atual do servidor
         // comparar com odd do cliente e aplicar um threshold max
         //      caso threshold exceda, enviar erro
         //      caso contrario, criar selection
-        try
-        {
-            double serverOdd = await APIService.GetOdd(betTypeId, oddId);
-            return await SelectionRepository.CreateSelection(serverOdd, odd, betTypeId, oddId, gameId);
-        }
-        catch (Exception e)
-        {
-            throw new Exception(e.Message);
-        }
+        return await SelectionRepository.CreateSelection(serverOdd, odd, betTypeId, oddId, gameId);
     }
 
     public async Task<ICollection<Selection>> GetSelectionByGame(int game)
@@ -205,7 +202,7 @@ public class BetFacade : IBetFacade
         {
             return await SelectionRepository.GetSelectionByGame(game);
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             throw new Exception(e.Message);
         }
@@ -217,7 +214,7 @@ public class BetFacade : IBetFacade
         {
             return await SelectionRepository.GetSelectionByType(bettype);
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             throw new Exception(e.Message);
         }

@@ -23,8 +23,7 @@ builder.Services.AddIdentityUserConfig();
 //builder.Services.AddScoped<UserManager<Domain.User>>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IWalletRepository, WalletRepository>();
-builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
-//builder.Services.AddHttpContextAccessor();
+
 var app = builder.Build();
 
 
@@ -36,7 +35,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

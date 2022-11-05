@@ -8,15 +8,20 @@ namespace DTO.UserDTO;
 
 public class TransactionDTO
 {
-    public double Value { get; set; }
+    public string Value { get; set; }
     public string UserId { get; set; }
 
 
-    protected TransactionDTO()
+    public TransactionDTO()
     {
-
     }
+
     public TransactionDTO(string id, double value)
+    {
+        UserId = id;
+        Value = ""+value;
+    }
+    public TransactionDTO(string id, string value)
     {
         UserId = id;
         Value = value;

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Json;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace GameOddApplication;
@@ -20,6 +21,10 @@ public class APIService
 
     public async Task UpdateBets(ICollection<BetsOddsWonDTO> bets)
     {
-        await _httpClientBet.PutAsJsonAsync("bet", bets);
+        StringContent content = new(JsonSerializer.Serialize(bets),
+                            Encoding.UTF8,
+                            "application/json");
+        HttpResponseMessage resp = await _httpClientBet.PutAsync($"bet", content);
+        resp.EnsureSuccessStatusCode();
     }
 }

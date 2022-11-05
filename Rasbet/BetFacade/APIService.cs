@@ -1,8 +1,10 @@
 ﻿using Domain;
 using Domain.ResultDomain;
 using DTO.UserDTO;
+using System.Globalization;
 using System.Net.Http.Json;
 using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -15,9 +17,9 @@ public class APIService
 
     public APIService()
     {
-        _httpClientUser = new ();
+        _httpClientUser = new();
         _httpClientUser.BaseAddress = new("http://localhost:5000/");
-        _httpClientGameOdd = new ();
+        _httpClientGameOdd = new();
         _httpClientGameOdd.BaseAddress = new("http://localhost:5002/");
     }
 
@@ -27,7 +29,9 @@ public class APIService
     {
         HttpResponseMessage resp = await _httpClientGameOdd.GetAsync($"GameOdd/odd?betTypeId={betTypeId}&oddId={oddId}");
         resp.EnsureSuccessStatusCode();
-        return double.Parse(await resp.Content.ReadAsStringAsync());
+        string s = await resp.Content.ReadAsStringAsync();
+
+        return double.Parse(s, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture);
     }
 
     //ir buscar bettype por id
@@ -49,16 +53,20 @@ public class APIService
     //withdraw dinheiro do user
     public async Task WithdrawUserBalance(TransactionDTO dto)
     {
-        StringContent content = new(JsonSerializer.Serialize(dto));
-        HttpResponseMessage resp = await _httpClientUser.PutAsync($"User/withdraw", content);
+        StringContent content = new(JsonSerializer.Serialize(dto),
+                                    Encoding.UTF8,
+                                    "application/json");
+        HttpResponseMessage resp = await _httpClientUser.PutAsync($"Wallet/withdraw", content);
         resp.EnsureSuccessStatusCode();
     }
 
     //deposit dinheiro no user
     public async Task DepositUserBalance(TransactionDTO dto)
     {
-        StringContent content = new(JsonSerializer.Serialize(dto));
-        HttpResponseMessage resp = await _httpClientUser.PutAsync($"User/deposit", content);
+        StringContent content = new(JsonSerializer.Serialize(dto),
+                                    Encoding.UTF8,
+                                    "application/json");
+        HttpResponseMessage resp = await _httpClientUser.PutAsync($"Wallet/deposit", content);
         resp.EnsureSuccessStatusCode();
     }
 }

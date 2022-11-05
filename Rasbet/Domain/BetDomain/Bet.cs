@@ -6,7 +6,7 @@ public abstract class Bet
     private double amount { get; set; }
     private double wonValue { get; set; }
 
-    public DateTime Start { get; set; }
+    public DateTime Start { get; set; } = DateTime.Now;
     public DateTime ?End { get; set; }
 
     // utilizador que realizou a aposta

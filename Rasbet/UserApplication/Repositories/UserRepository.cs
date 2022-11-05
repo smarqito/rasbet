@@ -1,5 +1,6 @@
 using Domain.UserDomain;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.Net.Mail;
 using UserApplication.Interfaces;
 using UserPersistence;
@@ -12,7 +13,7 @@ public class UserRepository : IUserRepository
     private readonly UserManager<User> userManager;
     private readonly SignInManager<User> signInManager;
     private readonly RoleManager<IdentityRole> roleManager;
-   
+
     public UserRepository(UserContext context,
                           UserManager<User> userManager,
                           SignInManager<User> signInManager,
@@ -36,8 +37,8 @@ public class UserRepository : IUserRepository
     /// <param name="language"> User's preferred language. </param>
     /// <returns>The user, if the register was successfull.</returns>
     /// <exception>The user is under age or the chosen e-mail is already in use.</exception>
-    public async Task<AppUser> RegisterAppUser(string name, string email, string password, string nif, DateTime dob , bool notifications, string language)
-    { 
+    public async Task<AppUser> RegisterAppUser(string name, string email, string password, string nif, DateTime dob, bool notifications, string language)
+    {
         User user = await userManager.FindByEmailAsync(email);
 
         var today = DateTime.Today;
@@ -46,9 +47,9 @@ public class UserRepository : IUserRepository
 
         if (age < 18) throw new Exception("Não cumpre a idade mínima permitida.");
 
-        
+
         if (user == null)
-         {
+        {
             AppUser newU = new AppUser(name, email, nif, dob, language, notifications);
             var s = await userManager.CreateAsync(newU, password);
 
@@ -84,12 +85,13 @@ public class UserRepository : IUserRepository
     /// <returns>The administrator, if the register was successfull.</returns>
     /// <exception>The chosen e-mail is already in use.</exception>
     public async Task<Admin> RegisterAdmin(string name, string email, string password, string language)
-	{
+    {
         User user = await userManager.FindByEmailAsync(email);
 
-        if (user == null) { 
-		    Admin newU = new (name, email, language);
-		    var s = await userManager.CreateAsync(newU, password);
+        if (user == null)
+        {
+            Admin newU = new(name, email, language);
+            var s = await userManager.CreateAsync(newU, password);
             if (s.Succeeded)
             {
                 if (!await roleManager.RoleExistsAsync("Admin"))
@@ -110,7 +112,7 @@ public class UserRepository : IUserRepository
         }
 
         throw new Exception("E-mail já está a ser utilizado.");
-	}
+    }
 
     /// <summary>
     /// Registers a specialist.
@@ -122,11 +124,12 @@ public class UserRepository : IUserRepository
     /// <returns>The specialist, if the register was successfull.</returns>
     /// <exception>The chosen e-mail is already in use.</exception>
     public async Task<Specialist> RegisterSpecialist(string name, string email, string password, string language)
-	{
+    {
         var user = await userManager.FindByEmailAsync(email);
-        if (user == null) {
-		    Specialist newU = new Specialist(name, email,language);
-		    var s = await userManager.CreateAsync(newU, password);
+        if (user == null)
+        {
+            Specialist newU = new Specialist(name, email, language);
+            var s = await userManager.CreateAsync(newU, password);
             if (s.Succeeded)
             {
                 if (!await roleManager.RoleExistsAsync("Specialist"))
@@ -146,7 +149,7 @@ public class UserRepository : IUserRepository
             throw new Exception("Erro ao criar utilizador.");
         }
         throw new Exception("E-mail já está a ser utilizado.");
-	}
+    }
 
     /// <summary>
     /// Logs in an user.
@@ -155,12 +158,12 @@ public class UserRepository : IUserRepository
     /// <param name="password"> Given password. </param>
     /// <returns>The user, if the log in was successfull.</returns>
     /// <exception>The given e-mail doesn't correspond to an user or the password was incorrect.</exception>
-    public async Task<User> Login (string email, string password)
+    public async Task<User> Login(string email, string password)
     {
         var user = await userManager.FindByEmailAsync(email);
         if (user == null) throw new Exception("E-mail inexistente.");
 
-        var result = await signInManager.PasswordSignInAsync(email,password, false, false);
+        var result = await signInManager.PasswordSignInAsync(email, password, false, false);
         if (result == SignInResult.Success)
             return user;
         throw new Exception("Password incorreta.");
@@ -188,7 +191,7 @@ public class UserRepository : IUserRepository
     /// <param name="id"> Id of the user to be retrieved.</param>
     /// <returns>The user, if it exists.</returns>
     /// <exception>The given id doesn't correspond to an user.</exception>
-    public async Task<AppUser> GetAppUser (string id)
+    public async Task<AppUser> GetAppUser(string id)
     {
         var user = await userManager.FindByIdAsync(id);
 
@@ -198,7 +201,7 @@ public class UserRepository : IUserRepository
 
         if (user == null) throw new Exception("Utilizador não encontrado.");
 
-        if (role_name == "AppUser") return (AppUser) user;
+        if (role_name == "AppUser") return (AppUser)user;
 
         throw new Exception("Utilizador não encontrado.");
 
@@ -207,13 +210,15 @@ public class UserRepository : IUserRepository
     {
         var user = await userManager.FindByIdAsync(id);
 
-        string role_id = context.UserRoles.Where(u => u.UserId.Equals(id)).First().RoleId;
+        IdentityUserRole<string> UserRole = await context.UserRoles.Where(u => u.UserId.Equals(id)).FirstOrDefaultAsync();
+        if (UserRole == null) throw new Exception("A role nao existe");
+        string role_id = UserRole.RoleId;
         IdentityRole role = await roleManager.FindByIdAsync(role_id);
         string role_name = await roleManager.GetRoleNameAsync(role);
 
         if (user == null) throw new Exception("Utilizador não encontrado.");
 
-        if (role_name == "Specialist") return (Specialist) user;
+        if (role_name == "Specialist") return (Specialist)user;
 
         throw new Exception("Utilizador não encontrado.");
 
@@ -222,13 +227,15 @@ public class UserRepository : IUserRepository
     {
         var user = await userManager.FindByIdAsync(id);
 
-        string role_id = context.UserRoles.Where(u => u.UserId.Equals(id)).First().RoleId;
-        IdentityRole role = await roleManager.FindByIdAsync(role_id);
-        string role_name = await roleManager.GetRoleNameAsync(role);
+        IdentityUserRole<string> role = await context.UserRoles.Where(u => u.UserId.Equals(id)).FirstOrDefaultAsync();
+        if (role == null) throw new Exception("A role nao existe");
+        string role_id = role.RoleId;
+        IdentityRole urole = await roleManager.FindByIdAsync(role_id);
+        string role_name = await roleManager.GetRoleNameAsync(urole);
 
         if (user == null) throw new Exception("Utilizador não encontrado.");
 
-        if (role_name == "Admin") return (Admin) user;
+        if (role_name == "Admin") return (Admin)user;
 
         throw new Exception("Utilizador não encontrado.");
     }
@@ -243,9 +250,9 @@ public class UserRepository : IUserRepository
     /// <param name="notifications"> Indicates whether the user wants to receive notifications or not. </param>
     /// <returns>The user if the update was successfull.</returns>
     /// <exception>The given e-mail doesn't correspond to an user.</exception>
-    public async Task<AppUser> UpdateAppUser (string email, string name, string language, string coin, bool notifications)
+    public async Task<AppUser> UpdateAppUser(string email, string name, string language, string coin, bool notifications)
     {
-        AppUser user = context.AppUsers.Where(u => u.Email.Equals(email)).First();
+        AppUser? user = await context.AppUsers.Where(u => u.Email.Equals(email)).FirstOrDefaultAsync();
 
         if (user == null) throw new Exception("E-mail inexistente.");
 
@@ -259,21 +266,25 @@ public class UserRepository : IUserRepository
         return user;
     }
 
-    public void SendEmail(string to, string subject, string body) {
-        try {
+    public void SendEmail(string to, string subject, string body)
+    {
+        try
+        {
             string from = "rasbet.apostasdesportivas@gmail.com";
-            MailMessage message = new MailMessage(from,to, subject, body);
+            MailMessage message = new MailMessage(from, to, subject, body);
             SmtpClient client = new SmtpClient("smtp.gmail.com");
 
             client.EnableSsl = true;
             client.Port = 465;
             client.UseDefaultCredentials = false;
             client.DeliveryMethod = SmtpDeliveryMethod.Network;
-            client.Credentials = new System.Net.NetworkCredential(from,"Ra$bet2022");
+            client.Credentials = new System.Net.NetworkCredential(from, "Ra$bet2022");
             client.Send(message);
             client.Dispose();
-        } catch(Exception e) {
-            throw new Exception( e.Message);
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
         }
     }
 
@@ -286,8 +297,9 @@ public class UserRepository : IUserRepository
     /// <param name="phoneno">  User's phone number. </param>
     /// <returns>The user if the update was successfull. Null otherwise.</returns>
     /// <exception>The given e-mail doesn't correspond to an user.</exception>
-    public async Task<AppUser> UpdateAppUserSensitive(string email, string password, string iban, string phoneno){
-        AppUser user = context.AppUsers.Where(u => u.Email.Equals(email)).First();
+    public async Task<AppUser> UpdateAppUserSensitive(string email, string password, string iban, string phoneno)
+    {
+        AppUser? user = await context.AppUsers.Where(u => u.Email.Equals(email)).FirstOrDefaultAsync();
 
         if (user == null) throw new Exception("E-mail inexistente.");
 
@@ -297,9 +309,9 @@ public class UserRepository : IUserRepository
         await context.SaveChangesAsync();
         string subject = "Confirmação de alterações no perfil";
         string message = code;
-        SendEmail(email,subject,code);
+        SendEmail(email, subject, code);
 
-        return null;
+        return user;
     }
 
     /// <summary>
@@ -309,8 +321,9 @@ public class UserRepository : IUserRepository
     /// <param name="password"> Admin's password. </param>
     /// <returns>The user if the update was successfull. Null otherwise.</returns>
     /// <exception>The given e-mail doesn't correspond to an user.</exception>
-    public async Task<Admin> UpdateAdminSensitive(string email, string password){
-        Admin user = context.Admins.Where(u => u.Email.Equals(email)).First();
+    public async Task<Admin> UpdateAdminSensitive(string email, string password)
+    {
+        Admin? user = await context.Admins.Where(u => u.Email.Equals(email)).FirstOrDefaultAsync();
 
         if (user == null) throw new Exception("E-mail inexistente.");
 
@@ -320,9 +333,9 @@ public class UserRepository : IUserRepository
         await context.SaveChangesAsync();
         string subject = "Confirmação de alterações no perfil";
         string message = code;
-        SendEmail(email,subject,code);
+        SendEmail(email, subject, code);
 
-        return null;
+        return user;
     }
 
     /// <summary>
@@ -332,8 +345,9 @@ public class UserRepository : IUserRepository
     /// <param name="password"> Specialist's password. </param>
     /// <returns>The user if the update was successfull. Null otherwise.</returns>
     /// <exception>The given e-mail doesn't correspond to an user.</exception>
-    public async Task<Specialist> UpdateSpecialistSensitive(string email, string password){
-        Specialist user = context.Specialists.Where(u => u.Email.Equals(email)).First();
+    public async Task<Specialist> UpdateSpecialistSensitive(string email, string password)
+    {
+        Specialist? user = await context.Specialists.Where(u => u.Email.Equals(email)).FirstOrDefaultAsync();
 
         if (user == null) throw new Exception("E-mail inexistente.");
 
@@ -343,9 +357,9 @@ public class UserRepository : IUserRepository
         await context.SaveChangesAsync();
         string subject = "Confirmação de alterações no perfil";
         string message = code;
-        SendEmail(email,subject,code);
+        SendEmail(email, subject, code);
 
-        return null;
+        return user;
     }
 
     /// <summary>
@@ -355,24 +369,28 @@ public class UserRepository : IUserRepository
     /// <param name="code"> User's confirmation code. </param>
     /// <returns>The user if the update was successfull. Null otherwise.</returns>
     /// <exception>The given e-mail doesn't correspond to an user.</exception>
-    public async Task<AppUser> UpdateAppUserSensitiveConfirm(string email, string code){
-        AppUser user = context.AppUsers.Where(u => u.Email.Equals(email)).First();
+    public async Task<AppUser> UpdateAppUserSensitiveConfirm(string email, string code)
+    {
+        AppUser? user = await context.AppUsers.Where(u => u.Email.Equals(email)).FirstOrDefaultAsync();
         if (user == null) throw new Exception("E-mail inexistente.");
 
-        UpdateInfo info = context.Updates.Where(u => u.Email.Equals(email)).First();
-        if (info== null) throw new Exception("Utilizador não tem updates.");
-        if (code.Equals(info.ConfirmationCode)) {
+        UpdateInfo? info = await context.Updates.Where(u => u.Email.Equals(email)).FirstOrDefaultAsync();
+        if (info == null) throw new Exception("Utilizador não tem updates.");
+        if (code.Equals(info.ConfirmationCode))
+        {
             user.IBAN = info.IBAN;
             await userManager.RemovePasswordAsync(user);
-            await userManager.AddPasswordAsync(user,info.Password);
-            await userManager.SetPhoneNumberAsync(user,info.PhoneNumber);
+            await userManager.AddPasswordAsync(user, info.Password);
+            await userManager.SetPhoneNumberAsync(user, info.PhoneNumber);
             info.Accepted = true;
             await context.SaveChangesAsync();
-        } else {
+            return user;
+        }
+        else
+        {
             throw new Exception("Código de confirmação inválido.");
         }
 
-        return null;
     }
 
     /// <summary>
@@ -382,23 +400,27 @@ public class UserRepository : IUserRepository
     /// <param name="code"> Admin's confirmation code. </param>
     /// <returns>The user if the update was successfull. Null otherwise.</returns>
     /// <exception>The given e-mail doesn't correspond to an user.</exception>
-    public async Task<Admin> UpdateAdminSensitiveConfirm(string email, string code){
-        Admin user = context.Admins.Where(u => u.Email.Equals(email)).First();
+    public async Task<Admin> UpdateAdminSensitiveConfirm(string email, string code)
+    {
+        Admin? user = await context.Admins.Where(u => u.Email.Equals(email)).FirstOrDefaultAsync();
         if (user == null) throw new Exception("E-mail inexistente.");
 
-        UpdateInfo info = context.Updates.Where(u => u.Email.Equals(email)).First();
+        UpdateInfo? info = await context.Updates.Where(u => u.Email.Equals(email)).FirstOrDefaultAsync();
         if (info == null) throw new Exception("Utilizador não tem updates.");
 
-        if (code.Equals(info.ConfirmationCode)) {
+        if (code.Equals(info.ConfirmationCode))
+        {
             await userManager.RemovePasswordAsync(user);
-            await userManager.AddPasswordAsync(user,info.Password);
+            await userManager.AddPasswordAsync(user, info.Password);
             info.Accepted = true;
             await context.SaveChangesAsync();
-        } else {
+            return user;
+        }
+        else
+        {
             throw new Exception("Código de confirmação inválido.");
         }
 
-        return null;
     }
 
     /// <summary>
@@ -408,22 +430,26 @@ public class UserRepository : IUserRepository
     /// <param name="code"> Specialist's confirmation code. </param>
     /// <returns>The user if the update was successfull. Null otherwise.</returns>
     /// <exception>The given e-mail doesn't correspond to an user.</exception>
-    public async Task<Specialist> UpdateSpecialistSensitiveConfirm(string email, string code){
-        Specialist user = context.Specialists.Where(u => u.Email.Equals(email)).First();
+    public async Task<Specialist> UpdateSpecialistSensitiveConfirm(string email, string code)
+    {
+        Specialist? user = await context.Specialists.Where(u => u.Email.Equals(email)).FirstOrDefaultAsync();
         if (user == null) throw new Exception("E-mail inexistente.");
 
-        UpdateInfo info = context.Updates.Where(u => u.Email.Equals(email)).First();
+        UpdateInfo? info = await context.Updates.Where(u => u.Email.Equals(email)).FirstOrDefaultAsync();
         if (info == null) throw new Exception("Utilizador não tem updates.");
-        if (code.Equals(info.ConfirmationCode)) {
+        if (code.Equals(info.ConfirmationCode))
+        {
             await userManager.RemovePasswordAsync(user);
-            await userManager.AddPasswordAsync(user,info.Password);
+            await userManager.AddPasswordAsync(user, info.Password);
             info.Accepted = true;
             await context.SaveChangesAsync();
-        } else {
+        }
+        else
+        {
             throw new Exception("Código de confirmação inválido.");
         }
 
-        return null;
+        return user;
     }
 
     /// <summary>
@@ -436,7 +462,7 @@ public class UserRepository : IUserRepository
     /// <exception>The given e-mail doesn't correspond to an user.</exception>
     public async Task<Specialist> UpdateSpecialist(string email, string name, string language)
     {
-        Specialist user = context.Specialists.Where(u => u.Email.Equals(email)).First();
+        Specialist? user = await context.Specialists.Where(u => u.Email.Equals(email)).FirstOrDefaultAsync();
 
         if (user == null) throw new Exception("E-mail inexistente.");
 
@@ -458,7 +484,7 @@ public class UserRepository : IUserRepository
     /// <exception>The given e-mail doesn't correspond to an user.</exception>
     public async Task<Admin> UpdateAdmin(string email, string name, string language)
     {
-        Admin user = context.Admins.Where(u => u.Email.Equals(email)).First();
+        Admin? user = await context.Admins.Where(u => u.Email.Equals(email)).FirstOrDefaultAsync();
 
         if (user == null) throw new Exception("E-mail inexistente.");
 

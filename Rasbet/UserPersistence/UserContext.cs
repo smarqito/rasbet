@@ -33,5 +33,8 @@ public class UserContext : IdentityDbContext<Domain.User>
 
         builder.Entity<AppUser>().HasMany(x => x.BetHistory).WithOne().HasForeignKey(x => x.UserId);
 
+        builder.Entity<Withdraw>();
+        builder.Entity<Deposit>();
+
     }
 }

@@ -10,6 +10,7 @@ public class Transaction
 {
     public int Id { get; set; }
     public double Balance { get; set; }
+    public DateTime Date { get; set; } = DateTime.Now;
 
     public Transaction(double balance)
     {

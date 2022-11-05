@@ -14,7 +14,7 @@ public interface IBetFacade
     Task<ICollection<Bet>> GetUserBetsByEnd(string user, DateTime end);
     Task<ICollection<Bet>> GetUserBetsByWonValue(string user, double wonValue);
     Task<bool> UpdateBets(ICollection<BetsOddsWonDTO> finsihedGames);
-    Task<Selection> CreateSelection(int betTypeId, int oddId, double odd, int gameId);
+    Task<Selection> CreateSelection(int betTypeId, int oddId, double odd, int gameId, double server_odd);
     Task<ICollection<Selection>> GetSelectionByGame(int game);
     Task<ICollection<Selection>> GetSelectionByType(int bettype);
 }

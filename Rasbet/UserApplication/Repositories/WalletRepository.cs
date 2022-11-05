@@ -2,6 +2,8 @@ using Domain;
 using DTO;
 using DTO.BetDTO;
 using DTO.UserDTO;
+using Microsoft.EntityFrameworkCore;
+using UserApplication.Errors;
 using UserApplication.Interfaces;
 using UserPersistence;
 
@@ -22,13 +24,13 @@ public class WalletRepository : IWalletRepository
     /// </summary>
     /// <param name="userId">Id of the user whose wallet we want to retrieve.</param>
     /// <returns></returns>
-    public  async Task<WalletDTO> Get(string id)
+    public async Task<WalletDTO> Get(string userId)
     {
-        Wallet wallet = context.Wallet.Where(w => w.UserId.Equals(id)).First();
+        Wallet? wallet = await context.Wallet.Where(w => w.UserId.Equals(userId)).FirstOrDefaultAsync();
 
         if (wallet == null) throw new Exception("O User id indicado não tem uma carteira associada.");
 
-        WalletDTO dto = new WalletDTO(wallet.UserId, wallet.Balance); 
+        WalletDTO dto = new WalletDTO(wallet.UserId, wallet.Balance);
 
         return dto;
     }
@@ -37,40 +39,57 @@ public class WalletRepository : IWalletRepository
     /// Deposit funds to a user.
     /// </summary>
     /// <param name="value"></param>
-    public async Task<AppUser> DepositFunds(string id, double value)
+    public async Task DepositFunds(string userId, double value)
     {
-        //Transações
-
-        Wallet wallet = context.Wallet.Where(w => w.UserId.Equals(id)).First();
+        Wallet? wallet = await context.Wallet.Where(w => w.UserId.Equals(userId)).FirstOrDefaultAsync();
         if (wallet == null) throw new Exception("O User id indicado não tem uma carteira associada.");
+
         wallet.Balance += value;
 
-        await context.SaveChangesAsync();
+        Deposit d = new Deposit(value);
+        wallet.Transactions.Add(d);
 
-        AppUser user = context.AppUsers.Where(u => u.Id.Equals(id)).First();
-        return user;
+        await context.SaveChangesAsync();
     }
 
     /// <summary>
     /// Withdraw money from current user
     /// </summary>
     /// <param name="value"> Value to withdraw. </param>
-    public async Task<AppUser> WithdrawFunds(string id, double value)
+    public async Task WithdrawFunds(string userId, double value)
     {
-        
-        Wallet wallet = context.Wallet.Where(w => w.UserId.Equals(id)).First();
+        Wallet? wallet = await context.Wallet.Where(w => w.UserId.Equals(userId)).FirstOrDefaultAsync();
         if (wallet == null) throw new Exception("O User id indicado não tem uma carteira associada.");
-        wallet.Balance -= value;
 
-        await context.SaveChangesAsync();
 
-        AppUser user = context.AppUsers.Where(u => u.Id.Equals(id)).First();
-        return user;
+        if (wallet.Balance >= value)
+        {
+            try
+            {
+                wallet.Balance -= value;
+
+                Withdraw w = new Withdraw(value);
+
+                wallet.Transactions.Add(w);
+
+                await context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw new Exception("Ocorreu um erro interno!");
+            }
+        }
+        else
+        {
+            throw new UserBalanceTooLowException("O utilizador não tem saldo suficiente!");
+        }
+
+
     }
 
     public async Task<AppUser> RegisterBetSimple(CreateSimpleBetDTO dto)
     {
-        AppUser user = context.AppUsers.Where(u => u.Id.Equals(dto.UserId)).First();
+        AppUser? user = await context.AppUsers.Where(u => u.Id.Equals(dto.UserId)).FirstOrDefaultAsync();
 
         if (user == null) throw new Exception("Utilizador não encontrado.");
 
@@ -86,7 +105,7 @@ public class WalletRepository : IWalletRepository
 
     public async Task<AppUser> RegisterBetMult(CreateMultipleBetDTO dto)
     {
-        AppUser user = context.AppUsers.Where(u => u.Id.Equals(dto.UserId)).First();
+        AppUser? user = await context.AppUsers.Where(u => u.Id.Equals(dto.UserId)).FirstOrDefaultAsync();
 
         if (user == null) throw new Exception("Utilizador não encontrado.");
 

@@ -43,13 +43,9 @@ public class BetRepository : IBetRepository
         double threshold = serverOdd / selection.Odd;
         BetSimple b;
 
-        if (threshold >= 0.05 && threshold <= 0.95 )
-        {
-            throw new OddTooDiferentException("A odd atual diverge demaisado da odd escolhida!");
-        }
         if(amount > 0.10 )
         {
-            if(selection.Odd > 0.1)
+            if(selection.Odd > 1.2)
             {
                 b = new BetSimple(selection, amount, start, user);
                 await _context.Bets.AddAsync(b);    
@@ -69,7 +65,7 @@ public class BetRepository : IBetRepository
                 await _context.SaveChangesAsync();
                 return b;
         } 
-        catch(Exception)
+        catch(Exception ex)
         {
             throw new Exception("Aconteceu um erro interno!");
         }
