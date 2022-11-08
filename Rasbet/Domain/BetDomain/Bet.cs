@@ -30,10 +30,10 @@ public abstract class Bet
     {
     }
 
-    public Bet(double amount, DateTime start, string userId)
+    public Bet(double amount, string userId)
     {
         Amount = amount;
-        Start = start;
+        Start = DateTime.Now;
         UserId = userId;
     }
 

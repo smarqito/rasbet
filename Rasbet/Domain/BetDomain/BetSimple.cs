@@ -7,7 +7,7 @@ public class BetSimple : Bet
     {
     }
 
-    public BetSimple(Selection selection, double value, DateTime start, string userId) : base(value, start, userId)
+    public BetSimple(Selection selection, double value, string userId) : base(value, userId)
     {
         Selection = selection;
     }

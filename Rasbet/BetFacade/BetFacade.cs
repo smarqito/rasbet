@@ -21,7 +21,6 @@ public class BetFacade : IBetFacade
 
     // Métodos para o BetController
     public async Task<BetSimple> CreateBetSimple(double amount,
-                                                 DateTime start,
                                                  string userId,
                                                  CreateSelectionDTO selectionDTO)
     {
@@ -32,7 +31,7 @@ public class BetFacade : IBetFacade
             
             Selection newS = await CreateSelection(selectionDTO.BetTypeId, selectionDTO.OddId, selectionDTO.Odd, selectionDTO.GameId, server_odd);
 
-            bet = await BetRepository.CreateBetSimple(amount, start, userId, newS, server_odd);
+            bet = await BetRepository.CreateBetSimple(amount, userId, newS, server_odd);
         }
         catch (Exception e)
         {
@@ -52,7 +51,6 @@ public class BetFacade : IBetFacade
     }
 
     public async Task<BetMultiple> CreateBetMultiple(double amount,
-                                                     DateTime start,
                                                      string userId,
                                                      ICollection<CreateSelectionDTO> selectionDTOs)
     {
@@ -82,7 +80,6 @@ public class BetFacade : IBetFacade
         try
         {
             bet = await BetRepository.CreateBetMultiple(amount,
-                                                        start,
                                                         userId,
                                                         oddMultiple,
                                                         selections);

@@ -21,7 +21,6 @@ public class BetController : BaseController
         try
         {
             BetSimple bet = await BetFacade.CreateBetSimple(create.Amount,
-                                                            create.Start,
                                                             create.UserId,
                                                             create.selectionDTO);
             return Ok(bet);
@@ -38,24 +37,22 @@ public class BetController : BaseController
         try
         {
             BetMultiple bet = await BetFacade.CreateBetMultiple(create.Amount,
-                                                        create.Start,
                                                         create.UserId,
-                                                        create.selections);
+                                                        create.Selections);
             return Ok(bet);
         }
         catch (Exception e)
         {
             throw new Exception(e.Message);
         }
-        throw new NotImplementedException();
     }
 
     [HttpGet("open")]
-    public async Task<IActionResult> GetUserBetsOpen([FromBody] GetUserBetsDTO get)
+    public async Task<IActionResult> GetUserBetsOpen([FromQuery] string userId)
     {
         try
         {
-            ICollection<Bet> bets = await BetFacade.GetUserBetsByState(get.UserId, BetState.Open);
+            ICollection<Bet> bets = await BetFacade.GetUserBetsByState(userId, BetState.Open);
 
             return Ok(bets);
 
@@ -67,11 +64,11 @@ public class BetController : BaseController
     }
 
     [HttpGet("won")]
-    public async Task<IActionResult> GetUserBetsWon([FromBody] GetUserBetsDTO get)
+    public async Task<IActionResult> GetUserBetsWon([FromQuery] string userId)
     {
         try
         {
-            ICollection<Bet> bets = await BetFacade.GetUserBetsByState(get.UserId, BetState.Won);
+            ICollection<Bet> bets = await BetFacade.GetUserBetsByState(userId, BetState.Won);
 
             return Ok(bets);
 
@@ -83,11 +80,11 @@ public class BetController : BaseController
     }
 
     [HttpGet("lost")]
-    public async Task<IActionResult> GetUserBetsLost([FromBody] GetUserBetsDTO get) 
+    public async Task<IActionResult> GetUserBetsLost([FromQuery] string userId) 
     {
         try
         {
-            ICollection<Bet> bets = await BetFacade.GetUserBetsByState(get.UserId, BetState.Lost);
+            ICollection<Bet> bets = await BetFacade.GetUserBetsByState(userId, BetState.Lost);
             return Ok(bets);
 
         }

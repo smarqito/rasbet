@@ -35,7 +35,6 @@ public class BetRepository : IBetRepository
     }
 
     public async Task<BetSimple> CreateBetSimple(double amount,
-                                                 DateTime start,
                                                  string user,
                                                  Selection selection,
                                                  double serverOdd)
@@ -47,7 +46,7 @@ public class BetRepository : IBetRepository
         {
             if(selection.Odd > 1.2)
             {
-                b = new BetSimple(selection, amount, start, user);
+                b = new BetSimple(selection, amount, user);
                 await _context.Bets.AddAsync(b);    
             }
             else
@@ -72,7 +71,6 @@ public class BetRepository : IBetRepository
     }
 
     public async Task<BetMultiple> CreateBetMultiple(double amount,
-                                                     DateTime start,
                                                      string user,
                                                      double oddMultiple,
                                                      ICollection<Selection> selections)
@@ -107,7 +105,7 @@ public class BetRepository : IBetRepository
                 {
                     if(oddMultiple > 1.20)
                     {
-                        b = new BetMultiple(amount, start, user, oddMultiple, selections);
+                        b = new BetMultiple(amount, user, oddMultiple, selections);
                         await _context.Bets.AddAsync(b);
                     }
                     else

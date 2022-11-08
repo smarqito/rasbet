@@ -11,7 +11,7 @@ public class BetMultiple : Bet
     {
     }
 
-    public BetMultiple(double value, DateTime start, string userId, double oddMultiple, ICollection<Selection> selections) : base(value, start, userId)
+    public BetMultiple(double value, string userId, double oddMultiple, ICollection<Selection> selections) : base(value, userId)
     {
         OddMultiple = oddMultiple;
         Selections = selections;

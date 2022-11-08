@@ -6,8 +6,8 @@ namespace BetFacade;
 
 public interface IBetFacade
 {
-    Task<BetSimple> CreateBetSimple(double amount, DateTime start, string userId, CreateSelectionDTO selectionDTO);
-    Task<BetMultiple> CreateBetMultiple(double amount, DateTime start, string userId, ICollection<CreateSelectionDTO> selectionsDTOS);
+    Task<BetSimple> CreateBetSimple(double amount, string userId, CreateSelectionDTO selectionDTO);
+    Task<BetMultiple> CreateBetMultiple(double amount, string userId, ICollection<CreateSelectionDTO> selectionsDTOS);
     Task<ICollection<Bet>> GetUserBetsByState(string user, BetState state);
     Task<ICollection<Bet>> GetUserBetsByStart(string user, DateTime start);
     Task<ICollection<Bet>> GetUserBetsByAmount(string user, double amount);
