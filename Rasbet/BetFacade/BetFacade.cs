@@ -1,4 +1,5 @@
-﻿using BetApplication.Interfaces;
+﻿using BetApplication.Errors;
+using BetApplication.Interfaces;
 using Domain;
 using DTO;
 using DTO.BetDTO;
@@ -35,7 +36,7 @@ public class BetFacade : IBetFacade
         }
         catch (Exception e)
         {
-            throw;
+            throw new Exception(e.Message);
         }
 
         try
@@ -46,7 +47,7 @@ public class BetFacade : IBetFacade
         catch (Exception e)
         {
             await BetRepository.DeleteBet(bet.Id);
-            throw;
+            throw new Exception(e.Message);
         }
     }
 
@@ -162,19 +163,32 @@ public class BetFacade : IBetFacade
     //o método retorna true se existirem apostas vencedoras no update
     public async Task<bool> UpdateBets(ICollection<BetsOddsWonDTO> finishedGames)
     {
+        bool resp = false;
         try
         {
-            ICollection<Bet> won_bets = await BetRepository.UpdateBets(finishedGames);
+            ICollection<Bet> won_bets;
 
-            if (won_bets.Count > 0)
+            if (finishedGames.Count > 0)
             {
-                foreach (var bet in won_bets)
+                foreach (var finishedGame in finishedGames)
                 {
-                    await APIService.DepositUserBalance(new TransactionDTO(bet.UserId, bet.WonValue));
+                    ICollection<Selection> selecs = await SelectionRepository.GetSelectionByType(finishedGame.BetTypeId);
+                    won_bets = await BetRepository.UpdateBets(selecs, finishedGame.WinnerOddIds);
+
+                    if (won_bets.Count > 0)
+                    {
+                        foreach (var bet in won_bets)
+                        {
+                            await APIService.DepositUserBalance(new TransactionDTO(bet.UserId, bet.WonValue));
+                        }
+                        resp = true;
+                    }
                 }
-                return true;
+
+                return resp;
             }
-            return false;
+
+            else throw new FinishedGamesInvalidException("Os jogos enviados são inválidos!");
         }
         catch (Exception e)
         {

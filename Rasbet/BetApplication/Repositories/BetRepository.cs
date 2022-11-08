@@ -197,26 +197,24 @@ public class BetRepository : IBetRepository
         return bets;
     }
 
-    public async Task<ICollection<Bet>> UpdateBets(ICollection<BetsOddsWonDTO> finishedGames)
+    public async Task<ICollection<Bet>> UpdateBets(ICollection<Selection> selections, ICollection<int> odds)
     {
         ICollection<Bet> won_bets = new List<Bet>();
-        if(finishedGames.Count != 0)
+
+        foreach (Selection selection in selections)
         {
-            var bets = await _context.Bets.ToListAsync();
-            foreach (var bet in bets)
-            {
-                foreach(var finished in finishedGames)
-                {
-                    bet.SetFinishBet(finished.BetTypeId, finished.WinnerOddIds.ToList());
-                }
+            Bet bet = await _context.Bets.Where(b =>
+                (b.GetType() == typeof(BetSimple) && ((BetSimple)b).Selection.Id == selection.Id)
+                ||
+                (b.GetType() == typeof(BetMultiple) && ((BetMultiple)b).Selections.Contains(selection))
+                ).FirstAsync();
 
-                if(bet.State == BetState.Won) won_bets.Add(bet);
-            }
+            bet.SetFinishBet(selection.BetTypeId, odds.ToList());
 
-            await _context.SaveChangesAsync();
-
+            if (bet.State == BetState.Won) won_bets.Add(bet);
         }
-        else throw new FinishedGamesInvalidException("Os jogo enviados não são válidos!");
+        
+        await _context.SaveChangesAsync();
 
         return won_bets;
     }

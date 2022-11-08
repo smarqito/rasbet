@@ -41,6 +41,14 @@ public class APIService
         resp.EnsureSuccessStatusCode();
         return await resp.Content.ReadFromJsonAsync<BetType>();
     }
+    
+    //ir buscar bettype por id
+    public async Task<Game> GetGame(int gameId)
+    {
+        HttpResponseMessage resp = await _httpClientGameOdd.GetAsync($"GameOdd/game?gameId={gameId}");
+        resp.EnsureSuccessStatusCode();
+        return await resp.Content.ReadFromJsonAsync<Game>();
+    }
 
     //get user by id
     public async Task<User> GetUser(int userId)
