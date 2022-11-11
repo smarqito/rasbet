@@ -203,11 +203,13 @@ public class BetRepository : IBetRepository
 
         foreach (Selection selection in selections)
         {
-            Bet bet = await _context.Bets.Where(b =>
-                (b.GetType() == typeof(BetSimple) && ((BetSimple)b).Selection.Id == selection.Id)
-                ||
-                (b.GetType() == typeof(BetMultiple) && ((BetMultiple)b).Selections.Contains(selection))
-                ).FirstAsync();
+            Bet? bet = await _context.Bets.OfType<BetSimple>().Where(x => x.Selection.Id == selection.Id).FirstOrDefaultAsync();
+            if (bet == null)
+            {
+                bet = await _context.Bets.OfType<BetMultiple>()
+                                         .Where(x => x.Selections.Any(s => s.Id == selection.Id))
+                                         .FirstOrDefaultAsync();
+            }
 
             bet.SetFinishBet(selection.BetTypeId, odds.ToList());
 

@@ -79,20 +79,11 @@ public class SelectionRepository : ISelectionRepository
 
     public async Task<ICollection<Selection>> GetSelectionByType(int bettype)
     {
-        ICollection<Selection> selections = new List<Selection>();
-        var server_selections = await _context.Selections.ToListAsync();
+        ICollection<Selection> server_selections = await _context.Selections.Where(x => x.BetTypeId ==bettype).ToListAsync();
 
-        foreach (var selection in server_selections)
-        {
-            if (selection.BetTypeId == bettype)
-            {
-                selections.Add(selection);
-            }
-        }
-
-        if (selections.Count == 0)
+        if (server_selections.Count == 0)
             throw new NoSelectionsWithTypeException("Não existem seleções com apostas do tipo!");
 
-        return selections;
+        return server_selections;
     }
 }

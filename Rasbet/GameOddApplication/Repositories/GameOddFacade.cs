@@ -72,16 +72,34 @@ public class GameOddFacade : IGameOddFacade
         return Unit.Value;
     }
 
-    public async Task<Unit> SuspendGame(string gameId, string specialistId)
+    public async Task<Unit> SuspendGame(int gameId, string specialistId)
     {
-        return await gameRepository.ChangeGameState(gameId, specialistId, GameState.Suspended);
+        Game game = await gameRepository.GetGame(gameId);
+        return await gameRepository.ChangeGameState(game, specialistId, GameState.Suspended);
+    }
+
+    public async Task<Unit> FinishGame(int id, string result, string specialistId)
+    {
+        ICollection<BetsOddsWonDTO> res = new List<BetsOddsWonDTO>();
+        Game g = await gameRepository.GetGame(id);
+        await gameRepository.ChangeGameState(g, specialistId, GameState.Finished);
+        foreach (BetType betType in g.Bets)
+        {
+            if (specialistId != null)
+                betType.SpecialistId = specialistId;
+            betType.State = BetTypeState.FINISHED;
+            res.Add(new BetsOddsWonDTO(betType.Id, betType.SetWinningOdd(result).Select(x => x.Id).ToList()));
+            await gameOddContext.SaveChangesAsync();
+        }
+        await API.UpdateBets(res);
+        return Unit.Value;
     }
 
     public async Task<Unit> FinishGame(string id, string result, string? specialistId)
     {
         ICollection<BetsOddsWonDTO> res = new List<BetsOddsWonDTO>();
-        await gameRepository.ChangeGameState(id, specialistId, GameState.Finished);
         Game g = await gameRepository.GetGame(id);
+        await gameRepository.ChangeGameState(g, specialistId, GameState.Finished);
         foreach (BetType betType in g.Bets)
         {
             if (specialistId != null)
@@ -129,4 +147,6 @@ public class GameOddFacade : IGameOddFacade
         await gameOddContext.SaveChangesAsync();
         return Unit.Value;
     }
+
+    
 }

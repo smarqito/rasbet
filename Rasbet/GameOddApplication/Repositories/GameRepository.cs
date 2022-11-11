@@ -30,14 +30,13 @@ public class GameRepository : IGameRepository
         return Unit.Value;
     }
 
-    public async Task<Unit> ChangeGameState(string idSync, GameState state)
+    public async Task<Unit> ChangeGameState(Game g, GameState state)
     {
-        return await ChangeGameState(idSync, null, state);
+        return await ChangeGameState(g, null, state);
     }
 
-    public async Task<Unit> ChangeGameState(string gameId, string? specialistId, GameState state)
+    public async Task<Unit> ChangeGameState(Game g, string? specialistId, GameState state)
     {
-        Game g = await GetGame(gameId);
         if (state != g.State)
         {
             g.State = state;
@@ -89,6 +88,14 @@ public class GameRepository : IGameRepository
                                                     .FirstOrDefaultAsync(g => g.IdSync == idSync);
         if (g == null)
             throw new GameNotFoundException($"Game with id {idSync} don't exist!");
+        return g;
+    }
+
+    public async Task<Game> GetGame(int id)
+    {
+        Game? g = await gameOddContext.Game.FirstOrDefaultAsync(g => g.Id== id);
+        if (g == null)
+            throw new GameNotFoundException($"Game with id {id} don't exist!");
         return g;
     }
 
