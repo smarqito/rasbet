@@ -59,6 +59,20 @@ namespace GameOddAPI.Controllers
             }
         }
 
+        [HttpPatch("activate")]
+        public async Task<IActionResult> ActivateGame([FromQuery] int gameId, string specialistId)
+        {
+            try
+            {
+                await gameOddFacade.ActivateGame(gameId, specialistId);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
         [HttpGet("activeGames")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<ActiveGameDTO>))]
         public async Task<IActionResult> GetActivesGames()

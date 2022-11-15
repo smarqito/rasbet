@@ -78,6 +78,12 @@ public class GameOddFacade : IGameOddFacade
         return await gameRepository.ChangeGameState(game, specialistId, GameState.Suspended);
     }
 
+    public async Task<Unit> ActivateGame(int gameId, string specialistId)
+    {
+        Game game = await gameRepository.GetGame(gameId);
+        return await gameRepository.ChangeGameState(game, specialistId, GameState.Open);
+    }
+
     public async Task<Unit> FinishGame(int id, string result, string specialistId)
     {
         ICollection<BetsOddsWonDTO> res = new List<BetsOddsWonDTO>();
