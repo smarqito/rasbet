@@ -59,7 +59,8 @@ public class GameOddFacade : IGameOddFacade
                 else //O jogo ainda não acabou, atualizar as odds se necessário
                 {
                     CollectiveGame g = await gameRepository.GetCollectiveGame(game.Id);
-                    await betTypeRepository.UpdateBets(game.Bookmakers, g.AwayTeam, g.Id);
+                    if(g.SpecialistId != null)
+                        await betTypeRepository.UpdateBets(game.Bookmakers, g.AwayTeam, g.Id);
                 }
             }
             else if (game.Completed == false)

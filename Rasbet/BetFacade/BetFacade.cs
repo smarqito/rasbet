@@ -3,6 +3,7 @@ using BetApplication.Interfaces;
 using Domain;
 using DTO;
 using DTO.BetDTO;
+using DTO.GameOddDTO;
 using DTO.UserDTO;
 
 namespace BetFacade;
@@ -20,6 +21,13 @@ public class BetFacade : IBetFacade
         SelectionRepository = selectionRepository;
     }
 
+    public bool GameAvailable(DateTime start, string state)
+    {
+        if (start < DateTime.Now && state.Equals(GameState.Open))
+            return true;
+        else
+            return false;
+    }
     // Métodos para o BetController
     public async Task<BetSimple> CreateBetSimple(double amount,
                                                  string userId,
@@ -28,6 +36,13 @@ public class BetFacade : IBetFacade
         BetSimple? bet;
         try
         {
+            GameInfoDTO game = await APIService.GetGame(selectionDTO.GameId);
+            if (!GameAvailable(game.StartTime, game.State))
+            {
+                throw new GameNotAvailableException($"Game {selectionDTO.GameId} is not available");
+            }
+            
+
             double server_odd = await APIService.GetOdd(selectionDTO.BetTypeId, selectionDTO.OddId);
             
             Selection newS = await CreateSelection(selectionDTO.BetTypeId, selectionDTO.OddId, selectionDTO.Odd, selectionDTO.GameId, server_odd);
@@ -61,6 +76,12 @@ public class BetFacade : IBetFacade
         {
             try
             {
+                GameInfoDTO game = await APIService.GetGame(selectionDTO.GameId);
+                if (!GameAvailable(game.StartTime, game.State))
+                {
+                    throw new GameNotAvailableException($"Game {selectionDTO.GameId} is not available");
+                }
+
                 double server_odd = await APIService.GetOdd(selectionDTO.BetTypeId, selectionDTO.OddId);
 
                 Selection newS = await CreateSelection(selectionDTO.BetTypeId,
@@ -73,6 +94,7 @@ public class BetFacade : IBetFacade
             }
             catch (Exception e)
             {
+                await SelectionRepository.RemoveSelections(selections);
                 throw new Exception(e.Message);
             }
         }
