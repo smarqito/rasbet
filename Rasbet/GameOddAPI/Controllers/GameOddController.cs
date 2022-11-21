@@ -119,9 +119,17 @@ namespace GameOddAPI.Controllers
         }
 
         [HttpGet("GameInfo")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GameInfoDTO))]
         public async Task<IActionResult> GetGameInfo([FromQuery] int gameId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                GameInfoDTO game = await gameOddFacade.GetGameInfo(gameId);
+                return Ok(game);
+            }catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
     }
 }

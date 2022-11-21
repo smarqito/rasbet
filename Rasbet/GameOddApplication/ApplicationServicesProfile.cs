@@ -12,5 +12,6 @@ public class ApplicationServicesProfile : Profile
         CreateMap<Odd, OddDTO>();
         CreateMap<BetType, BetTypeDTO>();
         CreateMap<Game, ActiveGameDTO>();
+        CreateMap<Game, GameInfoDTO>();
     }
 }

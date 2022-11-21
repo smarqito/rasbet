@@ -154,5 +154,9 @@ public class GameOddFacade : IGameOddFacade
         return Unit.Value;
     }
 
-    
+    public async Task<GameInfoDTO> GetGameInfo(int gameId)
+    {
+        Game g = await gameRepository.GetGame(gameId);
+        return mapper.Map<GameInfoDTO>(g);
+    }
 }
