@@ -16,12 +16,17 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<UserContext>(opt =>
 {
     opt.UseSqlServer("Server=.\\SQLEXPRESS; Database=rasbet_user; Uid=rasbet; Pwd=Pa$$w0rd");
+    //opt.UseMySql()
 });
 builder.Services.AddIdentityUserConfig();
+
 //builder.Services.AddScoped<UserManager<Domain.User>>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IWalletRepository, WalletRepository>();
 
 var app = builder.Build();
+
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -30,7 +35,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

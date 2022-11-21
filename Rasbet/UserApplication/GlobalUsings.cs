@@ -4,3 +4,6 @@ global using System.Linq;
 global using System.Text;
 global using System.Threading.Tasks;
 global using Domain;
+global using Domain.UserDomain;
+global using UserApplication.Interfaces;
+global using UserApplication.Repositories;
