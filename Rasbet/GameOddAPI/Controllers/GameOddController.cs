@@ -117,5 +117,11 @@ namespace GameOddAPI.Controllers
             }
 
         }
+
+        [HttpGet("GameInfo")]
+        public async Task<IActionResult> GetGameInfo([FromQuery] int gameId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

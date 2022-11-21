@@ -41,7 +41,7 @@ public class BetFacade : IBetFacade
 
         try
         {
-            await APIService.WithdrawUserBalance(new TransactionDTO(userId, amount));
+            await APIService.WithdrawUserBalance(new DTO.UserDTO.TransactionDTO(userId, amount));
             return bet;
         }
         catch (Exception e)
@@ -91,7 +91,7 @@ public class BetFacade : IBetFacade
         }
         try
         {
-            await APIService.WithdrawUserBalance(new TransactionDTO(userId, amount));
+            await APIService.WithdrawUserBalance(new DTO.UserDTO.TransactionDTO(userId, amount));
             return bet;
         }
         catch (Exception e)
@@ -179,7 +179,7 @@ public class BetFacade : IBetFacade
                     {
                         foreach (var bet in won_bets)
                         {
-                            await APIService.DepositUserBalance(new TransactionDTO(bet.UserId, bet.WonValue));
+                            await APIService.DepositUserBalance(new DTO.UserDTO.TransactionDTO(bet.UserId, bet.WonValue));
                         }
                         resp = true;
                     }
