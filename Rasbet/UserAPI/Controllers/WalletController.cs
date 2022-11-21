@@ -121,4 +121,18 @@ public class WalletController : BaseController
         }
     }
 
+    /// <summary>
+    /// Get all transactions between 2 dates
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="start"></param>
+    /// <param name="end"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    [HttpGet("transactions")]
+    public Task<IActionResult> GetTransactions(string userId, DateTime start, DateTime end)
+    {
+        throw new NotImplementedException();
+    }
+
 }

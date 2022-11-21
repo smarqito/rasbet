@@ -35,6 +35,15 @@ public class WalletRepository : IWalletRepository
         return dto;
     }
 
+    public async Task<Wallet> GetWallet(string userId)
+    {
+        Wallet? wallet = await context.Wallet.Where(w => w.UserId.Equals(userId)).FirstOrDefaultAsync();
+
+        if (wallet == null) throw new Exception("O User id indicado não tem uma carteira associada.");
+
+        return wallet;
+    }
+
     /// <summary>
     /// Deposit funds to a user.
     /// </summary>
@@ -117,5 +126,15 @@ public class WalletRepository : IWalletRepository
         await context.SaveChangesAsync();
 
         return user;
+    }
+
+    public async Task<ICollection<DTO.TransactionDTO>> GetTransactions(string userId, DateTime start, DateTime end)
+    {
+        ICollection<Transaction> transactions = await context.Wallet.Where(u => u.Id.Equals(userId))
+                                                                    .SelectMany(x => x.Transactions)
+                                                                    .Where(x => x.Date > start && x.Date < end) 
+                                                                    .ToListAsync();
+
+        throw new NotImplementedException();
     }
 }
