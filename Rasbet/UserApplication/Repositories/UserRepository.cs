@@ -270,12 +270,12 @@ public class UserRepository : IUserRepository
     {
         try
         {
-            string from = "rasbet.apostasdesportivas@gmail.com";
+            string from = "rasbet.apostasdesportivas@outlook.com";
             MailMessage message = new MailMessage(from, to, subject, body);
-            SmtpClient client = new SmtpClient("smtp.gmail.com");
+            SmtpClient client = new SmtpClient("smtp-mail.outlook.com");
 
             client.EnableSsl = true;
-            client.Port = 465;
+            client.Port = 587;
             client.UseDefaultCredentials = false;
             client.DeliveryMethod = SmtpDeliveryMethod.Network;
             client.Credentials = new System.Net.NetworkCredential(from, "Ra$bet2022");
