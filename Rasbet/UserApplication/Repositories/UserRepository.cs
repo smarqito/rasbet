@@ -1,4 +1,5 @@
 using Domain.UserDomain;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Net.Mail;
@@ -266,11 +267,12 @@ public class UserRepository : IUserRepository
         return user;
     }
 
-    public void SendEmail(string to, string subject, string body)
+    public void SendEmail(string to, string subject, string code)
     {
         try
         {
             string from = "rasbet.apostasdesportivas@outlook.com";
+            string body = $"Olá!\nO seu código de confirmação é {code}.\nBoas apostas."
             MailMessage message = new MailMessage(from, to, subject, body);
             SmtpClient client = new SmtpClient("smtp-mail.outlook.com");
 
@@ -304,8 +306,10 @@ public class UserRepository : IUserRepository
         if (user == null) throw new Exception("E-mail inexistente.");
 
         string code = userManager.GenerateNewAuthenticatorKey();
+
         UpdateInfo update = new UpdateInfo(email, password, iban, phoneno, code);
         await context.Updates.AddAsync(update);
+      
         await context.SaveChangesAsync();
         string subject = "Confirmação de alterações no perfil";
         string message = code;
@@ -327,9 +331,11 @@ public class UserRepository : IUserRepository
 
         if (user == null) throw new Exception("E-mail inexistente.");
 
-        string code = await userManager.GetAuthenticatorKeyAsync(user);
-        UpdateInfo u = new UpdateInfo(email, password, code);
-        context.Updates.Add(u);
+        string code = userManager.GenerateNewAuthenticatorKey();
+
+        UpdateInfo update = new UpdateInfo(email, password, code);
+        await context.Updates.AddAsync(update);
+   
         await context.SaveChangesAsync();
         string subject = "Confirmação de alterações no perfil";
         string message = code;
@@ -351,9 +357,11 @@ public class UserRepository : IUserRepository
 
         if (user == null) throw new Exception("E-mail inexistente.");
 
-        string code = await userManager.GetAuthenticatorKeyAsync(user);
-        UpdateInfo u = new UpdateInfo(email, password, code);
-        context.Updates.Add(u);
+        string code = userManager.GenerateNewAuthenticatorKey();
+
+        UpdateInfo update = new UpdateInfo(email, password, code);
+        await context.Updates.AddAsync(update);
+
         await context.SaveChangesAsync();
         string subject = "Confirmação de alterações no perfil";
         string message = code;
@@ -375,14 +383,24 @@ public class UserRepository : IUserRepository
         if (user == null) throw new Exception("E-mail inexistente.");
 
         UpdateInfo? info = await context.Updates.Where(u => u.Email.Equals(email)).FirstOrDefaultAsync();
+
         if (info == null) throw new Exception("Utilizador não tem updates.");
+
         if (code.Equals(info.ConfirmationCode))
-        {
-            user.IBAN = info.IBAN;
-            await userManager.RemovePasswordAsync(user);
-            await userManager.AddPasswordAsync(user, info.Password);
-            await userManager.SetPhoneNumberAsync(user, info.PhoneNumber);
-            info.Accepted = true;
+        {   
+            if (info.IBAN != null)
+                user.IBAN = info.IBAN;
+
+            if (info.Password != null)
+            {
+                await userManager.RemovePasswordAsync(user);
+                await userManager.AddPasswordAsync(user, info.Password);
+            }
+
+            if (info.PhoneNumber != null)
+                await userManager.SetPhoneNumberAsync(user, info.PhoneNumber);
+
+            context.Updates.Remove(info);
             await context.SaveChangesAsync();
             return user;
         }
@@ -412,7 +430,7 @@ public class UserRepository : IUserRepository
         {
             await userManager.RemovePasswordAsync(user);
             await userManager.AddPasswordAsync(user, info.Password);
-            info.Accepted = true;
+            context.Updates.Remove(info);
             await context.SaveChangesAsync();
             return user;
         }
@@ -441,7 +459,7 @@ public class UserRepository : IUserRepository
         {
             await userManager.RemovePasswordAsync(user);
             await userManager.AddPasswordAsync(user, info.Password);
-            info.Accepted = true;
+            context.Updates.Remove(info);
             await context.SaveChangesAsync();
         }
         else
