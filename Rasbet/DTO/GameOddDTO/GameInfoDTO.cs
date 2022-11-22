@@ -10,5 +10,6 @@ public class GameInfoDTO
 {
     public DateTime StartTime { get; set; }
     public string State { get; set; }
+    public ICollection<BetInfoDTO> Bets { get; set; }
 
 }

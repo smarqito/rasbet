@@ -36,7 +36,7 @@ public class BetFacade : IBetFacade
         BetSimple? bet;
         try
         {
-            GameInfoDTO game = await APIService.GetGame(selectionDTO.GameId);
+            GameInfoDTO game = await APIService.GetGame(selectionDTO.GameId, false);
             if (!GameAvailable(game.StartTime, game.State))
             {
                 throw new GameNotAvailableException($"Game {selectionDTO.GameId} is not available");
@@ -76,7 +76,7 @@ public class BetFacade : IBetFacade
         {
             try
             {
-                GameInfoDTO game = await APIService.GetGame(selectionDTO.GameId);
+                GameInfoDTO game = await APIService.GetGame(selectionDTO.GameId, false);
                 if (!GameAvailable(game.StartTime, game.State))
                 {
                     throw new GameNotAvailableException($"Game {selectionDTO.GameId} is not available");

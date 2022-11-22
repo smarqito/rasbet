@@ -120,11 +120,11 @@ namespace GameOddAPI.Controllers
 
         [HttpGet("GameInfo")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GameInfoDTO))]
-        public async Task<IActionResult> GetGameInfo([FromQuery] int gameId)
+        public async Task<IActionResult> GetGameInfo([FromQuery] int gameId, bool detailed)
         {
             try
             {
-                GameInfoDTO game = await gameOddFacade.GetGameInfo(gameId);
+                GameInfoDTO game = await gameOddFacade.GetGameInfo(gameId, detailed);
                 return Ok(game);
             }catch(Exception e)
             {

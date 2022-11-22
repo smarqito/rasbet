@@ -155,9 +155,16 @@ public class GameOddFacade : IGameOddFacade
         return Unit.Value;
     }
 
-    public async Task<GameInfoDTO> GetGameInfo(int gameId)
+    public async Task<GameInfoDTO> GetGameInfo(int gameId, bool detailed)
     {
-        Game g = await gameRepository.GetGame(gameId);
+        IQueryable<Game> game = gameOddContext.Game.Where(x => x.Id.Equals(gameId));
+        if (detailed)
+        {
+            game.Include(x => x.Bets);
+        }
+        Game? g = await game.FirstOrDefaultAsync();
+        if (g == null)
+            throw new GameNotFoundException($"Game {gameId} not exists!");
         return mapper.Map<GameInfoDTO>(g);
     }
 }
