@@ -1,5 +1,6 @@
 ﻿using Domain;
 using Domain.ResultDomain;
+using DTO.GameOddDTO;
 using DTO.UserDTO;
 using System.Globalization;
 using System.Net.Http.Json;
@@ -43,11 +44,11 @@ public class APIService
     }
     
     //ir buscar bettype por id
-    public async Task<Game> GetGame(int gameId)
+    public async Task<GameInfoDTO> GetGame(int gameId, bool detailed)
     {
-        HttpResponseMessage resp = await _httpClientGameOdd.GetAsync($"GameOdd/game?gameId={gameId}");
+        HttpResponseMessage resp = await _httpClientGameOdd.GetAsync($"GameOdd/GameInfo?gameId={gameId}&detailed={detailed}");
         resp.EnsureSuccessStatusCode();
-        return await resp.Content.ReadFromJsonAsync<Game>();
+        return await resp.Content.ReadFromJsonAsync<GameInfoDTO>();
     }
 
     //get user by id

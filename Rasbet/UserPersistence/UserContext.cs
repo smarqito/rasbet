@@ -36,5 +36,7 @@ public class UserContext : IdentityDbContext<Domain.User>
         builder.Entity<Withdraw>();
         builder.Entity<Deposit>();
 
+        builder.Entity<UpdateInfo>().HasKey(x => x.Email);
+
     }
 }

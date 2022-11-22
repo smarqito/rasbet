@@ -59,7 +59,8 @@ public class GameOddFacade : IGameOddFacade
                 else //O jogo ainda não acabou, atualizar as odds se necessário
                 {
                     CollectiveGame g = await gameRepository.GetCollectiveGame(game.Id);
-                    await betTypeRepository.UpdateBets(game.Bookmakers, g.AwayTeam, g.Id);
+                    if(g.SpecialistId != null)
+                        await betTypeRepository.UpdateBets(game.Bookmakers, g.AwayTeam, g.Id);
                 }
             }
             else if (game.Completed == false)
@@ -154,5 +155,16 @@ public class GameOddFacade : IGameOddFacade
         return Unit.Value;
     }
 
-    
+    public async Task<GameInfoDTO> GetGameInfo(int gameId, bool detailed)
+    {
+        IQueryable<Game> game = gameOddContext.Game.Where(x => x.Id.Equals(gameId));
+        if (detailed)
+        {
+            game.Include(x => x.Bets);
+        }
+        Game? g = await game.FirstOrDefaultAsync();
+        if (g == null)
+            throw new GameNotFoundException($"Game {gameId} not exists!");
+        return mapper.Map<GameInfoDTO>(g);
+    }
 }

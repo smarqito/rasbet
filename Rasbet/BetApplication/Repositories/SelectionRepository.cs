@@ -86,4 +86,13 @@ public class SelectionRepository : ISelectionRepository
 
         return server_selections;
     }
+
+    public async Task RemoveSelections(ICollection<Selection> selections)
+    {
+        foreach(Selection s in selections)
+        {
+            _context.Selections.Remove(s);
+        }
+        await _context.SaveChangesAsync();
+    }
 }
