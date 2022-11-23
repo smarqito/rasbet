@@ -1,5 +1,6 @@
 using Domain;
 using Domain.UserDomain;
+using DTO.GameOddDTO;
 using DTO.LoginUserDTO;
 using DTO.UserDTO;
 using Microsoft.AspNetCore.Mvc;
@@ -22,14 +23,15 @@ namespace UserAPI.Controllers
         /// </summary>
         /// <param name="user"> Information used to log in an user (e-mail and password).</param>
         /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
-        [HttpPost("login")] 
+        [HttpPost("login")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserDTO))]
         public async Task<IActionResult> Login([FromBody] LoginUserDTO user)
         {
             try
             {
-                User u = await userRepository.Login(user.Email, 
+                UserDTO u = await userRepository.Login(user.Email, 
                                                     user.Password);
-                return Ok();
+                return Ok(u);
             }
             catch (Exception e)
             {

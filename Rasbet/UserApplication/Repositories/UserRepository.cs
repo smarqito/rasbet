@@ -1,4 +1,6 @@
 using Domain.UserDomain;
+using DTO.UserDTO;
+using Infrastructure;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -14,16 +16,19 @@ public class UserRepository : IUserRepository
     private readonly UserManager<User> userManager;
     private readonly SignInManager<User> signInManager;
     private readonly RoleManager<IdentityRole> roleManager;
+    private readonly IJwtGenerator jwtGenerator;
 
     public UserRepository(UserContext context,
                           UserManager<User> userManager,
                           SignInManager<User> signInManager,
-                          RoleManager<IdentityRole> roleManager)
+                          RoleManager<IdentityRole> roleManager,
+                          IJwtGenerator jwtGenerator)
     {
         this.context = context;
         this.userManager = userManager;
         this.signInManager = signInManager;
         this.roleManager = roleManager;
+        this.jwtGenerator = jwtGenerator;
     }
 
     /// <summary>
@@ -159,14 +164,19 @@ public class UserRepository : IUserRepository
     /// <param name="password"> Given password. </param>
     /// <returns>The user, if the log in was successfull.</returns>
     /// <exception>The given e-mail doesn't correspond to an user or the password was incorrect.</exception>
-    public async Task<User> Login(string email, string password)
+    public async Task<UserDTO> Login(string email, string password)
     {
-        var user = await userManager.FindByEmailAsync(email);
+        User user = await userManager.FindByEmailAsync(email);
         if (user == null) throw new Exception("E-mail inexistente.");
 
         var result = await signInManager.PasswordSignInAsync(email, password, false, false);
         if (result == SignInResult.Success)
-            return user;
+        {
+            string role = (await userManager.GetRolesAsync(user))[0];
+            string token = await jwtGenerator.CreateToken(user);
+            UserDTO userDto = new UserDTO(user.Name, user.Email, user.Language, token, role);
+            return userDto;
+        }
         throw new Exception("Password incorreta.");
     }
 
@@ -272,7 +282,7 @@ public class UserRepository : IUserRepository
         try
         {
             string from = "rasbet.apostasdesportivas@outlook.com";
-            string body = $"Olá!\nO seu código de confirmação é {code}.\nBoas apostas."
+            string body = $"Olá!\nO seu código de confirmação é {code}.\nBoas apostas.";
             MailMessage message = new MailMessage(from, to, subject, body);
             SmtpClient client = new SmtpClient("smtp-mail.outlook.com");
 
@@ -309,7 +319,7 @@ public class UserRepository : IUserRepository
 
         UpdateInfo update = new UpdateInfo(email, password, iban, phoneno, code);
         await context.Updates.AddAsync(update);
-      
+
         await context.SaveChangesAsync();
         string subject = "Confirmação de alterações no perfil";
         string message = code;
@@ -335,7 +345,7 @@ public class UserRepository : IUserRepository
 
         UpdateInfo update = new UpdateInfo(email, password, code);
         await context.Updates.AddAsync(update);
-   
+
         await context.SaveChangesAsync();
         string subject = "Confirmação de alterações no perfil";
         string message = code;
@@ -387,7 +397,7 @@ public class UserRepository : IUserRepository
         if (info == null) throw new Exception("Utilizador não tem updates.");
 
         if (code.Equals(info.ConfirmationCode))
-        {   
+        {
             if (info.IBAN != null)
                 user.IBAN = info.IBAN;
 
