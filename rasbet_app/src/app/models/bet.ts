@@ -6,7 +6,6 @@ import { IUser } from "./user";
 export type betState = "Open" | "Won" | "Lost";
 
 export interface ISelection {
-  id: number;
   odd: IOdd;
   oddValue: number;
   betType: IBetType;
@@ -15,7 +14,6 @@ export interface ISelection {
 }
 
 export interface IBet {
-  id: number;
   amount: number;
   wonValue: number;
   start: Date;

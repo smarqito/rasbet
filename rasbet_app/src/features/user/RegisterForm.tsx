@@ -1,13 +1,7 @@
-import {
-  Button,
-  Form,
-  Grid,
-  Header,
-  Message,
-  Segment,
-} from "semantic-ui-react";
+import { observer } from "mobx-react-lite";
+import { Button, Form, Grid, Header, Segment } from "semantic-ui-react";
 import { Field, Form as FinalForm } from "react-final-form";
-import { IUserLogin } from "../../app/models/user";
+import { useContext } from "react";
 import TextInput from "../../app/common/TextInput";
 import {
   composeValidators,
@@ -16,59 +10,64 @@ import {
   required,
 } from "../../app/common/Validators";
 import ErrorMessage from "../../app/common/ErrorMessage";
-import { useContext, useState } from "react";
 import { RootStoreContext } from "../../app/stores/rootStore";
+import { IAppUserRegister } from "../../app/models/user";
 import { FORM_ERROR } from "final-form";
 
-const LoginForm = () => {
+const RegisterForm: React.FC = () => {
   const rootStore = useContext(RootStoreContext);
-  const { login } = rootStore.userStore;
-  const [error, setError] = useState();
+  const { registerAppUser } = rootStore.userStore;
 
   return (
     <Grid textAlign="center" style={{ height: "100vh" }} verticalAlign="middle">
       <Grid.Column style={{ maxWidth: 450 }}>
         <Header as="h1" color="teal" textAlign="center">
-          Autenticação
+          Registo
         </Header>
         <FinalForm
-          onSubmit={(values: IUserLogin) =>
-            login(values).catch((error) => {
-              setError(error);
-              return {
-                [FORM_ERROR]: error,
-              };
-            })
-          }
+          onSubmit={(values: IAppUserRegister) => {
+            registerAppUser(values).catch((error) => ({
+              [FORM_ERROR]: error,
+            }));
+          }}
           render={({
             handleSubmit,
             submitError,
-            invalid,
             submitFailed,
+            invalid,
             dirtySinceLastSubmit,
           }) => (
-            <Form size="large" onSubmit={handleSubmit}>
+            <Form onSubmit={handleSubmit} size="large">
               <Segment stacked>
                 <Field
+                  name="username"
                   fluid
-                  name="email"
-                  icon="user"
                   component={TextInput}
+                  icon="user"
+                  iconPosition="left"
+                  placeholder="Nome de Utilizador"
+                  validate={required}
+                />
+                <Field
+                  name="email"
+                  component={TextInput}
+                  fluid
+                  icon="user"
                   iconPosition="left"
                   placeholder="E-mail"
                   validate={composeValidators(required, isEmail)}
                 />
                 <Field
-                  fluid
                   name="password"
-                  icon="lock"
                   component={TextInput}
+                  fluid
+                  icon="lock"
                   iconPosition="left"
                   placeholder="Password"
                   type="password"
                   validate={composeValidators(required, minLength(6))}
                 />
-                {submitFailed && submitError && !dirtySinceLastSubmit && (
+                {submitError && !dirtySinceLastSubmit && (
                   <ErrorMessage
                     error={submitError}
                     text="Utilizador ou pass errados"
@@ -77,20 +76,18 @@ const LoginForm = () => {
                 <Button
                   color="teal"
                   fluid
-                  disabled={invalid && !dirtySinceLastSubmit}
                   size="large"
-                  content="Entrar"
-                />
+                  disabled={submitFailed || (invalid && !dirtySinceLastSubmit)}
+                >
+                  Registar-se
+                </Button>
               </Segment>
             </Form>
           )}
         />
-        <Message>
-          Não tem conta ? <a href="registo">Regista-se</a>
-        </Message>
       </Grid.Column>
     </Grid>
   );
 };
 
-export default LoginForm;
+export default observer(RegisterForm);
