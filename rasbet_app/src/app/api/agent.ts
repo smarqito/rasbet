@@ -1,7 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { url } from "inspector";
 import { toast } from "react-toastify";
-import { isEmail } from "../common/Validators";
 import {
   IAppUserRegister,
   IUser,
@@ -43,6 +41,10 @@ const User = {
     coin: string,
     notif: boolean
   ) => requests.put(`/user/update/user`, { email, name, lang, coin, notif }),
+  updateSpecialist: (email: string, pass: string, lang: string) =>
+    requests.put(`/user/update/specialist`, { email, pass, lang }),
+  updateAdmin: (email: string, pass: string, lang: string) =>
+    requests.put(`/user/update/admin`, { email, pass, lang }),
   updateAppUserSensitive: (
     email: string,
     pass: string,
@@ -59,10 +61,6 @@ const User = {
     requests.put(`/user/sensitive/admin/confirm`, { email, pass }),
   updateSpecialistSensitiveConfirm: (email: string, pass: string) =>
     requests.put(`/user/sensitive/specialist/confirm`, { email, pass }),
-  updateSpecialist: (email: string, pass: string, lang: string) =>
-    requests.put(`/user/update/specialist`, { email, pass, lang }),
-  updateAdmin: (email: string, pass: string, lang: string) =>
-    requests.put(`/user/update/admin`, { email, pass, lang }),
 };
 
 const Bet = {};

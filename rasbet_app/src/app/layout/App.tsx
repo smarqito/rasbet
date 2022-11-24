@@ -1,23 +1,36 @@
-import { Fragment } from "react";
+import { Fragment, useContext, useEffect } from "react";
 import { observer } from "mobx-react-lite";
-import {
-  Route,
-  RouteComponentProps,
-  Switch,
-  withRouter,
-} from "react-router-dom";
-import { ToastContainer } from "react-toastify";
-import LoginForm from "../../features/user/LoginForm";
-import RegisterForm from "../../features/user/RegisterForm";
 import ModalContainer from "../common/ModalContainer";
+import { ToastContainer } from "react-toastify";
+import { Route, RouteComponentProps, Switch } from "react-router-dom";
 import NotFound from "./NotFound";
 import { Container } from "semantic-ui-react";
-import PrivateRoute from "./PrivateRoute";
+import RegisterForm from "../../features/appUser/RegisterForm";
+import LoginForm from "../../features/appUser/LoginForm";
+import "react-toastify/dist/ReactToastify.min.css";
+import { RootStoreContext } from "../stores/rootStore";
+import LoadingComponent from "./LoadingComponent";
 
-const App: React.FC<RouteComponentProps> = () => {
+const App: React.FC = () => {
+  const rootStore = useContext(RootStoreContext);
+  const { setAppLoaded, appLoaded, token} = rootStore.commonStore;
+  // const { } = rootStore.userStore;
+
+  // useEffect(() => {
+  //   if (token) {
+  //     getUser().finally(() => {
+  //       setAppLoaded();
+  //     });
+  //   } else {
+  //     setAppLoaded();
+  //   }
+  // }, [getUser, setAppLoaded, token]);
+
+  if (!appLoaded) {
+    return <LoadingComponent content="Loading app" />;
+  }
   return (
     <Fragment>
-      <ModalContainer />
       <ToastContainer position="bottom-right" />
       <Route exact path="/" component={LoginForm} />
       <Route exact path="/registo" component={RegisterForm} />
@@ -37,4 +50,4 @@ const App: React.FC<RouteComponentProps> = () => {
   );
 };
 
-export default withRouter(observer(App));
+export default observer(App);

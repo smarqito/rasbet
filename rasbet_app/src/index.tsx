@@ -1,9 +1,9 @@
+import React from "react";
 import ReactDOM from "react-dom";
-import "./index.css";
-import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import { createBrowserHistory } from "history";
+import App from "./app/layout/App";
 import { Router } from "react-router-dom";
+import { createBrowserHistory } from "history";
 import ScrollToTop from "./app/layout/ScrollToTop";
 
 export const history = createBrowserHistory();

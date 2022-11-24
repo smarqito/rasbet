@@ -2,6 +2,7 @@ import { configure } from "mobx";
 import { createContext } from "react";
 import BetStore from "./betStore";
 import BetTypeStore from "./betTypeStore";
+import CommonStore from "./commonStore";
 import GameStore from "./gameStore";
 import ModalStore from "./modalStore";
 import OddStore from "./oddStore";
@@ -20,6 +21,7 @@ export class RootStore {
   userStore: UserStore;
   walletStore: WalletStore;
   modalStore: ModalStore;
+  commonStore: CommonStore;
 
   constructor() {
     this.betStore = new BetStore();
@@ -30,6 +32,7 @@ export class RootStore {
     this.userStore = new UserStore(this);
     this.walletStore = new WalletStore();
     this.modalStore = new ModalStore(this);
+    this.commonStore = new CommonStore(this);
   }
 }
 

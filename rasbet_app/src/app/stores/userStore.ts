@@ -3,6 +3,7 @@ import {
   computed,
   makeObservable,
   observable,
+  reaction,
   runInAction,
 } from "mobx";
 import { toast } from "react-toastify";
@@ -24,11 +25,22 @@ export default class UserStore {
   constructor(rootStore: RootStore) {
     makeObservable(this);
     this.rootStore = rootStore;
+    reaction(
+      () => this.user,
+      (user) => {
+        if (user) {
+          window.localStorage.setItem("roles", user.role);
+        } else {
+          window.localStorage.removeItem("roles");
+        }
+      }
+    );
   }
 
   @observable user: IUser | null = null;
   @observable role: string | null = null;
   @observable loading = false;
+  @observable submitting = false;
 
   @action hasRole = (role: string) => {
     return this.user!.role == role;
@@ -53,9 +65,14 @@ export default class UserStore {
 
   @action registerAppUser = async (values: IAppUserRegister) => {
     try {
+      if (values.password !== values.repetePass) {
+        toast.error("Palavras-pass não coincidem!");
+        throw new Error();
+      }
+
       var a = await Agent.User.registerAppUser(values);
-      history.push("/");
       toast.info("Utilizador criado com sucesso!");
+      history.push("/");
     } catch (error) {
       throw error;
     }
@@ -77,5 +94,14 @@ export default class UserStore {
     } catch (error) {
       throw error;
     }
+  };
+
+  @action logout = async () => {
+    try {
+      // await Agent.User.logout(this.user)
+      this.rootStore.commonStore.setToken(null);
+      this.user = null;
+      history.push("/");
+    } catch (error) {}
   };
 }
