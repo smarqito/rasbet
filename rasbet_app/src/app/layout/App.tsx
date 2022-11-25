@@ -16,6 +16,7 @@ import "react-toastify/dist/ReactToastify.min.css";
 import { RootStoreContext } from "../stores/rootStore";
 import LoadingComponent from "./LoadingComponent";
 import ChangePass from "../../features/ChangePass";
+import { BetDashboard } from "../../features/appUser/betDashboard/BetDashboard";
 
 const App: React.FC<RouteComponentProps> = () => {
   const rootStore = useContext(RootStoreContext);
@@ -47,6 +48,7 @@ const App: React.FC<RouteComponentProps> = () => {
             <Container style={{ marginTop: "7em" }}>
               <Switch>
                 <Route exact path="/alterarPasse" component={ChangePass} />
+                <Route exact path="/user/homepage" component={BetDashboard} />
                 <Route component={NotFound} />
               </Switch>
             </Container>

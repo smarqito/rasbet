@@ -1,4 +1,4 @@
-import { IBet } from "./bet";
+import { IBetType } from "./betType";
 import { IUser } from "./user";
 
 export type GameState = "Open" | "Suspended" | "Finished";
@@ -11,8 +11,13 @@ export interface IGame {
   start: Date;
   sport: Sport;
   state: GameState;
-  bets: IBet[];
+  bets: IBetType[];
   specialist: IUser;
+  mainBet: IBetType;
+}
+
+export interface IActiveGame {
+
 }
 
 export interface CollectiveGame extends IGame {
