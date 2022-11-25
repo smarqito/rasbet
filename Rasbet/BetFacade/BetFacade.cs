@@ -1,4 +1,5 @@
-﻿using BetApplication.Errors;
+﻿using AutoMapper;
+using BetApplication.Errors;
 using BetApplication.Interfaces;
 using Domain;
 using DTO;
@@ -12,13 +13,17 @@ public class BetFacade : IBetFacade
 {
     public IBetRepository BetRepository;
     public ISelectionRepository SelectionRepository;
+    public IMapper mapper;
     public APIService APIService = new();
 
     public BetFacade(IBetRepository betRepository,
-                     ISelectionRepository selectionRepository)
+                     ISelectionRepository selectionRepository,
+                     IMapper mapper)
     {
         BetRepository = betRepository;
         SelectionRepository = selectionRepository;
+        this.mapper= mapper;
+
     }
 
     public bool GameAvailable(DateTime start, string state)
@@ -123,58 +128,12 @@ public class BetFacade : IBetFacade
         }
     }
 
-    public async Task<ICollection<Bet>> GetUserBetsByState(string user, BetState state)
+    public async Task<ICollection<BetDTO>> GetUserBetsByState(string user, BetState state)
     {
         try
         {
-            return await BetRepository.GetUserBetsByState(user, state);
-        }
-        catch (Exception e)
-        {
-            throw new Exception(e.Message);
-        }
-    }
-    public async Task<ICollection<Bet>> GetUserBetsByStart(string user, DateTime start)
-    {
-        try
-        {
-            return await GetUserBetsByStart(user, start);
-        }
-        catch (Exception e)
-        {
-            throw new Exception(e.Message);
-        }
-    }
-
-    public async Task<ICollection<Bet>> GetUserBetsByAmount(string user, double amount)
-    {
-        try
-        {
-            return await GetUserBetsByAmount(user, amount);
-        }
-        catch (Exception e)
-        {
-            throw new Exception(e.Message);
-        }
-    }
-
-    public async Task<ICollection<Bet>> GetUserBetsByEnd(string user, DateTime end)
-    {
-        try
-        {
-            return await GetUserBetsByEnd(user, end);
-        }
-        catch (Exception e)
-        {
-            throw new Exception(e.Message);
-        }
-    }
-
-    public async Task<ICollection<Bet>> GetUserBetsByWonValue(string user, double wonValue)
-    {
-        try
-        {
-            return await GetUserBetsByWonValue(user, wonValue);
+            ICollection<Bet> bets = await BetRepository.GetUserBetsByState(user, state);
+            return mapper.Map<ICollection<BetDTO>>(bets);
         }
         catch (Exception e)
         {

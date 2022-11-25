@@ -41,5 +41,6 @@ public abstract class Bet
     public void FinishBet(bool won)
     {
         State = won ? BetState.Won : BetState.Lost;
+        End = DateTime.Now;
     }
 }

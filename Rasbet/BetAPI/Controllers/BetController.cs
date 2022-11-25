@@ -48,11 +48,12 @@ public class BetController : BaseController
     }
 
     [HttpGet("open")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<BetDTO>))]
     public async Task<IActionResult> GetUserBetsOpen([FromQuery] string userId)
     {
         try
         {
-            ICollection<Bet> bets = await BetFacade.GetUserBetsByState(userId, BetState.Open);
+            ICollection<BetDTO> bets = await BetFacade.GetUserBetsByState(userId, BetState.Open);
 
             return Ok(bets);
 
@@ -64,11 +65,12 @@ public class BetController : BaseController
     }
 
     [HttpGet("won")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<BetDTO>))]
     public async Task<IActionResult> GetUserBetsWon([FromQuery] string userId)
     {
         try
         {
-            ICollection<Bet> bets = await BetFacade.GetUserBetsByState(userId, BetState.Won);
+            ICollection<BetDTO> bets = await BetFacade.GetUserBetsByState(userId, BetState.Won);
 
             return Ok(bets);
 
@@ -80,71 +82,12 @@ public class BetController : BaseController
     }
 
     [HttpGet("lost")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<BetDTO>))]
     public async Task<IActionResult> GetUserBetsLost([FromQuery] string userId) 
     {
         try
         {
-            ICollection<Bet> bets = await BetFacade.GetUserBetsByState(userId, BetState.Lost);
-            return Ok(bets);
-
-        }
-        catch (Exception e)
-        {
-            throw new Exception(e.Message);
-        }
-    }
-
-    [HttpGet("amount")]
-    public async Task<IActionResult> GetUserBetsByAmount([FromBody] GetUserBetsByValueDTO get)
-    {
-        try
-        {
-            ICollection<Bet> bets = await BetFacade.GetUserBetsByAmount(get.UserId, get.value);
-            return Ok(bets);
-
-        }
-        catch (Exception e)
-        {
-            throw new Exception(e.Message);
-        }
-    }
-
-    [HttpGet("wonValue")]
-    public async Task<IActionResult> GetUserBetsByWonValue([FromBody] GetUserBetsByValueDTO get)
-    {
-        try
-        {
-            ICollection<Bet> bets = await BetFacade.GetUserBetsByWonValue(get.UserId, get.value);
-            return Ok(bets);
-
-        }
-        catch (Exception e)
-        {
-            throw new Exception(e.Message);
-        }
-    }
-
-    [HttpGet("start")]
-    public async Task<IActionResult> GetUserBetsByStart([FromBody] GetUserBetsByDateDTO get)
-    {
-        try
-        {
-            ICollection<Bet> bets = await BetFacade.GetUserBetsByStart(get.UserId, get.DateTime);
-            return Ok(bets);
-
-        }
-        catch (Exception e)
-        {
-            throw new Exception(e.Message);
-        }
-    }
-
-    [HttpGet("end")]
-    public async Task<IActionResult> GetUserBetsByEnd([FromBody] GetUserBetsByDateDTO get)
-    {
-        try
-        {
-            ICollection<Bet> bets = await BetFacade.GetUserBetsByStart(get.UserId, get.DateTime);
+            ICollection<BetDTO> bets = await BetFacade.GetUserBetsByState(userId, BetState.Lost);
             return Ok(bets);
 
         }
