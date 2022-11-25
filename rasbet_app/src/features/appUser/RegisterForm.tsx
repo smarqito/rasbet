@@ -14,6 +14,7 @@ import {
   composeValidators,
   exactLength,
   isEmail,
+  isNumber,
   minLength,
   required,
 } from "../../app/common/Validators";
@@ -78,7 +79,6 @@ const RegisterForm: React.FC = () => {
           render={({
             handleSubmit,
             submitError,
-            submitFailed,
             invalid,
             dirtySinceLastSubmit,
           }) => (
@@ -137,7 +137,7 @@ const RegisterForm: React.FC = () => {
                   icon="lock"
                   iconPosition="left"
                   placeholder="NIF"
-                  validate={composeValidators(required, exactLength(9))}
+                  validate={composeValidators(required, exactLength(9), isNumber)}
                 />
                 <Segment>
                   <DatePicker

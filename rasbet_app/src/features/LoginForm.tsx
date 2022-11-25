@@ -7,24 +7,24 @@ import {
   Segment,
 } from "semantic-ui-react";
 import { Field, Form as FinalForm } from "react-final-form";
-import { IUserLogin } from "../../app/models/user";
-import TextInput from "../../app/common/TextInput";
+import { IUserLogin } from "../app/models/user";
+import TextInput from "../app/common/TextInput";
 import {
   composeValidators,
   isEmail,
   minLength,
   required,
-} from "../../app/common/Validators";
-import ErrorMessage from "../../app/common/ErrorMessage";
-import { useContext, useState } from "react";
-import { RootStoreContext } from "../../app/stores/rootStore";
+} from "../app/common/Validators";
+import ErrorMessage from "../app/common/ErrorMessage";
 import { FORM_ERROR } from "final-form";
-import { observer } from "mobx-react-lite";
 
-const LoginForm: React.FC = () => {
-  const rootStore = useContext(RootStoreContext);
-  const { login, submitting, loading } = rootStore.userStore;
+interface IProps {
+  loginFunc: (values: IUserLogin) => any;
+  submitting: boolean;
+  loading: boolean;
+}
 
+const LoginForm: React.FC<IProps> = ({ loginFunc, loading, submitting }) => {
   return (
     <Grid textAlign="center" style={{ height: "100vh" }} verticalAlign="middle">
       <Grid.Column style={{ maxWidth: 450 }}>
@@ -33,7 +33,7 @@ const LoginForm: React.FC = () => {
         </Header>
         <FinalForm
           onSubmit={(values: IUserLogin) =>
-            login(values).catch((error) => ({
+            loginFunc(values).catch((error: any) => ({
               [FORM_ERROR]: error,
             }))
           }
@@ -84,7 +84,7 @@ const LoginForm: React.FC = () => {
                   color="green"
                   fluid
                   loading={loading}
-                  disabled={invalid && !dirtySinceLastSubmit || submitting}
+                  disabled={(invalid && !dirtySinceLastSubmit) || submitting}
                   size="large"
                   content="Aceder"
                 />
@@ -100,4 +100,4 @@ const LoginForm: React.FC = () => {
   );
 };
 
-export default observer(LoginForm);
+export default LoginForm;

@@ -2,18 +2,24 @@ import { Fragment, useContext, useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import ModalContainer from "../common/ModalContainer";
 import { ToastContainer } from "react-toastify";
-import { Route, RouteComponentProps, Switch, withRouter } from "react-router-dom";
+import {
+  Route,
+  RouteComponentProps,
+  Switch,
+  withRouter,
+} from "react-router-dom";
 import NotFound from "./NotFound";
 import { Container } from "semantic-ui-react";
 import RegisterForm from "../../features/appUser/RegisterForm";
-import LoginForm from "../../features/appUser/LoginForm";
+import LoginForm from "../../features/LoginForm";
 import "react-toastify/dist/ReactToastify.min.css";
 import { RootStoreContext } from "../stores/rootStore";
 import LoadingComponent from "./LoadingComponent";
+import ChangePass from "../../features/ChangePass";
 
 const App: React.FC<RouteComponentProps> = () => {
   const rootStore = useContext(RootStoreContext);
-  const { setAppLoaded, appLoaded, token} = rootStore.commonStore;
+  const { setAppLoaded, appLoaded, token } = rootStore.commonStore;
   // const { } = rootStore.userStore;
 
   // useEffect(() => {
@@ -40,6 +46,7 @@ const App: React.FC<RouteComponentProps> = () => {
           <Fragment>
             <Container style={{ marginTop: "7em" }}>
               <Switch>
+                <Route exact path="/alterarPasse" component={ChangePass} />
                 <Route component={NotFound} />
               </Switch>
             </Container>

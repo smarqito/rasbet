@@ -15,7 +15,6 @@ import {
   IUser,
   IUserLogin,
   IUserRegister,
-  Role,
 } from "../models/user";
 import { RootStore } from "./rootStore";
 
@@ -58,6 +57,7 @@ export default class UserStore {
         this.user = user;
         this.role = user.role;
       });
+      this.rootStore.commonStore.setToken(user.token);
       history.push(getIn[user.role]);
       this.loading = false;
     } catch (error) {
@@ -117,10 +117,13 @@ export default class UserStore {
     } catch (error) {}
   };
 
-  @action getUser = async () => {
+  @action changePassByEmail = async (email: string) => {
     try {
-      
+      var password = "";
+      //password = Agent.User.changePassByEmail(email);
+      toast.info("Email enviado com nova Palavra-Passe!", { onClose: history.goBack, autoClose: 1000 });
     } catch (error) {
+      toast.info("Email inválido!");
       throw error;
     }
   };
