@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rasbet", "Rasbet\Rasbet.csproj", "{56B79EBB-8508-4DC6-8FFD-B8B8FA18C900}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RasbetGateway", "Rasbet\RasbetGateway.csproj", "{56B79EBB-8508-4DC6-8FFD-B8B8FA18C900}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserAPI", "UserAPI\UserAPI.csproj", "{B1FF588B-E977-40FD-B43A-79714EE0C140}"
 EndProject
@@ -29,7 +29,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BetFacade", "BetFacade\BetF
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserPersistence", "UserPersistence\UserPersistence.csproj", "{CEFD6357-F0E8-4803-91CB-F9B0F414CA19}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{825EAE4D-3A67-45B4-86B7-5EA5EF953EAB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{825EAE4D-3A67-45B4-86B7-5EA5EF953EAB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

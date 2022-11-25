@@ -18,6 +18,8 @@ builder.Services.AddAutoMapper(typeof(ApplicationServicesProfile));
 builder.Services.AddDbContext<BetContext>(opt =>
 {
     opt.UseSqlServer("Server=.\\SQLEXPRESS; Database=rasbet_bet; Uid=rasbet; Pwd=Pa$$w0rd");
+    opt.UseLazyLoadingProxies();
+    opt.EnableSensitiveDataLogging(true);
 });
 builder.Services.AddScoped<IBetRepository, BetRepository>();
 builder.Services.AddScoped<ISelectionRepository, SelectionRepository>();

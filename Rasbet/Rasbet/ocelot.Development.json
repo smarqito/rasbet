@@ -62,7 +62,7 @@
       "UpstreamHttpMethod": [ "POST" ]
     },
     {
-      "DownstreamPathTemplate": "/User/appuser/{id}",
+      "DownstreamPathTemplate": "/User/appuser?id={id}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -70,11 +70,11 @@
           "Port": "5000"
         }
       ],
-      "UpstreamPathTemplate": "/User/appuser/{id}",
+      "UpstreamPathTemplate": "/User/appuser?id={id}",
       "UpstreamHttpMethod": [ "GET" ]
     },
     {
-      "DownstreamPathTemplate": "/User/specialist/{id}",
+      "DownstreamPathTemplate": "/User/specialist?id={id}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -82,11 +82,11 @@
           "Port": "5000"
         }
       ],
-      "UpstreamPathTemplate": "/User/specialist/{id}",
+      "UpstreamPathTemplate": "/User/specialist?id={id}",
       "UpstreamHttpMethod": [ "GET" ]
     },
     {
-      "DownstreamPathTemplate": "/User/admin/{id}",
+      "DownstreamPathTemplate": "/User/admin?id={id}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -94,7 +94,7 @@
           "Port": "5000"
         }
       ],
-      "UpstreamPathTemplate": "/User/admin/{id}",
+      "UpstreamPathTemplate": "/User/admin?id={id}",
       "UpstreamHttpMethod": [ "GET" ]
     },
     {
@@ -194,7 +194,7 @@
       "UpstreamHttpMethod": [ "PUT" ]
     },
     {
-      "DownstreamPathTemplate": "/Wallet/{userId}",
+      "DownstreamPathTemplate": "/Wallet?userId={userId}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -202,7 +202,7 @@
           "Port": "5000"
         }
       ],
-      "UpstreamPathTemplate": "/Wallet/{userId}",
+      "UpstreamPathTemplate": "/Wallet/userId={userId}",
       "UpstreamHttpMethod": [ "GET" ]
     },
     {
@@ -254,7 +254,7 @@
       "UpstreamHttpMethod": [ "POST" ]
     },
     {
-      "DownstreamPathTemplate": "/Wallet/transactions",
+      "DownstreamPathTemplate": "/Wallet/transactions?userId={userId}&start={start}&end={end}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -262,7 +262,7 @@
           "Port": "5000"
         }
       ],
-      "UpstreamPathTemplate": "/Wallet/transactions/{userId}&{start}&{end}",
+      "UpstreamPathTemplate": "/Wallet/transactions?userId={userId}&start={start}&end={end}",
       "UpstreamHttpMethod": [ "GET" ]
     },
     //Bet API
@@ -291,7 +291,7 @@
       "UpstreamHttpMethod": [ "POST" ]
     },
     {
-      "DownstreamPathTemplate": "/Bet/open/{userId}",
+      "DownstreamPathTemplate": "/Bet/open?userId={userId}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -299,11 +299,11 @@
           "Port": "5001"
         }
       ],
-      "UpstreamPathTemplate": "/Bet/open/{userId}",
+      "UpstreamPathTemplate": "/Bet/open?userId={userId}",
       "UpstreamHttpMethod": [ "GET" ]
     },
     {
-      "DownstreamPathTemplate": "/Bet/won/{userId}",
+      "DownstreamPathTemplate": "/Bet/won?userId={userId}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -311,11 +311,11 @@
           "Port": "5001"
         }
       ],
-      "UpstreamPathTemplate": "/Bet/won/{userId}",
+      "UpstreamPathTemplate": "/Bet/won?userId={userId}",
       "UpstreamHttpMethod": [ "GET" ]
     },
     {
-      "DownstreamPathTemplate": "/Bet/lost/{userId}",
+      "DownstreamPathTemplate": "/Bet/lost?userId={userId}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -323,12 +323,12 @@
           "Port": "5001"
         }
       ],
-      "UpstreamPathTemplate": "/Bet/lost/{userId}",
+      "UpstreamPathTemplate": "/Bet/lost?userId={userId}",
       "UpstreamHttpMethod": [ "GET" ]
     },
     //GameOdd API
     {
-      "DownstreamPathTemplate": "/GameOdd/suspend/{gameId}&{specialistId}",
+      "DownstreamPathTemplate": "/GameOdd/suspend?gameId={gameId}&specialistId={specialistId}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -336,11 +336,11 @@
           "Port": "5002"
         }
       ],
-      "UpstreamPathTemplate": "/GameOdd/suspend/{gameId}&{specialistId}",
+      "UpstreamPathTemplate": "/GameOdd/suspend?gameId={gameId}&specialistId={specialistId}",
       "UpstreamHttpMethod": [ "PATCH" ]
     },
     {
-      "DownstreamPathTemplate": "/GameOdd/finish/{gameId}&{specialistId}",
+      "DownstreamPathTemplate": "/GameOdd/finish?gameId={gameId}&specialistId={specialistId}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -348,11 +348,11 @@
           "Port": "5002"
         }
       ],
-      "UpstreamPathTemplate": "/GameOdd/finish/{gameId}&{specialistId}",
+      "UpstreamPathTemplate": "/GameOdd/finish?gameId={gameId}&specialistId={specialistId}",
       "UpstreamHttpMethod": [ "PATCH" ]
     },
     {
-      "DownstreamPathTemplate": "/GameOdd/activate/{gameId}&{specialistId}",
+      "DownstreamPathTemplate": "/GameOdd/activate?gameId={gameId}&specialistId={specialistId}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -360,7 +360,7 @@
           "Port": "5002"
         }
       ],
-      "UpstreamPathTemplate": "/GameOdd/activate/{gameId}&{specialistId}",
+      "UpstreamPathTemplate": "/GameOdd/activate?gameId={gameId}&specialistId={specialistId}",
       "UpstreamHttpMethod": [ "PATCH" ]
     },
     {
