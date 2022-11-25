@@ -36,7 +36,7 @@ interface IErrors {
 
 const RegisterForm: React.FC = () => {
   const rootStore = useContext(RootStoreContext);
-  const { registerAppUser, submitting } = rootStore.userStore;
+  const { registerAppUser, loading } = rootStore.userStore;
   const [checkbox, setCheckbox] = useState(false);
   const [DateValue, setDateValue] = useState(new Date());
 
@@ -169,7 +169,7 @@ const RegisterForm: React.FC = () => {
                   color="green"
                   fluid
                   size="large"
-                  loading={submitting}
+                  loading={loading}
                   disabled={invalid && !dirtySinceLastSubmit}
                 >
                   Registar-se

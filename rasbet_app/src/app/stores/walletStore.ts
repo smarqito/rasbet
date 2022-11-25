@@ -1,4 +1,4 @@
-import { makeObservable } from "mobx";
+import { makeObservable, observable } from "mobx";
 import { RootStore } from "./rootStore";
 
 export default class WalletStore {
@@ -8,4 +8,6 @@ export default class WalletStore {
     makeObservable(this);
     this.rootStore = rootStore;
   }
+
+  @observable coisas: string = "null";
 }

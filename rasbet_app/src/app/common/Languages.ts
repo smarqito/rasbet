@@ -1,4 +1,4 @@
 export const Languages = [
-    {text : 'Português', value: 'Pt'},
-    {text: 'Inglês', value: 'Ing'}
+    {key: 'pt' , text : 'Português', value: 'Pt'},
+    {key: 'ing', text: 'Inglês', value: 'Ing'}
 ];

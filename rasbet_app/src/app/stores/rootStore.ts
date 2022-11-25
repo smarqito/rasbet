@@ -1,12 +1,9 @@
 import { configure } from "mobx";
 import { createContext } from "react";
 import BetStore from "./betStore";
-import BetTypeStore from "./betTypeStore";
 import CommonStore from "./commonStore";
 import GameStore from "./gameStore";
 import ModalStore from "./modalStore";
-import OddStore from "./oddStore";
-import TransactionStore from "./transactionStore";
 import UserStore from "./userStore";
 import WalletStore from "./walletStore";
 
@@ -14,10 +11,7 @@ configure({ enforceActions: "always" });
 
 export class RootStore {
   betStore: BetStore;
-  bettypeStore: BetTypeStore;
   gameStore: GameStore;
-  oddStore: OddStore;
-  transactionStore: TransactionStore;
   userStore: UserStore;
   walletStore: WalletStore;
   modalStore: ModalStore;
@@ -25,10 +19,7 @@ export class RootStore {
 
   constructor() {
     this.betStore = new BetStore(this);
-    this.bettypeStore = new BetTypeStore(this);
     this.gameStore = new GameStore(this);
-    this.oddStore = new OddStore(this);
-    this.transactionStore = new TransactionStore(this);
     this.userStore = new UserStore(this);
     this.walletStore = new WalletStore(this);
     this.modalStore = new ModalStore(this);

@@ -62,6 +62,7 @@ const User = {
     requests.put(`/user/sensitive/admin/confirm`, { email, pass }),
   updateSpecialistSensitiveConfirm: (email: string, pass: string) =>
     requests.put(`/user/sensitive/specialist/confirm`, { email, pass }),
+// Necessário logout?
   logout: (id: string) => requests.post(`/user/logout`, id),
 };
 

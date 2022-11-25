@@ -19,8 +19,9 @@ import ErrorMessage from "../../app/common/ErrorMessage";
 import { useContext, useState } from "react";
 import { RootStoreContext } from "../../app/stores/rootStore";
 import { FORM_ERROR } from "final-form";
+import { observer } from "mobx-react-lite";
 
-const LoginForm = () => {
+const LoginForm: React.FC = () => {
   const rootStore = useContext(RootStoreContext);
   const { login, submitting, loading } = rootStore.userStore;
 
@@ -64,7 +65,7 @@ const LoginForm = () => {
                   type="password"
                   validate={composeValidators(required, minLength(6))}
                 />
-                {/* <div
+                <div
                   style={{
                     paddingBottom: 10,
                     paddingRight: 10,
@@ -72,7 +73,7 @@ const LoginForm = () => {
                   }}
                 >
                   <a href="alterarPasse">Esqueci-me da palavra-passe</a>
-                </div> */}
+                </div>
                 {submitFailed && submitError && !dirtySinceLastSubmit && (
                   <ErrorMessage
                     error={submitError}
@@ -99,4 +100,4 @@ const LoginForm = () => {
   );
 };
 
-export default LoginForm;
+export default observer(LoginForm);

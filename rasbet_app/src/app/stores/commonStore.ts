@@ -22,7 +22,7 @@ export default class CommonStore {
       () => this.role,
       (role) => {
         if (role) {
-          window.localStorage.setItem("role", role.toString());
+          window.localStorage.setItem("role", role);
         } else {
           window.localStorage.removeItem("role");
         }

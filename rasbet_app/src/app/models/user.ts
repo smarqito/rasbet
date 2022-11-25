@@ -4,7 +4,6 @@ import { IWallet } from "./wallet";
 export type Role = "AppUser" | "Admin" | "Specialist";
 
 export interface IUser {
-  id: string;
   name: string;
   email: string;
   language: string;
