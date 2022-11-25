@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^13.5.0",
     "@types/react-datepicker": "^4.8.0",
     "axios": "^1.2.0",
+    "date-fns": "^2.29.3",
     "final-form": "^4.20.7",
     "mobx": "^6.7.0",
     "mobx-react-lite": "^3.4.0",

@@ -8,7 +8,7 @@ export interface IBetType {
   lastUpdate: Date;
   state: BetTypeState;
   specialist: IUser;
-  gameId: IGame;
+  gameId: number;
   odds: IOdd[];
 }
 

@@ -10,10 +10,11 @@ import LoginForm from "../../features/appUser/LoginForm";
 import "react-toastify/dist/ReactToastify.min.css";
 import { RootStoreContext } from "../stores/rootStore";
 import LoadingComponent from "./LoadingComponent";
+import { BetDashboard } from "../../features/appUser/betDashboard/BetDashboard";
 
 const App: React.FC<RouteComponentProps> = () => {
   const rootStore = useContext(RootStoreContext);
-  const { setAppLoaded, appLoaded, token} = rootStore.commonStore;
+  const { setAppLoaded, appLoaded, token } = rootStore.commonStore;
   // const { } = rootStore.userStore;
 
   // useEffect(() => {
@@ -40,6 +41,7 @@ const App: React.FC<RouteComponentProps> = () => {
           <Fragment>
             <Container style={{ marginTop: "7em" }}>
               <Switch>
+                <Route exact path="/user/homepage" component={BetDashboard} />
                 <Route component={NotFound} />
               </Switch>
             </Container>
