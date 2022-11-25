@@ -27,8 +27,10 @@ import {
 import { FORM_ERROR } from "final-form";
 import SelectInput from "../../app/common/SelectInput";
 import { Languages } from "../../app/common/Languages";
-import DatePicker from "react-datepicker";
+import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { pt } from "date-fns/locale";
+registerLocale("pt", pt);
 
 interface IErrors {
   repetePass?: string;
@@ -63,6 +65,7 @@ const RegisterForm: React.FC = () => {
           onSubmit={(values: IAppUserRegister) => {
             values.notif = checkbox;
             values.DOB = DateValue;
+            console.log(values);
             registerAppUser(values).catch((error) => ({
               [FORM_ERROR]: error,
             }));
@@ -72,7 +75,8 @@ const RegisterForm: React.FC = () => {
             if (values.password !== values.repetePass)
               errors.repetePass = "Não coincidem!";
 
-            if (getAge(values.DOB) < 18) errors.dob = "Idade não é válida";
+            if (getAge(DateValue) < 18) errors.dob = "Idade não é válida";
+
             return errors;
           }}
           initialValues={initialValues}
@@ -137,12 +141,19 @@ const RegisterForm: React.FC = () => {
                   icon="lock"
                   iconPosition="left"
                   placeholder="NIF"
-                  validate={composeValidators(required, exactLength(9), isNumber)}
+                  maxLength={9}
+                  validate={composeValidators(
+                    required,
+                    exactLength(9),
+                    isNumber
+                  )}
                 />
                 <Segment>
                   <DatePicker
                     selected={DateValue}
                     onChange={(date) => date && setDateValue(date)}
+                    locale="pt"
+                    dateFormat={"P"}
                   />
                 </Segment>
                 <Segment>
@@ -151,27 +162,18 @@ const RegisterForm: React.FC = () => {
                     label="Deseja ser notificado (por email)?"
                     checked={checkbox === true}
                     onChange={() => {
-                      if (checkbox === true) {
-                        setCheckbox(false);
-                      } else {
-                        setCheckbox(true);
-                      }
+                      setCheckbox(!checkbox);
                     }}
                   />
                 </Segment>
+                {/* {console.log( checkbox)} */}
                 {submitError && !dirtySinceLastSubmit && (
                   <ErrorMessage
                     error={submitError}
                     text="Parâmetros incorretos!"
                   />
                 )}
-                <Button
-                  color="green"
-                  fluid
-                  size="large"
-                  loading={loading}
-                  disabled={invalid && !dirtySinceLastSubmit}
-                >
+                <Button color="green" fluid size="large" type="submit">
                   Registar-se
                 </Button>
               </Segment>

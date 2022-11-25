@@ -62,11 +62,11 @@ export class AppUserRegisterFormValues implements IAppUserRegister {
   email: string = "";
   password: string = "";
   repetePass: string = "";
-  language: string = "";
+  language: string = "Pt";
   role: Role = "AppUser";
   NIF: string = "";
   DOB: Date = new Date();
-  notif: boolean = true;
+  notif: boolean = false;
   constructor(init?: IAppUserRegister) {
     Object.assign(this, init);
   }
@@ -97,7 +97,7 @@ export class SpecialistRegisterFromValues implements IUserRegister {
 }
 
 export const getIn = {
-  AppUser: "/homePage",
-  Admin: "/adminPage",
-  Specialist: "/specialistPage",
+  AppUser: "/user/homepage",
+  Admin: "/admin/homepage",
+  Specialist: "/specialist/homepage",
 };
