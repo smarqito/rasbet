@@ -2,7 +2,7 @@ import { Fragment, useContext, useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import ModalContainer from "../common/ModalContainer";
 import { ToastContainer } from "react-toastify";
-import { Route, RouteComponentProps, Switch } from "react-router-dom";
+import { Route, RouteComponentProps, Switch, withRouter } from "react-router-dom";
 import NotFound from "./NotFound";
 import { Container } from "semantic-ui-react";
 import RegisterForm from "../../features/appUser/RegisterForm";
@@ -11,7 +11,7 @@ import "react-toastify/dist/ReactToastify.min.css";
 import { RootStoreContext } from "../stores/rootStore";
 import LoadingComponent from "./LoadingComponent";
 
-const App: React.FC = () => {
+const App: React.FC<RouteComponentProps> = () => {
   const rootStore = useContext(RootStoreContext);
   const { setAppLoaded, appLoaded, token} = rootStore.commonStore;
   // const { } = rootStore.userStore;
@@ -26,9 +26,9 @@ const App: React.FC = () => {
   //   }
   // }, [getUser, setAppLoaded, token]);
 
-  if (!appLoaded) {
-    return <LoadingComponent content="Loading app" />;
-  }
+  // if (!appLoaded) {
+  //   return <LoadingComponent content="Loading app" />;
+  // }
   return (
     <Fragment>
       <ToastContainer position="bottom-right" />
@@ -50,4 +50,4 @@ const App: React.FC = () => {
   );
 };
 
-export default observer(App);
+export default withRouter(observer(App));

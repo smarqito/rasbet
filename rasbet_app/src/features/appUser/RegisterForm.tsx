@@ -8,7 +8,7 @@ import {
   Segment,
 } from "semantic-ui-react";
 import { Field, Form as FinalForm } from "react-final-form";
-import { SetStateAction, useContext, useState } from "react";
+import { useContext, useState } from "react";
 import TextInput from "../../app/common/TextInput";
 import {
   composeValidators,
@@ -39,7 +39,6 @@ const RegisterForm: React.FC = () => {
   const { registerAppUser, submitting } = rootStore.userStore;
   const [checkbox, setCheckbox] = useState(false);
   const [DateValue, setDateValue] = useState(new Date());
-  const [Lang, setLang] = useState(Languages[0].text);
 
   const [initialValues] = useState(new AppUserRegisterFormValues());
 
@@ -171,7 +170,7 @@ const RegisterForm: React.FC = () => {
                   fluid
                   size="large"
                   loading={submitting}
-                  disabled={submitFailed || (invalid && !dirtySinceLastSubmit)}
+                  disabled={invalid && !dirtySinceLastSubmit}
                 >
                   Registar-se
                 </Button>

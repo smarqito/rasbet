@@ -4,6 +4,7 @@ import { IWallet } from "./wallet";
 export type Role = "AppUser" | "Admin" | "Specialist";
 
 export interface IUser {
+  id: string;
   name: string;
   email: string;
   language: string;
@@ -11,11 +12,11 @@ export interface IUser {
   role: Role;
 }
 
-export interface AppUserInfo {
+export interface IAppUser extends IUser {
   IBAN?: string;
   NIF: string;
   DOB: Date;
-  phoneNum: string;
+  phoneNum?: string;
   wallet: IWallet;
   betHistory: IBet[];
   coin: string;
@@ -31,12 +32,12 @@ export interface IUserRegister {
   name: string;
   email: string;
   password: string;
+  repetePass: string;
   language: string;
   role: Role;
 }
 
 export interface IAppUserRegister extends IUserRegister {
-  repetePass: string;
   NIF: string;
   DOB: Date;
   notif: boolean;
@@ -76,6 +77,7 @@ export class AdminRegisterFromValues implements IUserRegister {
   name: string = "";
   email: string = "";
   password: string = "";
+  repetePass: string = "";
   language: string = "PT";
   role: Role = "Admin";
   constructor(init?: IUserRegister) {
@@ -87,6 +89,7 @@ export class SpecialistRegisterFromValues implements IUserRegister {
   name: string = "";
   email: string = "";
   password: string = "";
+  repetePass: string = "";
   language: string = "PT";
   role: Role = "Specialist";
   constructor(init?: IUserRegister) {

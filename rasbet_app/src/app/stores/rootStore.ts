@@ -24,13 +24,13 @@ export class RootStore {
   commonStore: CommonStore;
 
   constructor() {
-    this.betStore = new BetStore();
-    this.bettypeStore = new BetTypeStore();
-    this.gameStore = new GameStore();
-    this.oddStore = new OddStore();
-    this.transactionStore = new TransactionStore();
+    this.betStore = new BetStore(this);
+    this.bettypeStore = new BetTypeStore(this);
+    this.gameStore = new GameStore(this);
+    this.oddStore = new OddStore(this);
+    this.transactionStore = new TransactionStore(this);
     this.userStore = new UserStore(this);
-    this.walletStore = new WalletStore();
+    this.walletStore = new WalletStore(this);
     this.modalStore = new ModalStore(this);
     this.commonStore = new CommonStore(this);
   }

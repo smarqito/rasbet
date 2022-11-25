@@ -1,6 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import { toast } from "react-toastify";
 import {
+  IAppUser,
   IAppUserRegister,
   IUser,
   IUserLogin,
@@ -31,9 +32,9 @@ const User = {
   registerAdmin: (user: IUserRegister) => requests.post(`/user/admin`, user),
   registerSpecialist: (user: IUserRegister) =>
     requests.post(`/user/specialist`, user),
-  getAppUser: (id: string) => requests.get(`/user/appuser?id=${id}$`),
-  getSpecialist: (id: string) => requests.get(`/user/specialist?id=${id}$`),
-  getAdmin: (id: string) => requests.get(`/user/admin?id=${id}$`),
+  getAppUser: (id: string): Promise<IAppUser> => requests.get(`/user/appuser?id=${id}$`),
+  getSpecialist: (id: string): Promise<IUser> => requests.get(`/user/specialist?id=${id}$`),
+  getAdmin: (id: string): Promise<IUser> => requests.get(`/user/admin?id=${id}$`),
   updateAppUser: (
     email: string,
     name: string,
@@ -61,6 +62,7 @@ const User = {
     requests.put(`/user/sensitive/admin/confirm`, { email, pass }),
   updateSpecialistSensitiveConfirm: (email: string, pass: string) =>
     requests.put(`/user/sensitive/specialist/confirm`, { email, pass }),
+  logout: (id: string) => requests.post(`/user/logout`, id),
 };
 
 const Bet = {};

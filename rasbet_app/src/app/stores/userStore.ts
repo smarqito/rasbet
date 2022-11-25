@@ -98,10 +98,17 @@ export default class UserStore {
 
   @action logout = async () => {
     try {
-      // await Agent.User.logout(this.user)
+      await Agent.User.logout(this.user!.id);
       this.rootStore.commonStore.setToken(null);
       this.user = null;
       history.push("/");
     } catch (error) {}
+  };
+
+  @action getUser = async () => {
+    try {
+    } catch (error) {
+      throw error;
+    }
   };
 }

@@ -3,7 +3,6 @@ import {
   Form,
   Grid,
   Header,
-  Image,
   Message,
   Segment,
 } from "semantic-ui-react";
@@ -20,7 +19,6 @@ import ErrorMessage from "../../app/common/ErrorMessage";
 import { useContext, useState } from "react";
 import { RootStoreContext } from "../../app/stores/rootStore";
 import { FORM_ERROR } from "final-form";
-import { loadavg } from "os";
 
 const LoginForm = () => {
   const rootStore = useContext(RootStoreContext);
