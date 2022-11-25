@@ -6,6 +6,7 @@ using DTO;
 using DTO.BetDTO;
 using DTO.GameOddDTO;
 using DTO.UserDTO;
+using System.Net.Mail;
 
 namespace BetFacade;
 
@@ -141,26 +142,63 @@ public class BetFacade : IBetFacade
         }
     }
 
+    public void SendEmail(string to, string subject, string body)
+    {
+        try
+        {
+            string from = "rasbet.apostasdesportivas@outlook.com";
+            MailMessage message = new MailMessage(from, to, subject, body);
+            SmtpClient client = new SmtpClient("smtp-mail.outlook.com");
+
+            client.EnableSsl = true;
+            client.Port = 587;
+            client.UseDefaultCredentials = false;
+            client.DeliveryMethod = SmtpDeliveryMethod.Network;
+            client.Credentials = new System.Net.NetworkCredential(from, "Ra$bet2022");
+            client.Send(message);
+            client.Dispose();
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
     //o método retorna true se existirem apostas vencedoras no update
     public async Task<bool> UpdateBets(ICollection<BetsOddsWonDTO> finishedGames)
     {
         bool resp = false;
         try
         {
-            ICollection<Bet> won_bets;
+            ICollection<Bet> finished_bets;
 
             if (finishedGames.Count > 0)
             {
                 foreach (var finishedGame in finishedGames)
                 {
                     ICollection<Selection> selecs = await SelectionRepository.GetSelectionByType(finishedGame.BetTypeId);
-                    won_bets = await BetRepository.UpdateBets(selecs, finishedGame.WinnerOddIds);
+                    finished_bets = await BetRepository.UpdateBets(selecs, finishedGame.WinnerOddIds);
 
-                    if (won_bets.Count > 0)
+                    if (finished_bets.Count > 0)
                     {
-                        foreach (var bet in won_bets)
+                        foreach (var bet in finished_bets)
                         {
-                            await APIService.DepositUserBalance(new DTO.UserDTO.TransactionDTO(bet.UserId, bet.WonValue));
+                  
+                            UserSimpleDTO dto = await APIService.GetUserSimple(bet.UserId);
+                            string subject = "Resultado da aposta";
+                            string body = "";
+                            if(bet.State == BetState.Lost)
+                            {
+                                body = $"Olá!\nPerdeu a aposta que realizou no dia {bet.Start}.\nBoas apostas.";
+                            }
+
+                            if(bet.State == BetState.Won)
+                            { 
+                                body = $"Olá!\nGanhou {bet.WonValue} {dto.Coin} na aposta que realizou no dia {bet.Start}.\nBoas apostas.";
+                                await APIService.DepositUserBalance(new TransactionDTO(bet.UserId, bet.WonValue));
+                            }
+
+                            SendEmail(dto.Email, subject, body);
                         }
                         resp = true;
                     }
@@ -211,5 +249,6 @@ public class BetFacade : IBetFacade
             throw new Exception(e.Message);
         }
     }
+
 
 }

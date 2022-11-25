@@ -217,6 +217,22 @@ public class UserRepository : IUserRepository
         throw new Exception("Utilizador não encontrado.");
 
     }
+
+    /// <summary>
+    /// Retrieves an user based on its id.
+    /// </summary>
+    /// <param name="id"> Id of the user to be retrieved.</param>
+    /// <returns>The user, if it exists.</returns>
+    /// <exception>The given id doesn't correspond to an user.</exception>
+    public async Task<AppUser> GetUserSimple(string id)
+    {
+        var user = await userManager.FindByIdAsync(id);
+        if (user != null) 
+            return (AppUser) user;
+
+        throw new Exception("Utilizador não encontrado.");
+
+    }
     public async Task<Specialist> GetSpecialist(string id)
     {
         var user = await userManager.FindByIdAsync(id);

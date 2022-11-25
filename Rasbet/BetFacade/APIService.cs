@@ -52,12 +52,21 @@ public class APIService
     }
 
     //get user by id
-    public async Task<User> GetUser(int userId)
+    public async Task<User> GetUser(string userId)
     {
         HttpResponseMessage resp = await _httpClientUser.GetAsync($"User?userId={userId}");
         resp.EnsureSuccessStatusCode();
         return await resp.Content.ReadFromJsonAsync<User>();
     }
+
+    //get user simple by id
+    public async Task<UserSimpleDTO> GetUserSimple(string userId)
+    {
+        HttpResponseMessage resp = await _httpClientUser.GetAsync($"User/userSimple?id={userId}");
+        resp.EnsureSuccessStatusCode();
+        return await resp.Content.ReadFromJsonAsync<UserSimpleDTO>();
+    }
+
 
     //withdraw dinheiro do user
     public async Task WithdrawUserBalance(TransactionDTO dto)

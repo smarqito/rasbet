@@ -165,6 +165,30 @@ namespace UserAPI.Controllers
         /// </summary>
         /// <param name="id"> Id of the user to be retrieved.</param>
         /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
+        [HttpGet("userSimple/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserSimpleDTO))]
+        public async Task<IActionResult> GetUserSimple(string id)
+        {
+            try
+            {
+                AppUser user = await userRepository.GetUserSimple(id);
+
+                UserSimpleDTO dto = new UserSimpleDTO(user.Email, user.Language, user.Coin);
+
+                return Ok(dto);
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
+        }
+
+
+        /// <summary>
+        /// Retrieve UserDTO based on user id
+        /// </summary>
+        /// <param name="id"> Id of the user to be retrieved.</param>
+        /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
         [HttpGet("specialist/{id}")]
         public async Task<UserDTO> GetSpecialist(string id)
         {
@@ -355,5 +379,6 @@ namespace UserAPI.Controllers
                 return BadRequest(e.Message);
             }
         }
+
     }
 }
