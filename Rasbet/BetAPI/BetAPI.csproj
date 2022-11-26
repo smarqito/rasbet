@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BetFacade\BetFacade.csproj" />
+    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

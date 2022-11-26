@@ -31,13 +31,13 @@ public class Startup
                 .AddCacheManager(settings => settings.WithDictionaryHandle());
 
 
-        services.AddControllers(opt =>
-        {
-            var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
-            opt.Filters.Add(new AuthorizeFilter(policy));
-        });
-
-        BearerAuthentication.AddBearerAuthenticationConfig(services, Configuration);
+        //services.AddControllers(opt =>
+        //{
+        //    var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+        //    opt.Filters.Add(new AuthorizeFilter(policy));
+        //});
+        //
+        //BearerAuthentication.AddBearerAuthenticationConfig(services, Configuration);
     }
 
 
@@ -50,8 +50,9 @@ public class Startup
         }
 
         app.UseRouting();
-        app.UseAuthentication();
-        app.UseAuthorization();
+
+        //app.UseAuthentication();
+        //app.UseAuthorization();
 
 
         app.UseEndpoints(endpoints =>

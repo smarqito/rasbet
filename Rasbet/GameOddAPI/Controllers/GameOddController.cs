@@ -4,6 +4,7 @@ using DTO.GameOddDTO;
 using DTO.GetGamesRespDTO;
 using GameOddApplication.Interfaces;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GameOddAPI.Controllers
@@ -25,6 +26,7 @@ namespace GameOddAPI.Controllers
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
         [HttpPatch("suspend")]
+        [Authorize(Roles = "Specialist")]
         public async Task<IActionResult> SuspendGame([FromQuery] int gameId, string specialistId)
         {
             try
@@ -46,6 +48,7 @@ namespace GameOddAPI.Controllers
         /// <param name="specialistId"></param>
         /// <returns></returns>
         [HttpPatch("finish")]
+        [Authorize(Roles = "Specialist")]
         public async Task<IActionResult> FinishGame([FromQuery] int gameId, string result, string specialistId)
         {
             try
@@ -60,6 +63,7 @@ namespace GameOddAPI.Controllers
         }
 
         [HttpPatch("activate")]
+        [Authorize(Roles = "Specialist")]
         public async Task<IActionResult> ActivateGame([FromQuery] int gameId, string specialistId)
         {
             try
@@ -104,6 +108,7 @@ namespace GameOddAPI.Controllers
         }
 
         [HttpPatch("odds")]
+        [Authorize(Roles = "Specialist")]
         public async Task<IActionResult> ChangeOdds([FromBody] ChangeOddsDTO odds)
         {
             try

@@ -10,7 +10,8 @@ public class ApplicationServicesProfile : Profile
     public ApplicationServicesProfile()
     {
         CreateMap<Odd, OddDTO>();
-        CreateMap<BetType, BetTypeDTO>();
+        CreateMap<BetType, BetTypeDTO>()
+            .ForMember(x => x.Type, o => o.MapFrom(b => b.GetType().BaseType.Name));
         CreateMap<Game, ActiveGameDTO>()
             .ForMember(x => x.MainBet, o => o.MapFrom(g => g.Bets.Where(x => x.GetType().BaseType.Name.Equals("H2h")).FirstOrDefault()));
         CreateMap<Game, GameInfoDTO>();

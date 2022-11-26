@@ -2,6 +2,7 @@
 using Domain;
 using DTO;
 using DTO.BetDTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BetAPI.Controllers;
@@ -16,6 +17,7 @@ public class BetController : BaseController
     }
 
     [HttpPost("simple")]
+    [Authorize(Roles ="AppUser")]
     public async Task<IActionResult> CreateBetSimple([FromBody] CreateSimpleBetDTO create)
     {
         try
@@ -32,6 +34,7 @@ public class BetController : BaseController
     }
 
     [HttpPost("multiple")]
+    [Authorize(Roles = "AppUser")]
     public async Task<IActionResult> CreateBetMultiple([FromBody] CreateMultipleBetDTO create) 
     {
         try
@@ -48,6 +51,7 @@ public class BetController : BaseController
     }
 
     [HttpGet("open")]
+    [Authorize(Roles = "AppUser")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<BetDTO>))]
     public async Task<IActionResult> GetUserBetsOpen([FromQuery] string userId)
     {
@@ -65,6 +69,7 @@ public class BetController : BaseController
     }
 
     [HttpGet("won")]
+    [Authorize(Roles = "AppUser")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<BetDTO>))]
     public async Task<IActionResult> GetUserBetsWon([FromQuery] string userId)
     {
@@ -82,6 +87,7 @@ public class BetController : BaseController
     }
 
     [HttpGet("lost")]
+    [Authorize(Roles = "AppUser")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<BetDTO>))]
     public async Task<IActionResult> GetUserBetsLost([FromQuery] string userId) 
     {

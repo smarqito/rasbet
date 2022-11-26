@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GameOddApplication\GameOddApplication.csproj" />
+    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

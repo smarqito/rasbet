@@ -14,9 +14,9 @@ namespace Infrastructure
         private readonly SymmetricSecurityKey _key;
         private readonly UserManager<User> _userManager;
 
-        public JwtGenerator(IConfiguration config, UserManager<User> userManager)
+        public JwtGenerator(UserManager<User> userManager)
         {
-            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]));
+            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtTokenHandler.JWT_SECURITY_KEY));
             _userManager = userManager;
         }
 
@@ -38,7 +38,7 @@ namespace Infrastructure
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddDays(7),
+                Expires = DateTime.Now.AddHours(2),
                 SigningCredentials = credentials
             };
 
