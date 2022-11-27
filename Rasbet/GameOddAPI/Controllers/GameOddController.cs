@@ -131,7 +131,23 @@ namespace GameOddAPI.Controllers
             {
                 GameInfoDTO game = await gameOddFacade.GetGameInfo(gameId, detailed);
                 return Ok(game);
-            }catch(Exception e)
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet("Games")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<GameInfoDTO>))]
+        public async Task<IActionResult> GetGames([FromQuery] ICollection<int> gameIds)
+        {
+            try
+            {
+                ICollection<GameInfoDTO> resp = await gameOddFacade.GetGames(gameIds);
+                return Ok(resp);
+            }
+            catch (Exception e)
             {
                 return BadRequest(e.Message);
             }

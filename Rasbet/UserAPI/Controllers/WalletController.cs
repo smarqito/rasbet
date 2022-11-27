@@ -4,6 +4,7 @@ using UserApplication.Interfaces;
 using DTO.UserDTO;
 using Microsoft.AspNetCore.Identity;
 using DTO.BetDTO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace UserAPI.Controllers;
 
@@ -26,8 +27,9 @@ public class WalletController : BaseController
     /// </summary>
     /// <param name="userId">Id of the user whose wallet we want to retrieve.</param>
     /// <returns></returns>
-    [HttpGet("{userId}")]
-    public async Task<WalletDTO> Get(string userId)
+    [HttpGet]
+    [Authorize(Roles ="AppUser")]
+    public async Task<WalletDTO> Get([FromQuery]string userId)
     {
         WalletDTO dto = await walletRepository.Get(userId);
 

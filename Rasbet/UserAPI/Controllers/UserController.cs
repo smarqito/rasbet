@@ -3,6 +3,7 @@ using Domain.UserDomain;
 using DTO.GameOddDTO;
 using DTO.LoginUserDTO;
 using DTO.UserDTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UserApplication.Interfaces;
 
@@ -226,6 +227,7 @@ namespace UserAPI.Controllers
         /// <param name="updateInfo"> </param>
         /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
         [HttpPut("sensitive/user")]
+        [Authorize(Roles ="AppUser")]
         public async Task<IActionResult> UpdateAppUserSensitive([FromBody] SensitiveAppUserDTO updateInfo){
             try {   
                 await userRepository.UpdateAppUserSensitive(updateInfo.Email, updateInfo.Password, updateInfo.IBAN, updateInfo.PhoneNumber);

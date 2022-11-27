@@ -22,4 +22,5 @@ public interface IGameOddFacade
     public Task<double> GetOddValue(int oddId, int betTypeId);
     public Task<Unit> ChangeOdds(string specialistId, int betTypeId, Dictionary<int, double> newOdds);
     public Task<GameInfoDTO> GetGameInfo(int gameId, bool detailed);
+    public Task<ICollection<GameInfoDTO>> GetGames(ICollection<int> gameIds);
 }

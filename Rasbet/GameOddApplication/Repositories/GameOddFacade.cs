@@ -167,4 +167,10 @@ public class GameOddFacade : IGameOddFacade
             throw new GameNotFoundException($"Game {gameId} not exists!");
         return mapper.Map<GameInfoDTO>(g);
     }
+
+    public async Task<ICollection<GameInfoDTO>> GetGames(ICollection<int> gameIds)
+    {
+        ICollection<GameInfoDTO> dtos = await gameOddContext.Game.Join(gameIds, g => g.Id, id => id, (g, id) => g).ToListAsync();
+        return mapper.Map<ICollection<GameInfoDTO>>(dtos);
+    }
 }

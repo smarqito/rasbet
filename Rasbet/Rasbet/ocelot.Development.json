@@ -202,7 +202,7 @@
           "Port": "5000"
         }
       ],
-      "UpstreamPathTemplate": "/Wallet/userId={userId}",
+      "UpstreamPathTemplate": "/Wallet?userId={userId}",
       "UpstreamHttpMethod": [ "GET" ]
     },
     {
