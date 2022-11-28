@@ -8,5 +8,6 @@ namespace BetGamesAggregator.Services
         public Task<ICollection<BetDTO>> GetUserBetsWon(string userId);
         public Task<ICollection<BetDTO>> GetUserBetsLost(string userId);
         public Task<ICollection<BetDTO>> GetUserBetsOpen(string userId);
+        public Task<StatisticsDTO> GetStatisticsByGame(int gameId);
     }
 }

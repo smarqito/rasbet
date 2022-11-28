@@ -43,7 +43,7 @@ public class SelectionController : BaseController
     }
 
     [HttpGet("statistics")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<BetDTO>))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(StatisticsDTO))]
     public async Task<IActionResult> GetStatisticsByGame([FromQuery] int gameId)
     {
         try

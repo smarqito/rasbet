@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DTO.BetDTO;
 
-namespace DTO
+namespace DTO.BetGamesAggregator
 {
     public class BetGameDTO
     {
@@ -18,14 +18,14 @@ namespace DTO
         public ICollection<SelectionGameDTO> Selections { get; set; }
         public double Odd { get; set; }
 
-        public BetGameDTO(BetDTO.BetDTO bet) 
-        { 
-            this.Amount = bet.Amount;
-            this.WonValue= bet.WonValue;
-            this.Start = bet.Start;
-            this.End = bet.End;
-            this.State = bet.State;
-            this.Odd= bet.Odd;
+        public BetGameDTO(BetDTO.BetDTO bet)
+        {
+            Amount = bet.Amount;
+            WonValue = bet.WonValue;
+            Start = bet.Start;
+            End = bet.End;
+            State = bet.State;
+            Odd = bet.Odd;
             Selections = new List<SelectionGameDTO>();
         }
     }

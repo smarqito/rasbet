@@ -1,7 +1,7 @@
 ﻿using BetAPI.Controllers;
 using BetGamesAggregator.Services;
-using DTO;
 using DTO.BetDTO;
+using DTO.BetGamesAggregator;
 using DTO.GameOddDTO;
 using DTO.UserDTO;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +17,21 @@ namespace BetGamesAggregator.Controllers
         {
             this.betService = betService;
             this.gameOddService = gameOddService;
+        }
+
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<GameStatisticsDTO>))]
+        public async Task<IActionResult> GetActivesGames()
+        {
+            ICollection<GameDTO> games = await gameOddService.GetActivesGames();
+            ICollection<GameStatisticsDTO> res = new List<GameStatisticsDTO>();
+            foreach(GameDTO game in games)
+            {
+                GameStatisticsDTO s = new GameStatisticsDTO(game);
+                s.Statistics = await betService.GetStatisticsByGame(game.Id);
+                res.Add(s);
+            }
+            return Ok(res);
         }
 
         [HttpGet("won")]

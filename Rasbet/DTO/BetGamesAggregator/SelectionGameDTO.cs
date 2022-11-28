@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DTO
+namespace DTO.BetGamesAggregator
 {
     public class SelectionGameDTO
     {

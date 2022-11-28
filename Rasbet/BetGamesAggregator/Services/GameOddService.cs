@@ -13,6 +13,13 @@ namespace BetGamesAggregator.Services
         {
             _client = client ?? throw new ArgumentNullException(nameof(client));
         }
+
+        public async Task<ICollection<GameDTO>> GetActivesGames()
+        {
+            var response = await _client.GetAsync("/GameOdd/activeGames");
+            return await response.Content.ReadFromJsonAsync<ICollection<GameDTO>>();
+        }
+
         public async Task<GameDTO> GetGame(int ids)
         {
             var response = await _client.GetAsync("/GameOdd");

@@ -1,4 +1,5 @@
-﻿using DTO.BetDTO;
+﻿using Domain;
+using DTO.BetDTO;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BetGamesAggregator.Services
@@ -10,6 +11,12 @@ namespace BetGamesAggregator.Services
         public BetService(HttpClient client)
         {
             _client = client ?? throw new ArgumentNullException(nameof(client));
+        }
+
+        public async Task<StatisticsDTO> GetStatisticsByGame(int gameId)
+        {
+            var response = await _client.GetAsync($"/Selection/statistics?gameId={gameId}");
+            return await response.Content.ReadFromJsonAsync<StatisticsDTO>();
         }
 
         public async Task<ICollection<BetDTO>> GetUserBetsLost(string userId)

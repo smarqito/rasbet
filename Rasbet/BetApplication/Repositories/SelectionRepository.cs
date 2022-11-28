@@ -101,15 +101,16 @@ public class SelectionRepository : ISelectionRepository
     {
 
         ICollection<Selection> selections = await GetSelectionByGame(gameId);
-        int betCount = selections.Count;
 
         Dictionary<int, int> count = new Dictionary<int, int>();
 
+        int betCount = 0;
         foreach (Selection s in selections)
         {
             if (count.ContainsKey(s.OddId))
                 count[s.OddId]++;
             else count[s.OddId] = 1;
+            betCount++;
         }
 
         Dictionary<int, float> statistics = new Dictionary<int, float>();

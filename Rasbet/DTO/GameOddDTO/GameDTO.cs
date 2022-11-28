@@ -12,5 +12,13 @@ namespace DTO.GameOddDTO
         public DateTime StartTime { get; set; }
         public string SportName { get; set; }
         public BetTypeDTO MainBet { get; set; }
+
+        public GameDTO(GameDTO g)
+        {
+            Id = g.Id;
+            StartTime = g.StartTime;
+            SportName = g.SportName;
+            MainBet = g.MainBet;
+        }
     }
 }
