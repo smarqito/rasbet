@@ -145,9 +145,4 @@ public class WalletRepository : IWalletRepository
 
         return transactionsDTO;
     }
-
-    public async Task<ICollection<BetDTO>> GetHistoric(string userId)
-    {
-       return await service.GetBetHistory(userId);
-    }
 }
