@@ -129,24 +129,11 @@ public class BetFacade : IBetFacade
         }
     }
 
-    public async Task<ICollection<BetDTO>> GetUserBetsByState(string user, BetState state)
+    public async Task<ICollection<BetDTO>> GetUserBetsByState(string user, BetState state, DateTime start, DateTime end)
     {
         try
         {
-            ICollection<Bet> bets = await BetRepository.GetUserBetsByState(user, state);
-            return mapper.Map<ICollection<BetDTO>>(bets);
-        }
-        catch (Exception e)
-        {
-            throw new Exception(e.Message);
-        }
-    }
-
-    public async Task<ICollection<BetDTO>> GetUserAllBets(string user)
-    {
-        try
-        {
-            ICollection<Bet> bets = await BetRepository.GetUserAllBets(user);
+            ICollection<Bet> bets = await BetRepository.GetUserBetsByState(user, state, start, end);
             return mapper.Map<ICollection<BetDTO>>(bets);
         }
         catch (Exception e)

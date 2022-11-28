@@ -137,11 +137,19 @@ public class BetRepository : IBetRepository
             throw new InvalidSelectionsException("Não existem pelo menos 2 seleções!");
     }
 
-    public async Task<ICollection<Bet>> GetUserBetsByState(string user, BetState state)
+    public async Task<ICollection<Bet>> GetUserBetsByState(string user, BetState state, DateTime start, DateTime end)
     {
-        ICollection<Bet> bets = await _context.Bets.Where(b => b.UserId == user && b.State == state).ToListAsync();
+        ICollection<Bet> bets;
+        if (state == BetState.Open)   
+           bets = await _context.Bets.Where(b => b.UserId == user 
+                                            && b.State == state
+                                            && b.Start > start && b.Start < end).ToListAsync();
+        else
+           bets = await _context.Bets.Where(b => b.UserId == user 
+                                            && b.State == state
+                                            && b.End > start && b.End < end).ToListAsync();
 
-        if(bets.Count == 0)
+        if (bets.Count == 0)
         {
             throw new UserWithoutBetsException("O utilizador não tem bets associadas com o estado!");
         }
@@ -149,17 +157,6 @@ public class BetRepository : IBetRepository
         return bets;
     }
 
-    public async Task<ICollection<Bet>> GetUserAllBets(string user)
-    {
-        ICollection<Bet> bets = await _context.Bets.Where(b => b.UserId == user).ToListAsync();
-
-        if (bets.Count == 0)
-        {
-            throw new UserWithoutBetsException("O utilizador não tem bets associadas!");
-        }
-
-        return bets;
-    }
 
     public async Task<ICollection<Bet>> GetUserBetsByStart(string user, DateTime start)
     {

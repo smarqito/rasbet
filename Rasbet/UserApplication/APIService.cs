@@ -36,12 +36,4 @@ public class APIService
         resp.EnsureSuccessStatusCode();
         return await resp.Content.ReadFromJsonAsync<BetMultiple>();
     }
-
-    public async Task<ICollection<BetDTO>> GetBetHistory (string userId)
-    {
-        StringContent content = new StringContent(JsonSerializer.Serialize(userId));
-        HttpResponseMessage resp = await _httpClientBet.PostAsync($"Bet/all", content);
-        resp.EnsureSuccessStatusCode();
-        return await resp.Content.ReadFromJsonAsync<ICollection<BetDTO>>();
-    }
 }

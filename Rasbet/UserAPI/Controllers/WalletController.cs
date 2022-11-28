@@ -99,24 +99,4 @@ public class WalletController : BaseController
             return BadRequest(e.Message);
         }
     }
-
-    /// <summary>
-    /// Get historic of bets
-    /// </summary>
-    /// <param name="userId"></param>
-    /// <returns>The historic of bets made by the given user.</returns>
-    [HttpGet("historic")]
-    public async Task<IActionResult> GetHistoric(string userId)
-    {
-        try
-        {
-            ICollection<BetDTO> historic = await walletRepository.GetHistoric(userId);
-            return Ok(historic);
-        }
-        catch (Exception e)
-        {
-            return BadRequest(e.Message);
-        }
-    }
-
 }
