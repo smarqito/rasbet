@@ -10,5 +10,5 @@ public interface ISelectionRepository
     Task<ICollection<Selection>> GetSelectionByGame(int game);
     Task<ICollection<Selection>> GetSelectionByType(int bettype);
     Task RemoveSelections(ICollection<Selection> selections);
-    Task<StatisticsDTO> GetStatisticsByGame(int gameId);
+    Task<StatisticsDTO> GetStatisticsByGame(List<int> oddIds);
 }

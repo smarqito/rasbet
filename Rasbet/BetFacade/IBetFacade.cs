@@ -14,5 +14,5 @@ public interface IBetFacade
     Task<ICollection<Selection>> GetSelectionByGame(int game);
     Task<ICollection<Selection>> GetSelectionByType(int bettype);
 
-   Task<StatisticsDTO> GetStatisticsByGame(int gameId);
+   Task<StatisticsDTO> GetStatisticsByGame(List<int> oddIds);
 }
