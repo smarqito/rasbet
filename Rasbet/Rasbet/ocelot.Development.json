@@ -230,30 +230,6 @@
       "UpstreamHttpMethod": [ "PUT" ]
     },
     {
-      "DownstreamPathTemplate": "/Wallet/bet/simple",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": "5000"
-        }
-      ],
-      "UpstreamPathTemplate": "/Walletbet/simple",
-      "UpstreamHttpMethod": [ "POST" ]
-    },
-    {
-      "DownstreamPathTemplate": "/Wallet/bet/multiple",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": "5000"
-        }
-      ],
-      "UpstreamPathTemplate": "/Wallet/bet/multiple",
-      "UpstreamHttpMethod": [ "POST" ]
-    },
-    {
       "DownstreamPathTemplate": "/Wallet/transactions?userId={userId}&start={start}&end={end}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
@@ -386,6 +362,18 @@
       ],
       "UpstreamPathTemplate": "/GameOdd/odds",
       "UpstreamHttpMethod": [ "PATCH" ]
+    },
+    {
+      "DownstreamPathTemplate": "/GameOdd/Sports",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5002"
+        }
+      ],
+      "UpstreamPathTemplate": "/GameOdd/Sports",
+      "UpstreamHttpMethod": [ "GET" ]
     }
   ],
   "GlobalConfiguration": {

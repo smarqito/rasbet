@@ -78,12 +78,12 @@ namespace GameOddAPI.Controllers
         }
 
         [HttpGet("activeGames")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<ActiveGameDTO>))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<DTO.GameOddDTO.GameDTO>))]
         public async Task<IActionResult> GetActivesGames()
         {
             try
             {
-                ICollection<ActiveGameDTO> games = await gameOddFacade.GetActiveGames();
+                ICollection<DTO.GameOddDTO.GameDTO> games = await gameOddFacade.GetActiveGames();
                 return Ok(games);
             }
             catch (Exception e)
@@ -145,6 +145,20 @@ namespace GameOddAPI.Controllers
             try
             {
                 ICollection<GameInfoDTO> resp = await gameOddFacade.GetGames(gameIds);
+                return Ok(resp);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet("Sports")]
+        public async Task<IActionResult> GetAllSports()
+        {
+            try
+            {
+                ICollection<SportDTO> resp = await gameOddFacade.GetSports();
                 return Ok(resp);
             }
             catch (Exception e)

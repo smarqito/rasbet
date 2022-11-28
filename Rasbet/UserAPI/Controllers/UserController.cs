@@ -172,7 +172,7 @@ namespace UserAPI.Controllers
             try
             {
                 Specialist user = await userRepository.GetSpecialist(id);
-                UserDTO dto = new UserDTO(user.Name, user.Email, user.Language);
+                UserDTO dto = new UserDTO(user.Id, user.Name, user.Email, user.Language);
                 return dto;
             }
             catch (Exception e)
@@ -193,7 +193,7 @@ namespace UserAPI.Controllers
             try
             {
                 Admin user = await userRepository.GetAdmin(id);
-                UserDTO dto = new UserDTO(user.Name, user.Email, user.Language);
+                UserDTO dto = new UserDTO(user.Id, user.Name, user.Email, user.Language);
                 return dto;
             }
             catch (Exception e)

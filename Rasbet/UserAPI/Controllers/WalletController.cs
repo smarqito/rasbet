@@ -5,6 +5,7 @@ using DTO.UserDTO;
 using Microsoft.AspNetCore.Identity;
 using DTO.BetDTO;
 using Microsoft.AspNetCore.Authorization;
+using DTO.GameOddDTO;
 
 namespace UserAPI.Controllers;
 
@@ -29,11 +30,12 @@ public class WalletController : BaseController
     /// <returns></returns>
     [HttpGet]
     [Authorize(Roles ="AppUser")]
-    public async Task<WalletDTO> Get([FromQuery]string userId)
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(WalletDTO))]
+    public async Task<IActionResult> Get([FromQuery]string userId)
     {
         WalletDTO dto = await walletRepository.Get(userId);
 
-        return dto;
+        return Ok(dto);
     }
 
     /// <summary>
@@ -41,6 +43,7 @@ public class WalletController : BaseController
     /// </summary>
     /// <param name="value"></param>
     [HttpPut("deposit")]
+    [Authorize(Roles = "AppUser")]
     public async Task<IActionResult> DepositFunds([FromBody] TransactionDTO transaction)
     {
         try
@@ -60,6 +63,7 @@ public class WalletController : BaseController
     /// </summary>
     /// <param name="value"> Value to withdraw. </param>
     [HttpPut("withdraw")]
+    [Authorize(Roles = "AppUser")]
     public async Task<IActionResult> WithdrawFunds([FromBody] TransactionDTO transaction)
     {
         try
@@ -73,54 +77,6 @@ public class WalletController : BaseController
             return BadRequest(e.Message);
         }
 
-    }
-
-    /// <summary>
-    /// Register a bet to users wallet history
-    ///     - update account balance
-    ///     - insert into wallet history
-    ///     - keep the bet in open state until POST bet/result
-    /// </summary>
-    /// <param name="userId"> Id of the user who made the bet.</param>
-    /// <param name="betId"> Id of the bet.</param>
-    /// <param name="value"> Value of the bet.</param>
-    /// <param name="odd"> Odd of the bet.</param>
-    [HttpPost("bet/simple")]
-    public async Task<IActionResult> RegisterBetSimple([FromBody] CreateSimpleBetDTO bet)
-    {
-        try
-        {
-            await walletRepository.RegisterBetSimple(bet);
-            return Ok();
-        }
-        catch (Exception e)
-        {
-            return BadRequest(e.Message);
-        }
-    }
-
-    /// <summary>
-    /// Register a bet to users wallet history
-    ///     - update account balance
-    ///     - insert into wallet history
-    ///     - keep the bet in open state until POST bet/result
-    /// </summary>
-    /// <param name="userId"> Id of the user who made the bet.</param>
-    /// <param name="betId"> Id of the bet.</param>
-    /// <param name="value"> Value of the bet.</param>
-    /// <param name="odd"> Odd of the bet.</param>
-    [HttpPost("bet/multiple")]
-    public async Task<IActionResult> RegisterBetMult([FromBody] CreateMultipleBetDTO bet)
-    {
-        try
-        {
-            await walletRepository.RegisterBetMult(bet);
-            return Ok();
-        }
-        catch (Exception e)
-        {
-            return BadRequest(e.Message);
-        }
     }
 
     /// <summary>

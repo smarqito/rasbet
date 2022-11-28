@@ -174,7 +174,7 @@ public class UserRepository : IUserRepository
         {
             string role = (await userManager.GetRolesAsync(user))[0];
             string token = await jwtGenerator.CreateToken(user);
-            UserDTO userDto = new UserDTO(user.Name, user.Email, user.Language, token, role);
+            UserDTO userDto = new UserDTO(user.Id,user.Name, user.Email, user.Language, token, role);
             return userDto;
         }
         throw new Exception("Password incorreta.");
