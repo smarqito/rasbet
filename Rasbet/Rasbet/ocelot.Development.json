@@ -268,7 +268,7 @@
     },
     //BetGamesAggregator
     {
-      "DownstreamPathTemplate": "/BetGames/open?userId={userId}",
+      "DownstreamPathTemplate": "/BetGames/open?userId={userId}&start={start}&end={end}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -276,11 +276,11 @@
           "Port": "6001"
         }
       ],
-      "UpstreamPathTemplate": "/Bet/open?userId={userId}",
+      "UpstreamPathTemplate": "/Bet/open?userId={userId}&start={start}&end={end}",
       "UpstreamHttpMethod": [ "GET" ]
     },
     {
-      "DownstreamPathTemplate": "/BetGames/won?userId={userId}",
+      "DownstreamPathTemplate": "/BetGames/won?userId={userId}&start={start}&end={end}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -288,11 +288,11 @@
           "Port": "6001"
         }
       ],
-      "UpstreamPathTemplate": "/Bet/won?userId={userId}",
+      "UpstreamPathTemplate": "/Bet/won?userId={userId}&start={start}&end={end}",
       "UpstreamHttpMethod": [ "GET" ]
     },
     {
-      "DownstreamPathTemplate": "/BetGames/lost?userId={userId}",
+      "DownstreamPathTemplate": "/BetGames/closed?userId={userId}&start={start}&end={end}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -300,7 +300,7 @@
           "Port": "6001"
         }
       ],
-      "UpstreamPathTemplate": "/Bet/lost?userId={userId}",
+      "UpstreamPathTemplate": "/Bet/closed?userId={userId}&start={start}&end={end}",
       "UpstreamHttpMethod": [ "GET" ]
     },
     //GameOdd API
@@ -340,18 +340,20 @@
       "UpstreamPathTemplate": "/GameOdd/activate?gameId={gameId}&specialistId={specialistId}",
       "UpstreamHttpMethod": [ "PATCH" ]
     },
+    //BetGamesAggregator
     {
-      "DownstreamPathTemplate": "/GameOdd/activeGames",
+      "DownstreamPathTemplate": "/BetGames/activeGames",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": "5002"
+          "Port": "6001"
         }
       ],
       "UpstreamPathTemplate": "/GameOdd/activeGames",
       "UpstreamHttpMethod": [ "GET" ]
     },
+    //-------------------
     {
       "DownstreamPathTemplate": "/GameOdd/odds",
       "DownstreamScheme": "http",

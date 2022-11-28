@@ -125,7 +125,7 @@ public class GameOddFacade : IGameOddFacade
                                                      .Include(g => g.Sport)
                                                      .Include(g => g.Bets).ThenInclude(o => o.Odds)
                                                      .ToListAsync();
-        return mapper.Map< ICollection<DTO.GameOddDTO.GameDTO >> (games);
+        return (ICollection<DTO.GameOddDTO.GameDTO>)mapper.Map<ICollection<CollectiveGameDTO>> (games);
     }
 
     public async Task<double> GetOddValue(int oddId, int betTypeId)

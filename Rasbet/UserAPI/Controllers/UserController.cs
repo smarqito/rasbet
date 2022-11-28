@@ -139,8 +139,8 @@ namespace UserAPI.Controllers
         /// </summary>
         /// <param name="id"> Id of the user to be retrieved.</param>
         /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
-        [HttpGet("appuser/{id}")]
-        public async Task<AppUserDTO> GetAppUser(string id)
+        [HttpGet("appuser")]
+        public async Task<AppUserDTO> GetAppUser([FromQuery]string id)
         {
             try { 
                AppUser user = await userRepository.GetAppUser(id);
@@ -168,9 +168,9 @@ namespace UserAPI.Controllers
         /// </summary>
         /// <param name="id"> Id of the user to be retrieved.</param>
         /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
-        [HttpGet("userSimple/{id}")]
+        [HttpGet("userSimple")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserSimpleDTO))]
-        public async Task<IActionResult> GetUserSimple(string id)
+        public async Task<IActionResult> GetUserSimple([FromQuery] string id)
         {
             try
             {
@@ -192,8 +192,8 @@ namespace UserAPI.Controllers
         /// </summary>
         /// <param name="id"> Id of the user to be retrieved.</param>
         /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
-        [HttpGet("specialist/{id}")]
-        public async Task<UserDTO> GetSpecialist(string id)
+        [HttpGet("specialist")]
+        public async Task<UserDTO> GetSpecialist([FromQuery] string id)
         {
             try
             {
@@ -213,8 +213,8 @@ namespace UserAPI.Controllers
         /// </summary>
         /// <param name="id"> Id of the user to be retrieved.</param>
         /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
-        [HttpGet("admin/{id}")]
-        public async Task<UserDTO> GetAdmin(string id)
+        [HttpGet("admin")]
+        public async Task<UserDTO> GetAdmin([FromQuery] string id)
         {
             try
             {

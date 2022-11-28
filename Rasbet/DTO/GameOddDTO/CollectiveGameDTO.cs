@@ -10,5 +10,7 @@ namespace DTO.GameOddDTO
     {
         public string HomeTeam { get; set; }
         public string AwayTeam { get; set; }
+
+        public CollectiveGameDTO(GameDTO g) : base(g) { }
     }
 }

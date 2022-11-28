@@ -19,21 +19,21 @@ namespace BetGamesAggregator.Services
             return await response.Content.ReadFromJsonAsync<StatisticsDTO>();
         }
 
-        public async Task<ICollection<BetDTO>> GetUserBetsLost(string userId)
+        public async Task<ICollection<BetDTO>> GetUserBetsClosed(string userId, DateTime start, DateTime end)
         {
-            var response = await _client.GetAsync($"/Bet/lost?userId={userId}");
+            var response = await _client.GetAsync($"/Bet/closed?userId={userId}&start={start}&end={end}");
             return await response.Content.ReadFromJsonAsync<ICollection<BetDTO>>();
         }
 
-        public async Task<ICollection<BetDTO>> GetUserBetsOpen(string userId)
+        public async Task<ICollection<BetDTO>> GetUserBetsOpen(string userId, DateTime start, DateTime end)
         {
-            var response = await _client.GetAsync($"/Bet/open?userId={userId}");
+            var response = await _client.GetAsync($"/Bet/open?userId={userId}&start={start}&end={end}");
             return await response.Content.ReadFromJsonAsync<ICollection<BetDTO>>();
         }
 
-        public async Task<ICollection<BetDTO>> GetUserBetsWon(string userId)
+        public async Task<ICollection<BetDTO>> GetUserBetsWon(string userId, DateTime start, DateTime end)
         {
-            var response = await _client.GetAsync($"/Bet/won?userId={userId}");
+            var response = await _client.GetAsync($"/Bet/won?userId={userId}&start={start}&end={end}");
             return await response.Content.ReadFromJsonAsync<ICollection<BetDTO>>();
         }
     }

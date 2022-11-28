@@ -19,7 +19,7 @@ namespace BetGamesAggregator.Controllers
             this.gameOddService = gameOddService;
         }
 
-        [HttpGet]
+        [HttpGet("activeGames")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<GameStatisticsDTO>))]
         public async Task<IActionResult> GetActivesGames()
         {
@@ -36,9 +36,9 @@ namespace BetGamesAggregator.Controllers
 
         [HttpGet("won")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<BetGameDTO>))]
-        public async Task<IActionResult> GetUserBetsWon([FromQuery] string userId)
+        public async Task<IActionResult> GetUserBetsWon([FromQuery] string userId, DateTime start, DateTime end)
         {
-            ICollection<BetDTO> bets = await betService.GetUserBetsWon(userId);
+            ICollection<BetDTO> bets = await betService.GetUserBetsWon(userId, start, end);
             ICollection<BetGameDTO> res = new List<BetGameDTO>();
             foreach (BetDTO bet in bets)
             {
@@ -54,12 +54,12 @@ namespace BetGamesAggregator.Controllers
             return Ok(res);
         }
 
-        [HttpGet("lost")]
+        [HttpGet("closed")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<BetGameDTO>))]
 
-        public async Task<IActionResult> GetUserBetsLost([FromQuery] string userId)
+        public async Task<IActionResult> GetUserBetsClosed([FromQuery] string userId, DateTime start, DateTime end)
         {
-            ICollection<BetDTO> bets = await betService.GetUserBetsLost(userId);
+            ICollection<BetDTO> bets = await betService.GetUserBetsClosed(userId, start, end);
             ICollection<BetGameDTO> res = new List<BetGameDTO>();
             foreach (BetDTO bet in bets)
             {
@@ -78,9 +78,9 @@ namespace BetGamesAggregator.Controllers
         [HttpGet("open")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<BetGameDTO>))]
 
-        public async Task<IActionResult> GetUserBetsOpen([FromQuery] string userId)
+        public async Task<IActionResult> GetUserBetsOpen([FromQuery] string userId, DateTime start, DateTime end)
         {
-            ICollection<BetDTO> bets = await betService.GetUserBetsOpen(userId);
+            ICollection<BetDTO> bets = await betService.GetUserBetsOpen(userId, start, end);
             ICollection<BetGameDTO> res = new List<BetGameDTO>();
             foreach (BetDTO bet in bets)
             {
