@@ -47,6 +47,23 @@ public class BetController : BaseController
         }
     }
 
+    [HttpGet("all")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<BetDTO>))]
+    public async Task<IActionResult> GetUserAllBets([FromQuery] string userId)
+    {
+        try
+        {
+            ICollection<BetDTO> bets = await BetFacade.GetUserAllBets(userId);
+
+            return Ok(bets);
+
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
     [HttpGet("open")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<BetDTO>))]
     public async Task<IActionResult> GetUserBetsOpen([FromQuery] string userId)

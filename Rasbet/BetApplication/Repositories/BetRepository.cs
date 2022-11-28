@@ -149,6 +149,18 @@ public class BetRepository : IBetRepository
         return bets;
     }
 
+    public async Task<ICollection<Bet>> GetUserAllBets(string user)
+    {
+        ICollection<Bet> bets = await _context.Bets.Where(b => b.UserId == user).ToListAsync();
+
+        if (bets.Count == 0)
+        {
+            throw new UserWithoutBetsException("O utilizador não tem bets associadas!");
+        }
+
+        return bets;
+    }
+
     public async Task<ICollection<Bet>> GetUserBetsByStart(string user, DateTime start)
     {
         ICollection<Bet> bets = await _context.Bets.Where(b => b.UserId == user && b.Start == start).ToListAsync();

@@ -124,11 +124,10 @@ public class WalletController : BaseController
     /// <summary>
     /// Get all transactions between 2 dates
     /// </summary>
-    /// <param name="userId"></param>
-    /// <param name="start"></param>
-    /// <param name="end"></param>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
+    /// <param name="userId">Id of the user</param>
+    /// <param name="start">The date that starts the period of time of the transactions.</param>
+    /// <param name="end">The date that ends the period of time of the transactions.</param>
+    /// <returns>The transactions made on that period of  time by the given user.</returns>
     [HttpGet("transactions")]
     public async Task<IActionResult> GetTransactions(string userId, DateTime start, DateTime end)
     {
@@ -136,6 +135,25 @@ public class WalletController : BaseController
         {
             ICollection<TransactionDTO> transactions = await walletRepository.GetTransactions(userId, start, end);
             return Ok(transactions);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
+
+    /// <summary>
+    /// Get historic of bets
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns>The historic of bets made by the given user.</returns>
+    [HttpGet("historic")]
+    public async Task<IActionResult> GetHistoric(string userId)
+    {
+        try
+        {
+            ICollection<BetDTO> historic = await walletRepository.GetHistoric(userId);
+            return Ok(historic);
         }
         catch (Exception e)
         {

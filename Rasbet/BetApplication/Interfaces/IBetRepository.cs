@@ -11,6 +11,7 @@ public interface IBetRepository
     Task<BetMultiple> CreateBetMultiple(double amount, string user, double oddMultiple, ICollection<Selection> selections);
     Task<bool> DeleteBet(int betId);
     Task<ICollection<Bet>> GetUserBetsByState(string user, BetState state);
+    Task<ICollection<Bet>> GetUserAllBets(string user);
     Task<ICollection<Bet>> GetUserBetsByStart(string user, DateTime start);
     Task<ICollection<Bet>> GetUserBetsByAmount(string user, double amount);
     Task<ICollection<Bet>> GetUserBetsByEnd(string user, DateTime end);

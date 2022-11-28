@@ -142,6 +142,19 @@ public class BetFacade : IBetFacade
         }
     }
 
+    public async Task<ICollection<BetDTO>> GetUserAllBets(string user)
+    {
+        try
+        {
+            ICollection<Bet> bets = await BetRepository.GetUserAllBets(user);
+            return mapper.Map<ICollection<BetDTO>>(bets);
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
     public void SendEmail(string to, string subject, string body)
     {
         try
