@@ -5,6 +5,7 @@ using Domain;
 using Domain.ResultDomain;
 using DTO.BetDTO;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.ObjectModel;
 
 namespace BetApplication.Repositories;
 
@@ -97,10 +98,25 @@ public class SelectionRepository : ISelectionRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<StatisticsDTO> GetStatisticsByGame(int gameId)
+    public async Task<ICollection<Selection>> GetSelectionByOddId(List<int> oddIds)
+    {
+        ICollection<Selection> selections = new Collection<Selection>();
+        foreach (int oddId in oddIds)
+        {
+            ICollection<Selection> s_tmp = await _context.Selections.Where(x => x.OddId == oddId).ToListAsync();
+            selections = new Collection<Selection>(selections.Concat(s_tmp).ToList());
+        }
+
+        if (selections.Count == 0)
+            throw new NoSelectionsWithTypeException("Não existem seleções com apostas do tipo!");
+
+        return selections;
+    }
+
+    public async Task<StatisticsDTO> GetStatisticsByGame(List<int> oddIds)
     {
 
-        ICollection<Selection> selections = await GetSelectionByGame(gameId);
+        ICollection<Selection> selections = await GetSelectionByOddId(oddIds);
 
         Dictionary<int, int> count = new Dictionary<int, int>();
 

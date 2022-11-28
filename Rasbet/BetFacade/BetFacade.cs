@@ -250,11 +250,11 @@ public class BetFacade : IBetFacade
         }
     }
 
-    public async Task<StatisticsDTO> GetStatisticsByGame(int gameId)
+    public async Task<StatisticsDTO> GetStatisticsByGame(List<int> oddIds)
     {
         try
         {
-            return await SelectionRepository.GetStatisticsByGame(gameId);
+            return await SelectionRepository.GetStatisticsByGame(oddIds);
         }
         catch (Exception e)
         {
