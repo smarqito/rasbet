@@ -139,7 +139,7 @@ public class WalletRepository : IWalletRepository
         ICollection<TransactionDTO> transactionsDTO = new Collection<TransactionDTO>();
         foreach (Transaction transaction in transactions)
         {
-            TransactionDTO dto = new TransactionDTO(transaction.Balance, transaction.Date);
+            TransactionDTO dto = new TransactionDTO(transaction.Balance, transaction.Date, transaction.GetType().BaseType.Name);
             transactionsDTO.Add(dto);
         }
 

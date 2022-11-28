@@ -62,7 +62,7 @@ public class BetFacade : IBetFacade
 
         try
         {
-            await APIService.WithdrawUserBalance(new DTO.UserDTO.TransactionDTO(userId, amount));
+            await APIService.WithdrawUserBalance(new TransactionDTO(userId, amount, nameof(Withdraw)));
             return bet;
         }
         catch (Exception e)
@@ -119,7 +119,7 @@ public class BetFacade : IBetFacade
         }
         try
         {
-            await APIService.WithdrawUserBalance(new DTO.UserDTO.TransactionDTO(userId, amount));
+            await APIService.WithdrawUserBalance(new DTO.UserDTO.TransactionDTO(userId, amount, nameof(Withdraw)));
             return bet;
         }
         catch (Exception e)
@@ -195,7 +195,7 @@ public class BetFacade : IBetFacade
                             if(bet.State == BetState.Won)
                             { 
                                 body = $"Olá!\nGanhou {bet.WonValue} {dto.Coin} na aposta que realizou no dia {bet.Start}.\nBoas apostas.";
-                                await APIService.DepositUserBalance(new TransactionDTO(bet.UserId, bet.WonValue));
+                                await APIService.DepositUserBalance(new TransactionDTO(bet.UserId, bet.WonValue, nameof(Deposit)));
                             }
 
                             SendEmail(dto.Email, subject, body);
@@ -250,5 +250,15 @@ public class BetFacade : IBetFacade
         }
     }
 
-
+    public async Task<StatisticsDTO> GetStatisticsByGame(int gameId)
+    {
+        try
+        {
+            return await SelectionRepository.GetStatisticsByGame(gameId);
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
 }

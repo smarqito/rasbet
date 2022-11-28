@@ -130,9 +130,17 @@ public class WalletController : BaseController
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
     [HttpGet("transactions")]
-    public Task<IActionResult> GetTransactions(string userId, DateTime start, DateTime end)
+    public async Task<IActionResult> GetTransactions(string userId, DateTime start, DateTime end)
     {
-        throw new NotImplementedException();
+        try
+        {
+            ICollection<TransactionDTO> transactions = await walletRepository.GetTransactions(userId, start, end);
+            return Ok(transactions);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 
 }
