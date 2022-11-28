@@ -4,6 +4,7 @@ using BetPersistence;
 using Domain;
 using DTO;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Mail;
 
 namespace BetApplication.Repositories;
 
@@ -148,6 +149,18 @@ public class BetRepository : IBetRepository
         return bets;
     }
 
+    public async Task<ICollection<Bet>> GetUserAllBets(string user)
+    {
+        ICollection<Bet> bets = await _context.Bets.Where(b => b.UserId == user).ToListAsync();
+
+        if (bets.Count == 0)
+        {
+            throw new UserWithoutBetsException("O utilizador não tem bets associadas!");
+        }
+
+        return bets;
+    }
+
     public async Task<ICollection<Bet>> GetUserBetsByStart(string user, DateTime start)
     {
         ICollection<Bet> bets = await _context.Bets.Where(b => b.UserId == user && b.Start == start).ToListAsync();
@@ -197,9 +210,10 @@ public class BetRepository : IBetRepository
         return bets;
     }
 
+
     public async Task<ICollection<Bet>> UpdateBets(ICollection<Selection> selections, ICollection<int> odds)
     {
-        ICollection<Bet> won_bets = new List<Bet>();
+        ICollection<Bet> finished_bets = new List<Bet>();
 
         foreach (Selection selection in selections)
         {
@@ -213,12 +227,13 @@ public class BetRepository : IBetRepository
 
             bet.SetFinishBet(selection.BetTypeId, odds.ToList());
 
-            if (bet.State == BetState.Won) won_bets.Add(bet);
+            if (bet.State == BetState.Won || bet.State == BetState.Lost)
+                finished_bets.Add(bet);
         }
         
         await _context.SaveChangesAsync();
 
-        return won_bets;
+        return finished_bets;
     }
 
     public async Task<bool> DeleteBet(int betId)

@@ -11,5 +11,6 @@ public interface IWalletRepository
     Task WithdrawFunds(string id, double value);
     Task<AppUser> RegisterBetSimple(CreateSimpleBetDTO dto);
     Task<AppUser> RegisterBetMult(CreateMultipleBetDTO dto);
-    Task<ICollection<DTO.TransactionDTO>> GetTransactions(string userId, DateTime start, DateTime end);
+    Task<ICollection<TransactionDTO>> GetTransactions(string userId, DateTime start, DateTime end);
+    Task<ICollection<BetDTO>> GetHistoric(string userId);
 }

@@ -13,6 +13,7 @@ public interface IUserRepository
 	Task Logout();
 
     Task<AppUser> GetAppUser(string id);
+	Task<AppUser> GetUserSimple(string id);
     Task<Specialist> GetSpecialist(string id);
     Task<Admin> GetAdmin(string id);
 

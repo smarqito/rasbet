@@ -1,4 +1,5 @@
 ﻿using Domain;
+using DTO.BetDTO;
 
 namespace BetApplication.Interfaces;
 
@@ -9,4 +10,5 @@ public interface ISelectionRepository
     Task<ICollection<Selection>> GetSelectionByGame(int game);
     Task<ICollection<Selection>> GetSelectionByType(int bettype);
     Task RemoveSelections(ICollection<Selection> selections);
+    Task<StatisticsDTO> GetStatisticsByGame(int gameId);
 }

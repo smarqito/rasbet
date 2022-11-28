@@ -3,6 +3,7 @@ using DTO;
 using DTO.BetDTO;
 using DTO.UserDTO;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.ObjectModel;
 using UserApplication.Errors;
 using UserApplication.Interfaces;
 using UserPersistence;
@@ -128,13 +129,25 @@ public class WalletRepository : IWalletRepository
         return user;
     }
 
-    public async Task<ICollection<DTO.TransactionDTO>> GetTransactions(string userId, DateTime start, DateTime end)
+    public async Task<ICollection<TransactionDTO>> GetTransactions(string userId, DateTime start, DateTime end)
     {
         ICollection<Transaction> transactions = await context.Wallet.Where(u => u.Id.Equals(userId))
                                                                     .SelectMany(x => x.Transactions)
                                                                     .Where(x => x.Date > start && x.Date < end) 
                                                                     .ToListAsync();
 
-        throw new NotImplementedException();
+        ICollection<TransactionDTO> transactionsDTO = new Collection<TransactionDTO>();
+        foreach (Transaction transaction in transactions)
+        {
+            TransactionDTO dto = new TransactionDTO(transaction.Balance, transaction.Date, transaction.GetType().BaseType.Name);
+            transactionsDTO.Add(dto);
+        }
+
+        return transactionsDTO;
+    }
+
+    public async Task<ICollection<BetDTO>> GetHistoric(string userId)
+    {
+       return await service.GetBetHistory(userId);
     }
 }

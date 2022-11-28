@@ -41,4 +41,20 @@ public class SelectionController : BaseController
             throw new Exception(e.Message);
         }
     }
+
+    [HttpGet("statistics")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<BetDTO>))]
+    public async Task<IActionResult> GetStatisticsByGame([FromQuery] int gameId)
+    {
+        try
+        {
+            StatisticsDTO dto = await _betFacade.GetStatisticsByGame(gameId);
+            return Ok(dto);
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
 }

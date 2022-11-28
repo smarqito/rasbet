@@ -3,6 +3,7 @@ using BetApplication.Interfaces;
 using BetPersistence;
 using Domain;
 using Domain.ResultDomain;
+using DTO.BetDTO;
 using Microsoft.EntityFrameworkCore;
 
 namespace BetApplication.Repositories;
@@ -94,5 +95,31 @@ public class SelectionRepository : ISelectionRepository
             _context.Selections.Remove(s);
         }
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<StatisticsDTO> GetStatisticsByGame(int gameId)
+    {
+
+        ICollection<Selection> selections = await GetSelectionByGame(gameId);
+        int betCount = selections.Count;
+
+        Dictionary<int, int> count = new Dictionary<int, int>();
+
+        foreach (Selection s in selections)
+        {
+            if (count.ContainsKey(s.OddId))
+                count[s.OddId]++;
+            else count[s.OddId] = 1;
+        }
+
+        Dictionary<int, float> statistics = new Dictionary<int, float>();
+
+        foreach (KeyValuePair<int, int> entry in count)
+        {
+            statistics[entry.Key] = (float)Math.Round((Double)entry.Value / betCount, 2);
+        }
+
+        return new StatisticsDTO(betCount, statistics);
+
     }
 }
