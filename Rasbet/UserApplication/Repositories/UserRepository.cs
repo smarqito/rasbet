@@ -43,8 +43,10 @@ public class UserRepository : IUserRepository
     /// <param name="language"> User's preferred language. </param>
     /// <returns>The user, if the register was successfull.</returns>
     /// <exception>The user is under age or the chosen e-mail is already in use.</exception>
-    public async Task<AppUser> RegisterAppUser(string name, string email, string password, string nif, DateTime dob, bool notifications, string language)
+    public async Task<AppUser> RegisterAppUser(string name, string email, string password, string passwordRepeated, string nif, DateTime dob, bool notifications, string language)
     {
+        if (!password.Equals(passwordRepeated))
+            throw new Exception("As 2 passwords são diferentes");
         User user = await userManager.FindByEmailAsync(email);
 
         var today = DateTime.Today;

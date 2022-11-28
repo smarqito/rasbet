@@ -13,14 +13,16 @@ public class RegisterAppUserDTO
     public string NIF { get; set; }
     public DateTime DOB { get; set; }
     public string Password { get; set; }
+    public string PasswordRepeated { get; set; }
     public bool Notifications { get; set; }
     public string Language { get; set; }
 
-    public RegisterAppUserDTO(string name, string email, string password, string nIF, DateTime dOB, bool notifications, string language)
+    public RegisterAppUserDTO(string name, string email, string password, string passwordRepeated, string nIF, DateTime dOB, bool notifications, string language)
     {
         Name = name;
         Email = email;
         Password = password;
+        PasswordRepeated = passwordRepeated;
         NIF = nIF;
         DOB = dOB;
         Notifications = notifications;

@@ -75,6 +75,7 @@ namespace UserAPI.Controllers
                 await userRepository.RegisterAppUser(registerApp.Name,
                                                      registerApp.Email,
                                                      registerApp.Password,
+                                                     registerApp.PasswordRepeated,
                                                      registerApp.NIF,
                                                      registerApp.DOB,
                                                      registerApp.Notifications,
