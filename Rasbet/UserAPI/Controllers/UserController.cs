@@ -144,7 +144,8 @@ namespace UserAPI.Controllers
         {
             try { 
                AppUser user = await userRepository.GetAppUser(id);
-               AppUserDTO dto = new AppUserDTO(user.Name, 
+               AppUserDTO dto = new AppUserDTO(user.Id,
+                                               user.Name, 
                                                user.Language, 
                                                user.Email, 
                                                user.IBAN, 

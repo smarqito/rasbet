@@ -5,6 +5,6 @@ namespace BetGamesAggregator.Services
 {
     public interface IGameOddService
     {
-        public Task<ICollection<GameInfoDTO>> GetGames(ICollection<int> ids);
+        public Task<GameDTO> GetGame(int id);
     }
 }

@@ -138,13 +138,13 @@ namespace GameOddAPI.Controllers
             }
         }
 
-        [HttpGet("Games")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<GameInfoDTO>))]
-        public async Task<IActionResult> GetGames([FromQuery] ICollection<int> gameIds)
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DTO.GameOddDTO.GameDTO))]
+        public async Task<IActionResult> GetGames([FromQuery] int gameId)
         {
             try
             {
-                ICollection<GameInfoDTO> resp = await gameOddFacade.GetGames(gameIds);
+                DTO.GameOddDTO.GameDTO resp = await gameOddFacade.GetGame(gameId);
                 return Ok(resp);
             }
             catch (Exception e)

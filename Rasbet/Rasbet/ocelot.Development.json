@@ -266,37 +266,38 @@
       "UpstreamPathTemplate": "/Bet/simple",
       "UpstreamHttpMethod": [ "POST" ]
     },
+    //BetGamesAggregator
     {
-      "DownstreamPathTemplate": "/Bet/open?userId={userId}",
+      "DownstreamPathTemplate": "/BetGames/open?userId={userId}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": "5001"
+          "Port": "6001"
         }
       ],
       "UpstreamPathTemplate": "/Bet/open?userId={userId}",
       "UpstreamHttpMethod": [ "GET" ]
     },
     {
-      "DownstreamPathTemplate": "/Bet/won?userId={userId}",
+      "DownstreamPathTemplate": "/BetGames/won?userId={userId}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": "5001"
+          "Port": "6001"
         }
       ],
       "UpstreamPathTemplate": "/Bet/won?userId={userId}",
       "UpstreamHttpMethod": [ "GET" ]
     },
     {
-      "DownstreamPathTemplate": "/Bet/lost?userId={userId}",
+      "DownstreamPathTemplate": "/BetGames/lost?userId={userId}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": "5001"
+          "Port": "6001"
         }
       ],
       "UpstreamPathTemplate": "/Bet/lost?userId={userId}",

@@ -1,9 +1,14 @@
-﻿using BetGamesAggregator.Services;
+﻿using BetAPI.Controllers;
+using BetGamesAggregator.Services;
+using DTO;
+using DTO.BetDTO;
+using DTO.GameOddDTO;
+using DTO.UserDTO;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BetGamesAggregator.Controllers
 {
-    public class BetGamesController : Controller
+    public class BetGamesController : BaseController
     {
         private readonly IBetService betService;
         private readonly IGameOddService gameOddService;
@@ -15,21 +20,65 @@ namespace BetGamesAggregator.Controllers
         }
 
         [HttpGet("won")]
-        public Task<IActionResult> GetUserBetsWon([FromQuery] string userId)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<BetGameDTO>))]
+        public async Task<IActionResult> GetUserBetsWon([FromQuery] string userId)
         {
-            throw new NotImplementedException();
+            ICollection<BetDTO> bets = await betService.GetUserBetsWon(userId);
+            ICollection<BetGameDTO> res = new List<BetGameDTO>();
+            foreach (BetDTO bet in bets)
+            {
+                BetGameDTO betDTO = new BetGameDTO(bet);
+                foreach(SelectionDTO selection in bet.Selections)
+                {
+                    GameDTO game = await gameOddService.GetGame(selection.GameId);
+                    SelectionGameDTO selectionDTO = new SelectionGameDTO(selection.Odd, game, selection.Win);
+                    betDTO.Selections.Add(selectionDTO);
+                }
+                res.Add(betDTO);
+            }
+            return Ok(res);
         }
 
         [HttpGet("lost")]
-        public Task<IActionResult> GetUserBetsLost([FromQuery] string userId)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<BetGameDTO>))]
+
+        public async Task<IActionResult> GetUserBetsLost([FromQuery] string userId)
         {
-            throw new NotImplementedException();
+            ICollection<BetDTO> bets = await betService.GetUserBetsLost(userId);
+            ICollection<BetGameDTO> res = new List<BetGameDTO>();
+            foreach (BetDTO bet in bets)
+            {
+                BetGameDTO betDTO = new BetGameDTO(bet);
+                foreach (SelectionDTO selection in bet.Selections)
+                {
+                    GameDTO game = await gameOddService.GetGame(selection.GameId);
+                    SelectionGameDTO selectionDTO = new SelectionGameDTO(selection.Odd, game, selection.Win);
+                    betDTO.Selections.Add(selectionDTO);
+                }
+                res.Add(betDTO);
+            }
+            return Ok(res);
         }
 
         [HttpGet("open")]
-        public Task<IActionResult> GetUserBetsOpen([FromQuery] string userId)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<BetGameDTO>))]
+
+        public async Task<IActionResult> GetUserBetsOpen([FromQuery] string userId)
         {
-            throw new NotImplementedException();
+            ICollection<BetDTO> bets = await betService.GetUserBetsOpen(userId);
+            ICollection<BetGameDTO> res = new List<BetGameDTO>();
+            foreach (BetDTO bet in bets)
+            {
+                BetGameDTO betDTO = new BetGameDTO(bet);
+                foreach (SelectionDTO selection in bet.Selections)
+                {
+                    GameDTO game = await gameOddService.GetGame(selection.GameId);
+                    SelectionGameDTO selectionDTO = new SelectionGameDTO(selection.Odd, game, selection.Win);
+                    betDTO.Selections.Add(selectionDTO);
+                }
+                res.Add(betDTO);
+            }
+            return Ok(res);
         }
 
     }

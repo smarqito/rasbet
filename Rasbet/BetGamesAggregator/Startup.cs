@@ -33,10 +33,7 @@ namespace BetGamesAggregator
 
 
             services.AddControllers();
-            //services.AddSwaggerGen(c =>
-            //{
-            //    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Shopping.Aggregator", Version = "v1" });
-            //});
+            services.AddSwaggerGen();
             //
             //services.AddHealthChecks()
             //    .AddUrlGroup(new Uri($"{Configuration["ApiSettings:CatalogUrl"]}/swagger/index.html"), "Catalog.API", HealthStatus.Degraded)
@@ -50,8 +47,8 @@ namespace BetGamesAggregator
             if (env.IsDevelopment())
             {
                 //app.UseDeveloperExceptionPage();
-                //app.UseSwagger();
-                //app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Shopping.Aggregator v1"));
+                app.UseSwagger();
+                app.UseSwaggerUI();
             }
 
             app.UseRouting();
@@ -61,11 +58,11 @@ namespace BetGamesAggregator
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHealthChecks("/hc", new HealthCheckOptions()
-                {
-                    Predicate = _ => true,
-                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-                });
+                //endpoints.MapHealthChecks("/hc", new HealthCheckOptions()
+                //{
+                //    Predicate = _ => true,
+                //    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                //});
             });
         }
 

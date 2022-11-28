@@ -168,10 +168,10 @@ public class GameOddFacade : IGameOddFacade
         return mapper.Map<GameInfoDTO>(g);
     }
 
-    public async Task<ICollection<GameInfoDTO>> GetGames(ICollection<int> gameIds)
+    public async Task<DTO.GameOddDTO.GameDTO> GetGame(int gameId)
     {
-        ICollection<Game> games = await gameOddContext.Game.Join(gameIds, g => g.Id, id => id, (g, id) => g).ToListAsync();
-        return mapper.Map<ICollection<GameInfoDTO>>(games);
+        Game g = await gameRepository.GetGame(gameId);
+        return mapper.Map<DTO.GameOddDTO.GameDTO>(g);
     }
 
     public async Task<ICollection<SportDTO>> GetSports()
