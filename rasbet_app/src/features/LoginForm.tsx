@@ -22,11 +22,17 @@ interface IProps {
   loginFunc: (values: IUserLogin) => any;
   submitting: boolean;
   loading: boolean;
+  isAppUser: boolean;
 }
 
-const LoginForm: React.FC<IProps> = ({ loginFunc, loading, submitting }) => {
+const LoginForm: React.FC<IProps> = ({
+  loginFunc,
+  loading,
+  submitting,
+  isAppUser,
+}) => {
   return (
-    <Grid textAlign="center" style={{ height: "100vh" }} verticalAlign="middle">
+    <Grid textAlign="center" style={{ height: "90vh" }} verticalAlign="middle">
       <Grid.Column style={{ maxWidth: 450 }}>
         <Header as="h1" color="black" textAlign="center">
           Bem Vindo
@@ -72,7 +78,7 @@ const LoginForm: React.FC<IProps> = ({ loginFunc, loading, submitting }) => {
                     textAlign: "right",
                   }}
                 >
-                  <a href="alterarPasse">Esqueci-me da palavra-passe</a>
+                  <a href="changePass">Esqueci-me da palavra-passe</a>
                 </div>
                 {submitFailed && submitError && !dirtySinceLastSubmit && (
                   <ErrorMessage
@@ -92,9 +98,11 @@ const LoginForm: React.FC<IProps> = ({ loginFunc, loading, submitting }) => {
             </Form>
           )}
         />
-        <Message>
-          Não tem conta? <a href="registo">Registe-se já!</a>
-        </Message>
+        {isAppUser && (
+          <Message>
+            Não tem conta? <a href="register">Registe-se já!</a>
+          </Message>
+        )}
       </Grid.Column>
     </Grid>
   );

@@ -41,8 +41,14 @@ export default class UserStore {
   @observable loading = false;
   @observable submitting = false;
 
-  @action hasRole = (role: string) => {
-    return this.user!.role == role;
+  @action hasRole = (roles: string[]) => {
+    let isAuthorized = false;
+    if (this.user) {
+      roles.forEach(
+        (role) => (isAuthorized = isAuthorized || this.role == role)
+      );
+    }
+    return isAuthorized;
   };
 
   @computed get isLoggedIn() {
@@ -52,17 +58,33 @@ export default class UserStore {
   @action login = async (values: IUserLogin) => {
     this.loading = true;
     try {
-      const user = await Agent.User.login(values);
-      runInAction(() => {
+      // const user = await Agent.User.login(values);
+      // runInAction(() => {
+      //   this.user = user;
+      //   this.role = user.role;
+      // });
+
+      const user: IUser = {
+        name: "Jose Alberto",
+        email: "jafmalheiro@live.com.pt",
+        language: "Português",
+        token: "tokenJose",
+        role: "AppUser",
+      };
+
+      if (values.email == user.email && values.password == "123456") {
         this.user = user;
         this.role = user.role;
-      });
-      this.rootStore.commonStore.setToken(user.token);
-      history.push(getIn[user.role]);
-      this.loading = false;
+        this.rootStore.commonStore.setToken(user.token);
+        history.push(getIn[user.role] + `/${user.name}`);
+        this.loading = false;
+      } else {
+        toast.error("Utilizador ou Password errados!");
+        this.loading = false;
+      }
     } catch (error) {
       this.loading = false;
-      toast.error("Utilizador ou Password errados");
+      toast.error("Utilizador ou Password errados!");
       throw error;
     }
   };
@@ -121,7 +143,10 @@ export default class UserStore {
     try {
       var password = "";
       //password = Agent.User.changePassByEmail(email);
-      toast.info("Email enviado com nova Palavra-Passe!", { onClose: history.goBack, autoClose: 1000 });
+      toast.info("Email enviado com nova Palavra-Passe!", {
+        onClose: history.goBack,
+        autoClose: 1000,
+      });
     } catch (error) {
       toast.info("Email inválido!");
       throw error;

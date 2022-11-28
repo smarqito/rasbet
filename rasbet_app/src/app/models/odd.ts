@@ -1,5 +1,11 @@
 export interface IOdd {
+  id: number;
   name: string;
   value: number;
-  win: boolean;
+}
+
+export interface IChangeOdd {
+  specialistId: string;
+  betTypeId: number;
+  newOdds: Map<number, number>
 }

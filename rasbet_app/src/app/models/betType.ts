@@ -1,15 +1,16 @@
-import { IGame } from "./game";
 import { IOdd } from "./odd";
-import { IUser } from "./user";
 
 export type BetTypeState = "FINISHED" | "UNFINISHED";
 
 export interface IBetType {
-  lastUpdate: Date;
-  state: BetTypeState;
-  specialist: IUser;
-  gameId: number;
+  id: number;
+  type: string;
   odds: IOdd[];
+}
+
+export interface IBetInfo {
+  id: number;
+  oddsId: number[];
 }
 
 export interface H2h extends IBetType {

@@ -6,17 +6,16 @@ import {
   RouteComponentProps,
   RouteProps,
 } from "react-router-dom";
-import { Role } from "../models/user";
 import { RootStoreContext } from "../stores/rootStore";
 
 interface IProps extends RouteProps {
-  role: Role;
+  roles: string[];
   component: React.ComponentType<RouteComponentProps<any>>;
 }
 
 const PrivateRoute: React.FC<IProps> = ({
   component: Component,
-  role,
+  roles,
   ...rest
 }) => {
   const rootStore = useContext(RootStoreContext);
@@ -28,7 +27,7 @@ const PrivateRoute: React.FC<IProps> = ({
       render={(props) => {
         if (!isLoggedIn) return <Redirect to={"/"} />;
 
-        if (!hasRole(role)) return <Redirect to={"/"} />;
+        if (!hasRole(roles)) return <Redirect to={"/"} />;
 
         return <Component {...props} />;
       }}

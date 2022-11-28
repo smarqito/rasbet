@@ -56,7 +56,7 @@ const RegisterForm: React.FC = () => {
   }
 
   return (
-    <Grid textAlign="center" style={{ height: "100vh" }} verticalAlign="middle">
+    <Grid textAlign="center" style={{ height: "70vh" }} verticalAlign="middle">
       <Grid.Column style={{ maxWidth: 450 }}>
         <Header as="h1" color="black" textAlign="center">
           Registo

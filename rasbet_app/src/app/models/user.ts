@@ -1,6 +1,3 @@
-import { IBet } from "./bet";
-import { IWallet } from "./wallet";
-
 export type Role = "AppUser" | "Admin" | "Specialist";
 
 export interface IUser {
@@ -16,8 +13,6 @@ export interface IAppUser extends IUser {
   NIF: string;
   DOB: Date;
   phoneNum?: string;
-  wallet: IWallet;
-  betHistory: IBet[];
   coin: string;
   notif: boolean;
 }
@@ -33,7 +28,6 @@ export interface IUserRegister {
   password: string;
   repetePass: string;
   language: string;
-  role: Role;
 }
 
 export interface IAppUserRegister extends IUserRegister {
@@ -78,7 +72,6 @@ export class AdminRegisterFromValues implements IUserRegister {
   password: string = "";
   repetePass: string = "";
   language: string = "PT";
-  role: Role = "Admin";
   constructor(init?: IUserRegister) {
     Object.assign(this, init);
   }
@@ -90,7 +83,6 @@ export class SpecialistRegisterFromValues implements IUserRegister {
   password: string = "";
   repetePass: string = "";
   language: string = "PT";
-  role: Role = "Specialist";
   constructor(init?: IUserRegister) {
     Object.assign(this, init);
   }

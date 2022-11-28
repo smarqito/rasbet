@@ -1,24 +1,21 @@
-import { IBetType } from "./betType";
-import { IGame } from "./game";
-import { IOdd } from "./odd";
-import { IUser } from "./user";
-
 export type betState = "Open" | "Won" | "Lost";
 
 export interface ISelection {
-  odd: IOdd;
+  id: number;
+  oddId: number;
   oddValue: number;
-  betType: IBetType;
-  game: IGame;
+  betTypeId: number;
+  gameId: number;
   win: boolean;
 }
 
 export interface IBet {
+  id: number;
   amount: number;
   wonValue: number;
   start: Date;
   end?: Date;
-  user: IUser;
+  user: string;
   state: betState;
 }
 
@@ -29,4 +26,24 @@ export interface IBetSimple extends IBet {
 export interface IBetMultiple extends IBet {
   oddMultiple: number;
   selections: ISelection[];
+}
+
+export interface ICreateBet {
+  amount: number;
+  userId: string;
+}
+
+export interface ICreateSelection {
+  betTypeId: number;
+  oddId: number;
+  odd: number;
+  gameId: number;
+}
+
+export interface ICreateBetSimple extends ICreateBet {
+  selection: ICreateSelection;
+}
+
+export interface ICreateBetMultiple extends ICreateBet {
+  selections: ICreateSelection[];
 }

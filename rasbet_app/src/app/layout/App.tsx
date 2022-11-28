@@ -1,6 +1,5 @@
-import { Fragment, useContext, useEffect } from "react";
+import { Fragment } from "react";
 import { observer } from "mobx-react-lite";
-import ModalContainer from "../common/ModalContainer";
 import { ToastContainer } from "react-toastify";
 import {
   Route,
@@ -13,14 +12,17 @@ import { Container } from "semantic-ui-react";
 import RegisterForm from "../../features/appUser/RegisterForm";
 import LoginForm from "../../features/LoginForm";
 import "react-toastify/dist/ReactToastify.min.css";
-import { RootStoreContext } from "../stores/rootStore";
-import LoadingComponent from "./LoadingComponent";
 import ChangePass from "../../features/ChangePass";
-import { BetDashboard } from "../../features/appUser/betDashboard/BetDashboard";
+import GameDetails from "../../features/appUser/GameDetails/GameDetails";
+import NavBar from "../../features/appUser/NavBar/NavBar";
+import ModalContainer from "../common/ModalContainer";
+import PrivateRoute from "./PrivateRoute";
+import AppUserDashboard from "../../features/appUser/Homepage/AppUserDashboard";
+import AppUserLogin from "../../features/appUser/AppUserLogin";
 
 const App: React.FC<RouteComponentProps> = () => {
-  const rootStore = useContext(RootStoreContext);
-  const { setAppLoaded, appLoaded, token } = rootStore.commonStore;
+  // const rootStore = useContext(RootStoreContext);
+  // const { setAppLoaded, appLoaded, token } = rootStore.commonStore;
   // const { } = rootStore.userStore;
 
   // useEffect(() => {
@@ -38,18 +40,33 @@ const App: React.FC<RouteComponentProps> = () => {
   // }
   return (
     <Fragment>
+      <ModalContainer />
       <ToastContainer position="bottom-right" />
-      <Route exact path="/" component={LoginForm} />
-      <Route exact path="/registo" component={RegisterForm} />
+      <Route exact path="/" component={AppUserLogin} />
       <Route
         path={"/(.+)"}
         render={() => (
           <Fragment>
-            <Container style={{ marginTop: "7em" }}>
+            <NavBar />
+            <Container fluid style={{ margin: "6em" }}>
               <Switch>
-                <Route exact path="/alterarPasse" component={ChangePass} />
-                <Route exact path="/user/homepage" component={BetDashboard} />
-                <Route component={NotFound} />
+                <Route exact path="/admin" component={AppUserLogin} />
+                <Route exact path="/specialist" component={AppUserLogin} />
+                <Route exact path="/register" component={RegisterForm} />
+                <Route exact path="/changePass" component={ChangePass} />
+                <PrivateRoute
+                  exact
+                  path="/user/homepage/:id"
+                  component={AppUserDashboard}
+                  roles={["AppUser"]}
+                />
+                <PrivateRoute
+                  exact
+                  path="/user/game/details/:id"
+                  component={GameDetails}
+                  roles={["AppUser"]}
+                />
+                <Route path="/*" component={NotFound} />
               </Switch>
             </Container>
           </Fragment>

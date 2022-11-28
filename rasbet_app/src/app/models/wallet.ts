@@ -2,7 +2,10 @@ import { ITransaction } from "./transaction";
 import { IUser } from "./user";
 
 export interface IWallet {
-    user: IUser;
+    userId: string;
     balance: number;
-    transactions: ITransaction[];
+}
+
+export interface IWalletDetailed {
+    transactions: number[];
 }

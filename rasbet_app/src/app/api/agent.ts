@@ -1,12 +1,23 @@
 import axios, { AxiosResponse } from "axios";
 import { toast } from "react-toastify";
 import {
+  IBet,
+  IBetMultiple,
+  IBetSimple,
+  ICreateBetMultiple,
+  ICreateBetSimple,
+} from "../models/bet";
+import { IActiveGame, IGameInfo } from "../models/game";
+import { IChangeOdd, IOdd } from "../models/odd";
+import { ICreateTransaction, ITransaction } from "../models/transaction";
+import {
   IAppUser,
   IAppUserRegister,
   IUser,
   IUserLogin,
   IUserRegister,
 } from "../models/user";
+import { IWallet } from "../models/wallet";
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
@@ -44,11 +55,11 @@ const User = {
   registerSpecialist: (user: IUserRegister) =>
     requests.post(`/user/specialist`, user),
   getAppUser: (id: string): Promise<IAppUser> =>
-    requests.get(`/user/appuser?id=${id}$`),
+    requests.get(`/user/appuser?id=${id}`),
   getSpecialist: (id: string): Promise<IUser> =>
-    requests.get(`/user/specialist?id=${id}$`),
+    requests.get(`/user/specialist?id=${id}`),
   getAdmin: (id: string): Promise<IUser> =>
-    requests.get(`/user/admin?id=${id}$`),
+    requests.get(`/user/admin?id=${id}`),
   updateAppUser: (
     email: string,
     name: string,
@@ -80,11 +91,50 @@ const User = {
   logout: (id: string) => requests.post(`/user/logout`, id),
 };
 
-const Bet = {};
+const Bet = {
+  createBetSimple: (createBet: ICreateBetSimple): Promise<IBetSimple> =>
+    requests.post(`/bet/simple`, createBet),
+  createBetMultiple: (createBet: ICreateBetMultiple): Promise<IBetMultiple> =>
+    requests.post(`/bet/multiple`, createBet),
+  getUserBetsOpen: (userId: number): Promise<IBet[]> =>
+    requests.get(`/bet/open`),
+  getUserBetsWon: (userId: number): Promise<IBet[]> => requests.get(`/bet/won`),
+  getUserBetsLost: (userId: number): Promise<IBet[]> =>
+    requests.get(`/bet/lost`),
+};
 
-const Game = {};
+const Game = {
+  suspendGame: (gameId: number, specialistId: string) =>
+    requests.patch(`/gameOdd/suspend`, { gameId, specialistId }),
+  finishGame: (gameId: number, result: string, specialistId: string) =>
+    requests.patch(`/gameOdd/finish`, { gameId, result, specialistId }),
+  activateGame: (gameId: number, specialistId: string) =>
+    requests.patch(`/gameOdd/activate`, { gameId, specialistId }),
+  getActiveGames: (): Promise<IActiveGame[]> =>
+    requests.get(`/gameOdd/activeGames`),
+  getOdd: (oddId: number, betTypeId: number): Promise<IOdd> =>
+    requests.get(`/gameOdd/odd/?oddId=${oddId}&betTypeId=${betTypeId}`),
+  changeOdds: (change: IChangeOdd) => requests.patch(`/gameOdd/odds`, change),
+  getGameInfo: (gameId: number, detailed: boolean): Promise<IGameInfo> =>
+    requests.get(`/gameOdd/GameInfo?gameId=${gameId}&detailed=${detailed}`),
+};
 
-const Wallet = {};
+const Wallet = {
+  get: (userId: number): Promise<IWallet> =>
+    requests.get(`/user/?userId=${userId}`),
+  depositFunds: (createTran: ICreateTransaction) =>
+    requests.put(`/wallet/deposit`, createTran),
+  withdrawFunds: (createTran: ICreateTransaction) =>
+    requests.put(`/wallet/withdraw`, createTran),
+  getTransactions: (
+    userId: string,
+    start: Date,
+    end: Date
+  ): Promise<ITransaction[]> =>
+    requests.get(
+      `/wallet/transactions?userId=${userId}&start=${start}&end=${end}`
+    ),
+};
 
 const Agent = {
   User,
