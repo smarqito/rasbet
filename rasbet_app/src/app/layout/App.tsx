@@ -48,7 +48,7 @@ const App: React.FC<RouteComponentProps> = () => {
         render={() => (
           <Fragment>
             <NavBar />
-            <Container fluid style={{ margin: "6em" }}>
+            <Container fluid style={{ margin: "6em", paddingLeft: '10em' }}>
               <Switch>
                 <Route exact path="/admin" component={AppUserLogin} />
                 <Route exact path="/specialist" component={AppUserLogin} />

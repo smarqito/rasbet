@@ -7,7 +7,7 @@ import {
   ICreateBetMultiple,
   ICreateBetSimple,
 } from "../models/bet";
-import { IActiveGame, IGameInfo } from "../models/game";
+import { CollectiveGame, IActiveGame, ISport } from "../models/game";
 import { IChangeOdd, IOdd } from "../models/odd";
 import { ICreateTransaction, ITransaction } from "../models/transaction";
 import {
@@ -93,30 +93,27 @@ const User = {
 
 const Bet = {
   createBetSimple: (createBet: ICreateBetSimple): Promise<IBetSimple> =>
-    requests.post(`/bet/simple`, createBet),
+    requests.post(`/Bet/simple`, createBet),
   createBetMultiple: (createBet: ICreateBetMultiple): Promise<IBetMultiple> =>
-    requests.post(`/bet/multiple`, createBet),
+    requests.post(`/Bet/multiple`, createBet),
   getUserBetsOpen: (userId: number): Promise<IBet[]> =>
-    requests.get(`/bet/open`),
-  getUserBetsWon: (userId: number): Promise<IBet[]> => requests.get(`/bet/won`),
+    requests.get(`/Bet/open`),
+  getUserBetsWon: (userId: number): Promise<IBet[]> => requests.get(`/Bet/won`),
   getUserBetsLost: (userId: number): Promise<IBet[]> =>
-    requests.get(`/bet/lost`),
+    requests.get(`/Bet/lost`),
 };
 
 const Game = {
   suspendGame: (gameId: number, specialistId: string) =>
-    requests.patch(`/gameOdd/suspend`, { gameId, specialistId }),
+    requests.patch(`/GameOdd/suspend`, { gameId, specialistId }),
   finishGame: (gameId: number, result: string, specialistId: string) =>
-    requests.patch(`/gameOdd/finish`, { gameId, result, specialistId }),
+    requests.patch(`/GameOdd/finish`, { gameId, result, specialistId }),
   activateGame: (gameId: number, specialistId: string) =>
-    requests.patch(`/gameOdd/activate`, { gameId, specialistId }),
+    requests.patch(`/GameOdd/activate`, { gameId, specialistId }),
+  changeOdds: (change: IChangeOdd) => requests.patch(`/GameOdd/odds`, change),
   getActiveGames: (): Promise<IActiveGame[]> =>
-    requests.get(`/gameOdd/activeGames`),
-  getOdd: (oddId: number, betTypeId: number): Promise<IOdd> =>
-    requests.get(`/gameOdd/odd/?oddId=${oddId}&betTypeId=${betTypeId}`),
-  changeOdds: (change: IChangeOdd) => requests.patch(`/gameOdd/odds`, change),
-  getGameInfo: (gameId: number, detailed: boolean): Promise<IGameInfo> =>
-    requests.get(`/gameOdd/GameInfo?gameId=${gameId}&detailed=${detailed}`),
+    requests.get(`/GameOdd/activeGames`),
+  getAllSports: (): Promise<ISport[]> => requests.get(`/GameOdd/sports`),
 };
 
 const Wallet = {

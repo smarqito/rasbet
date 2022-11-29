@@ -7,14 +7,3 @@ export interface IBetType {
   type: string;
   odds: IOdd[];
 }
-
-export interface IBetInfo {
-  id: number;
-  oddsId: number[];
-}
-
-export interface H2h extends IBetType {
-  away: string;
-}
-
-export interface IndividualResult extends IBetType {}

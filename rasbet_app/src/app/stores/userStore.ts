@@ -65,6 +65,7 @@ export default class UserStore {
       // });
 
       const user: IUser = {
+        id: "0",
         name: "Jose Alberto",
         email: "jafmalheiro@live.com.pt",
         language: "Português",

@@ -1,7 +1,6 @@
 export type type = "Deposit" | "Withdraw";
 
 export interface ITransaction {
-  id: number;
   userId: string;
   value: number;
   date: Date;

@@ -1,28 +1,16 @@
 import { IBetType } from "./betType";
 
 export type GameState = "Open" | "Suspended" | "Finished";
+
+export interface ISport {
+  name: string;
+}
+
 export interface IGame {
   id: number;
-  name: string;
-  start: Date;
-  sport: string;
-  state: GameState;
-  bets: IBetType[];
-  mainBet: IBetType;
-}
-
-export interface IActiveGame {
-  id: number;
-  name: string;
   start: Date;
   sport: string;
   mainBet: IBetType;
-}
-
-export interface IGameInfo {
-  start: Date;
-  state: GameState;
-  bets: IBetType[];
 }
 
 export interface CollectiveGame extends IGame {
@@ -32,4 +20,14 @@ export interface CollectiveGame extends IGame {
 
 export interface IndividualGame extends IGame {
   players: string[];
+}
+
+export interface IStatistics {
+  betCount: number;
+  statitics: Map<number, number>;
+}
+
+export interface IActiveGame {
+  game: CollectiveGame;
+  statistic: IStatistics;
 }

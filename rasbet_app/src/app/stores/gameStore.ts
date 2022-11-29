@@ -1,8 +1,20 @@
-import { action, makeObservable, observable, runInAction } from "mobx";
+import {
+  action,
+  computed,
+  makeObservable,
+  observable,
+  runInAction,
+} from "mobx";
 import { toast } from "react-toastify";
 import Agent from "../api/agent";
-import { IBetInfo, IBetType } from "../models/betType";
-import { IActiveGame, IGame } from "../models/game";
+import { IBetType } from "../models/betType";
+import {
+  CollectiveGame,
+  IActiveGame,
+  IGame,
+  ISport,
+  IStatistics,
+} from "../models/game";
 import { RootStore } from "./rootStore";
 
 export default class GameStore {
@@ -15,17 +27,31 @@ export default class GameStore {
 
   @observable game: IGame | null = null;
   @observable activeGames: IActiveGame[] = [];
+  @observable gamesFiltered: IActiveGame[] = [];
+  @observable allSports: ISport[] = [];
   @observable loading = false;
 
   @action clearGame = () => {
     this.game = null;
   };
 
+  @action clearActive = () => {
+    this.activeGames = [];
+  };
+
+  @action clearFiltered = () => {
+    this.gamesFiltered = [];
+  };
+
+  @action clearSports = () => {
+    this.allSports = [];
+  };
+
   getGame = (id: number) => {
     let game = null;
     for (let index = 0; index < this.activeGames.length; index++) {
       const element = this.activeGames[index];
-      if (element.id == id) {
+      if (element.game.id == id) {
         game = element;
         break;
       }
@@ -36,73 +62,22 @@ export default class GameStore {
     return game;
   };
 
-  @action loadGame = async (id: number) => {
-    this.loading = true;
-    let game = this.getGame(id);
-    try {
-      // let gameInfo = await Agent.Game.getGameInfo(id, true);
-      // runInAction(() => {
-      //   if (gameInfo) {
-      //     let detailed: IGame = {
-      //       id: id,
-      //       name: game.name,
-      //       start: gameInfo.start,
-      //       sport: game.sport,
-      //       state: gameInfo.state,
-      //       bets: gameInfo.bets,
-      //       mainBet: game.mainBet,
-      //     };
-      //     this.game = delotailed;
-      //   }
-      // });
+  // @action loadGame = async (id: number) => {
+  //   this.loading = true;
+  //   let game = this.getGame(id);
+  //   try {
+  //     // let gameInfo = await Agent.Game.getGame(id, true);
+  //     runInAction(() => {
+  //         this.game = gameinfo;
+  //       }
+  //     });
 
-      let betInfo1: IBetType = {
-        id: 0,
-        type: "Jogador que marcou mais golos",
-        odds: [
-          { id: 0, name: "Jogador1", value: 1.19 },
-          { id: 1, name: "Jogador2", value: 3.19 },
-          { id: 2, name: "Jogador3", value: 7.19 },
-        ],
-      };
-
-      let betInfo2: IBetType = {
-        id: 0,
-        type: "Número de golos marcados(total)",
-        odds: [
-          { id: 3, name: "0-5", value: 1.19 },
-          { id: 4, name: "1-2", value: 3.19 },
-          { id: 5, name: "3-4", value: 7.19 },
-        ],
-      };
-
-      let betInfo3: IBetType = {
-        id: 0,
-        type: "Número de cartões amarelos",
-        odds: [
-          { id: 6, name: "0-5", value: 1.19 },
-          { id: 7, name: "1-2", value: 3.19 },
-          { id: 8, name: "3-4", value: 7.19 },
-        ],
-      };
-
-      let detailed: IGame = {
-        id: id,
-        name: game.name,
-        start: game.start,
-        sport: game.sport,
-        state: "Open",
-        bets: [betInfo1, betInfo2],
-        mainBet: game.mainBet,
-      };
-      this.game = detailed;
-
-      this.loading = false;
-    } catch (error) {
-      toast.error("Não é possível apresentar o jogo!");
-      throw error;
-    }
-  };
+  //     this.loading = false;
+  //   } catch (error) {
+  //     toast.error("Não é possível apresentar o jogo!");
+  //     throw error;
+  //   }
+  // };
 
   @action getActiveGames = async () => {
     this.loading = true;
@@ -134,29 +109,94 @@ export default class GameStore {
         ],
       };
 
-      var game1: IActiveGame = {
+      var game1: CollectiveGame = {
         id: 0,
-        name: "Sporting - Varzim",
         start: new Date(),
         sport: "Futebol",
         mainBet: betType1,
+        home: "Sporting",
+        away: "Varzim",
       };
 
-      var game2: IActiveGame = {
+      var game2: CollectiveGame = {
         id: 1,
-        name: "Benfico - Porto",
         start: new Date(),
         sport: "Futebol",
         mainBet: betType2,
+        home: "Benfica",
+        away: "Porto",
       };
 
-      let games = [game1, game2];
-      this.activeGames = games;
+      var statitics1: IStatistics = {
+        betCount: 3,
+        statitics: new Map<number, number>(),
+      };
+
+      var statitics2: IStatistics = {
+        betCount: 3,
+        statitics: new Map<number, number>(),
+      };
+
+      statitics1.statitics.set(1, 23);
+      statitics1.statitics.set(2, 47);
+      statitics1.statitics.set(3, 30);
+
+      statitics2.statitics.set(1, 30);
+      statitics2.statitics.set(2, 60);
+      statitics2.statitics.set(3, 10);
+
+      var a1: IActiveGame = {
+        game: game1,
+        statistic: statitics1,
+      };
+
+      var a2: IActiveGame = {
+        game: game2,
+        statistic: statitics2,
+      };
+
+      this.activeGames.push(a1);
+      this.activeGames.push(a2);
 
       this.loading = false;
     } catch (error) {
       this.loading = false;
       toast.error("Sem jogos ativos!");
+      throw error;
+    }
+  };
+
+  @action getActiveGamesBySport = (sport: ISport) => {
+    try {
+      var gamesBySport = this.activeGames.filter(
+        (x) => x.game.sport == sport.name
+      );
+      this.gamesFiltered = gamesBySport;
+
+    } catch (error) {
+      toast.error("Ocorreu um erro interno!");
+      throw error;
+    }
+  };
+
+  @action getAllSports = async () => {
+    this.loading = true;
+    try {
+      // var sports = await Agent.Game.getAllSports();
+
+      // runInAction(() => {
+      //   this.allSports = sports;
+      // });
+
+      var s1: ISport = { name: "Futebol" };
+      var s2: ISport = { name: "teste" };
+
+      this.allSports.push(s1);
+      this.allSports.push(s2);
+
+      this.loading = false;
+    } catch (error) {
+      toast.error("Sem desportos disponíveis!");
       throw error;
     }
   };

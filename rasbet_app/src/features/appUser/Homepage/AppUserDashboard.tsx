@@ -1,9 +1,8 @@
 import { observer } from "mobx-react-lite";
 import GameList from "../GameList/GameList";
-import { Container, Grid } from "semantic-ui-react";
-import SportButtons from "./SportButtons";
+import { Button, Container, Grid, Header, Segment } from "semantic-ui-react";
 import BetCart from "../BetCart/BetCart";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { RootStoreContext } from "../../../app/stores/rootStore";
 import { RouteComponentProps } from "react-router-dom";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
@@ -17,25 +16,61 @@ const AppUserDashboard: React.FC<RouteComponentProps<DetailsParams>> = ({
   history,
 }) => {
   const rootStore = useContext(RootStoreContext);
-  const { getActiveGames, activeGames } = rootStore.gameStore;
+  const {
+    getActiveGames,
+    activeGames,
+    gamesFiltered,
+    getAllSports,
+    allSports,
+    getActiveGamesBySport,
+    clearActive,
+    clearFiltered,
+    clearSports,
+    loading,
+  } = rootStore.gameStore;
+
+  const [sport, setSport] = useState({ name: "Futebol" });
 
   useEffect(() => {
+    clearActive();
+    clearFiltered();
+    clearSports();
+
     getActiveGames();
-  }, [getActiveGames, activeGames, match.params.id]);
+    getAllSports();
+    getActiveGamesBySport(sport);
+  }, [setSport, sport, match.params.id]);
 
   return (
     <Grid padded divided stackable>
-      <Grid.Row columns={3}>
-        <Grid.Column width={3}>
-          <SportButtons />
+      <Grid.Row columns={3} key={"AppUserPage"}>
+        <Grid.Column width={3} key={"sport"}>
+          <Segment>
+            <Header as="h3">Desportos</Header>
+            <Grid padded centered>
+              {allSports.map((x) => {
+                return (
+                  <Grid.Row key={x.name}>
+                    <Button
+                      content={x.name}
+                      fluid
+                      type="button"
+                      onClick={() => setSport(x)}
+                    />
+                  </Grid.Row>
+                );
+              })}
+            </Grid>
+          </Segment>
         </Grid.Column>
-        <Grid.Column width={8}>
+        <Grid.Column width={8} key={"gameList"}>
           <Container>
-            <GameList games={activeGames} />
+            <Header as="h3">Todos os jogos</Header>
+            <GameList games={gamesFiltered} loading={loading} />
           </Container>
         </Grid.Column>
-        <Grid.Column width={5}>
-          <BetCart />
+        <Grid.Column width={5} key={"BetCart"}>
+          {/* <BetCart /> */}
         </Grid.Column>
       </Grid.Row>
     </Grid>
