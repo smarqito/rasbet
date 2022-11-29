@@ -3,6 +3,7 @@ using DTO.UserDTO;
 using Infrastructure;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Net.Mail;
 using UserApplication.Interfaces;
@@ -293,12 +294,11 @@ public class UserRepository : IUserRepository
         return user;
     }
 
-    public void SendEmail(string to, string subject, string code)
+    public void SendEmail(string to, string subject, string body)
     {
         try
         {
             string from = "rasbet.apostasdesportivas@outlook.com";
-            string body = $"Olá!\nO seu código de confirmação é {code}.\nBoas apostas.";
             MailMessage message = new MailMessage(from, to, subject, body);
             SmtpClient client = new SmtpClient("smtp-mail.outlook.com");
 
@@ -338,8 +338,8 @@ public class UserRepository : IUserRepository
 
         await context.SaveChangesAsync();
         string subject = "Confirmação de alterações no perfil";
-        string message = code;
-        SendEmail(email, subject, code);
+        string body = $"Olá!\nO seu código de confirmação é {code}.\nBoas apostas.";
+        SendEmail(email, subject, body);
 
         return user;
     }
@@ -364,8 +364,8 @@ public class UserRepository : IUserRepository
 
         await context.SaveChangesAsync();
         string subject = "Confirmação de alterações no perfil";
-        string message = code;
-        SendEmail(email, subject, code);
+        string body = $"Olá!\nO seu código de confirmação é {code}.\nBoas apostas.";
+        SendEmail(email, subject, body);
 
         return user;
     }
@@ -390,8 +390,8 @@ public class UserRepository : IUserRepository
 
         await context.SaveChangesAsync();
         string subject = "Confirmação de alterações no perfil";
-        string message = code;
-        SendEmail(email, subject, code);
+        string body = $"Olá!\nO seu código de confirmação é {code}.\nBoas apostas.";
+        SendEmail(email, subject, body);
 
         return user;
     }
@@ -540,4 +540,29 @@ public class UserRepository : IUserRepository
         return user;
     }
 
+    /// <summary>
+    /// Send new password to user.
+    /// </summary>
+    /// <param name="email"> User's email.</param>
+    /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
+    /// <exception>The given e-mail doesn't correspond to an user.</exception>
+    public async Task ForgotPassword(string email)
+    {
+        User? user = await context.Users.Where(u => u.Email.Equals(email)).FirstOrDefaultAsync();
+
+        if (user == null) throw new Exception("E-mail inexistente.");
+
+        string new_pw = userManager.GenerateNewAuthenticatorKey();
+
+        await userManager.RemovePasswordAsync(user);
+        await userManager.AddPasswordAsync(user, new_pw);
+
+        await context.SaveChangesAsync();
+
+
+        string subject = "Nova palavra-passe";
+        string body = $"Olá!\nA sua nova palavra passe é {new_pw}. Pode alterá-la, se assim desejar, através do nosso site.\nBoas apostas.";
+
+        SendEmail(email, subject, body);
+    }
 }
