@@ -193,6 +193,7 @@
       "UpstreamPathTemplate": "/User/update/specialist",
       "UpstreamHttpMethod": [ "PUT" ]
     },
+    //WalletController
     {
       "DownstreamPathTemplate": "/Wallet?userId={userId}",
       "DownstreamScheme": "http",

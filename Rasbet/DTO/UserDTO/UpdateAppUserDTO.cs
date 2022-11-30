@@ -8,18 +8,10 @@ namespace DTO.UserDTO;
 
 public class UpdateAppUserDTO
 {
-    public string Name { get; set; }
+    public string? Name { get; set; }
     public string Email { get; set; }   
-    public string Language { get; set; }
-    public string Coin { get; set; }
+    public string? Language { get; set; }
+    public string? Coin { get; set; }
     public bool Notifications { get; set; }
 
-    public UpdateAppUserDTO(string name, string language, string email, bool notifications, string coin) 
-    {
-        Name = name;
-        Email = email;
-        Language = language;
-        Notifications = notifications;
-        Coin = coin;
-    }
 }

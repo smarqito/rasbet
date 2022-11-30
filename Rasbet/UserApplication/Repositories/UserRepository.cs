@@ -284,10 +284,12 @@ public class UserRepository : IUserRepository
         AppUser? user = await context.AppUsers.Where(u => u.Email.Equals(email)).FirstOrDefaultAsync();
 
         if (user == null) throw new Exception("E-mail inexistente.");
-
-        user.Name = name;
-        user.Language = language;
-        user.Coin = coin;
+        if(name != null)
+            user.Name = name;
+        if (language != null)
+            user.Language = language;
+        if (coin != null)
+            user.Coin = coin;
         user.Notifications = notifications;
 
         await context.SaveChangesAsync();
@@ -512,8 +514,10 @@ public class UserRepository : IUserRepository
 
         if (user == null) throw new Exception("E-mail inexistente.");
 
-        user.Name = name;
-        user.Language = language;
+        if(name != null)
+            user.Name = name;
+        if (language != null)
+            user.Language = language;
 
         await context.SaveChangesAsync();
 
@@ -534,8 +538,10 @@ public class UserRepository : IUserRepository
 
         if (user == null) throw new Exception("E-mail inexistente.");
 
-        user.Name = name;
-        user.Language = language;
+        if(name != null)
+            user.Name = name;
+        if (language != null)
+            user.Language = language;
 
         await context.SaveChangesAsync();
 
