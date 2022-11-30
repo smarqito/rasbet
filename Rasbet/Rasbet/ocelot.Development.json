@@ -193,6 +193,18 @@
       "UpstreamPathTemplate": "/User/update/specialist",
       "UpstreamHttpMethod": [ "PUT" ]
     },
+    {
+      "DownstreamPathTemplate": "/User/forgotPWD?email={email}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5000"
+        }
+      ],
+      "UpstreamPathTemplate": "/User/forgotPWD?email={email}",
+      "UpstreamHttpMethod": [ "PUT" ]
+    },
     //WalletController
     {
       "DownstreamPathTemplate": "/Wallet?userId={userId}",

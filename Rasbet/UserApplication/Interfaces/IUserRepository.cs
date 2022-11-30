@@ -29,5 +29,5 @@ public interface IUserRepository
 	Task<Admin> UpdateAdminSensitiveConfirm(string email, string code);
 	Task<Specialist> UpdateSpecialistSensitiveConfirm(string email, string code);
 
-	Task<IActionResult> ForgotPassword(string email);
+	Task ForgotPassword(string email);
 }

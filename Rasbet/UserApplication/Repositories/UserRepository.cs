@@ -3,9 +3,9 @@ using DTO.UserDTO;
 using Infrastructure;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Net.Mail;
+using System.Text.RegularExpressions;
 using UserApplication.Interfaces;
 using UserPersistence;
 
@@ -561,6 +561,9 @@ public class UserRepository : IUserRepository
         if (user == null) throw new Exception("E-mail inexistente.");
 
         string new_pw = userManager.GenerateNewAuthenticatorKey();
+        string pattern = @"([A-Z])";
+        Regex regex = new Regex(pattern);
+        new_pw = regex.Replace(new_pw, p => p.ToString().ToLower(), 1);
 
         await userManager.RemovePasswordAsync(user);
         await userManager.AddPasswordAsync(user, new_pw);
