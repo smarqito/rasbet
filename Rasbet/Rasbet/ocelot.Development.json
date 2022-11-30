@@ -364,7 +364,8 @@
         }
       ],
       "UpstreamPathTemplate": "/GameOdd/activeGames",
-      "UpstreamHttpMethod": [ "GET" ]
+      "UpstreamHttpMethod": [ "GET" ],
+      "FileCacheOptions": { "TtlSeconds": 20}
     },
     //-------------------
     {
@@ -394,6 +395,5 @@
   ],
   "GlobalConfiguration": {
     "BaseUrl": "http://localhost:5010"
-  },
-  "FileCacheOptions": { "TtlSeconds": 30 }
+  }
 }
