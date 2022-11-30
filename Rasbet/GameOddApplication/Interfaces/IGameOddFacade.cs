@@ -18,7 +18,7 @@ public interface IGameOddFacade
     public Task<Unit> FinishGame(string gameId, string result, string? specialistId);
     public Task<Unit> ActivateGame(int gameId, string specialistId);
     public Task<Unit> SuspendGame(int gameId, string specialistId);
-    public Task<ICollection<DTO.GameOddDTO.GameDTO>> GetActiveGames();
+    public Task<ICollection<CollectiveGameDTO>> GetActiveGames();
     public Task<double> GetOddValue(int oddId, int betTypeId);
     public Task<Unit> ChangeOdds(string specialistId, int betTypeId, Dictionary<int, double> newOdds);
     public Task<GameInfoDTO> GetGameInfo(int gameId, bool detailed);

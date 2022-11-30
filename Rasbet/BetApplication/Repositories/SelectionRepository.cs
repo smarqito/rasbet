@@ -98,45 +98,26 @@ public class SelectionRepository : ISelectionRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<ICollection<Selection>> GetSelectionByOddId(List<int> oddIds)
+
+    public async Task<StatisticsDTO> GetStatisticsByGame(ICollection<int> oddIds)
     {
-        ICollection<Selection> selections = new Collection<Selection>();
+        Dictionary<int, int> count = new Dictionary<int, int>();
+        int total = 0;
+        foreach(int oddId in oddIds)
+        {
+            int n = await _context.Selections.Where(s => s.OddId == oddId).CountAsync();
+            count[oddId] = n;
+            total += n;
+        }
+
+        Dictionary<int, int> statistics = new Dictionary<int, int>();
+        int div = Math.Max(1, total);
         foreach (int oddId in oddIds)
         {
-            ICollection<Selection> s_tmp = await _context.Selections.Where(x => x.OddId == oddId).ToListAsync();
-            selections = new Collection<Selection>(selections.Concat(s_tmp).ToList());
+            statistics[oddId] = (int)Math.Round((Double)(count[oddId] / div) * 100);
         }
 
-        if (selections.Count == 0)
-            throw new NoSelectionsWithTypeException("Não existem seleções com apostas do tipo!");
-
-        return selections;
-    }
-
-    public async Task<StatisticsDTO> GetStatisticsByGame(List<int> oddIds)
-    {
-
-        ICollection<Selection> selections = await GetSelectionByOddId(oddIds);
-
-        Dictionary<int, int> count = new Dictionary<int, int>();
-
-        int betCount = 0;
-        foreach (Selection s in selections)
-        {
-            if (count.ContainsKey(s.OddId))
-                count[s.OddId]++;
-            else count[s.OddId] = 1;
-            betCount++;
-        }
-
-        Dictionary<int, float> statistics = new Dictionary<int, float>();
-
-        foreach (KeyValuePair<int, int> entry in count)
-        {
-            statistics[entry.Key] = (float)Math.Round((Double)entry.Value / betCount, 2);
-        }
-
-        return new StatisticsDTO(betCount, statistics);
+        return new StatisticsDTO(total, statistics);
 
     }
 }

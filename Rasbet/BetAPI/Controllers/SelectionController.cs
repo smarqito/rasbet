@@ -44,7 +44,7 @@ public class SelectionController : BaseController
 
     [HttpGet("statistics")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(StatisticsDTO))]
-    public async Task<IActionResult> GetStatisticsByGame([FromQuery] List<int> oddIds)
+    public async Task<IActionResult> GetStatisticsByGame([FromQuery] ICollection<int> oddIds)
     {
         try
         {

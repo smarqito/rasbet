@@ -5,6 +5,7 @@ using DTO.BetGamesAggregator;
 using DTO.GameOddDTO;
 using DTO.UserDTO;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Rest;
 
 namespace BetGamesAggregator.Controllers
 {
@@ -23,35 +24,57 @@ namespace BetGamesAggregator.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<GameStatisticsDTO>))]
         public async Task<IActionResult> GetActivesGames()
         {
-            ICollection<GameDTO> games = await gameOddService.GetActivesGames();
-            ICollection<GameStatisticsDTO> res = new List<GameStatisticsDTO>();
-            foreach(GameDTO game in games)
+            try
             {
-                GameStatisticsDTO s = new GameStatisticsDTO(game);
-                s.Statistics = await betService.GetStatisticsByGame(game.Id);
-                res.Add(s);
+
+                ICollection<CollectiveGameDTO> games = await gameOddService.GetActivesGames();
+                ICollection<GameStatisticsDTO> res = new List<GameStatisticsDTO>();
+                foreach (CollectiveGameDTO game in games)
+                {
+                    GameStatisticsDTO s = new GameStatisticsDTO(game.Id, game.StartTime, game.SportName, game.MainBet);
+                    s.Statistics = await betService.GetStatisticsByGame(game.MainBet.Odds.Select(x => x.Id).ToList());
+                    res.Add(s);
+                }
+                return Ok(res);
             }
-            return Ok(res);
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         [HttpGet("won")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<BetGameDTO>))]
         public async Task<IActionResult> GetUserBetsWon([FromQuery] string userId, DateTime start, DateTime end)
         {
-            ICollection<BetDTO> bets = await betService.GetUserBetsWon(userId, start, end);
-            ICollection<BetGameDTO> res = new List<BetGameDTO>();
-            foreach (BetDTO bet in bets)
+            try
             {
-                BetGameDTO betDTO = new BetGameDTO(bet);
-                foreach(SelectionDTO selection in bet.Selections)
+                if (Request.Headers.TryGetValue("Authorization", out var header))
                 {
-                    GameDTO game = await gameOddService.GetGame(selection.GameId);
-                    SelectionGameDTO selectionDTO = new SelectionGameDTO(selection.Odd, game, selection.Win);
-                    betDTO.Selections.Add(selectionDTO);
+                    ICollection<BetDTO> bets = await betService.GetUserBetsWon(userId, start, end, header);
+                    ICollection<BetGameDTO> res = new List<BetGameDTO>();
+                    foreach (BetDTO bet in bets)
+                    {
+                        BetGameDTO betDTO = new BetGameDTO(bet);
+                        foreach (SelectionDTO selection in bet.Selections)
+                        {
+                            GameDTO game = await gameOddService.GetGame(selection.GameId);
+                            SelectionGameDTO selectionDTO = new SelectionGameDTO(selection.Odd, game, selection.Win);
+                            betDTO.Selections.Add(selectionDTO);
+                        }
+                        res.Add(betDTO);
+                    }
+                    return Ok(res);
                 }
-                res.Add(betDTO);
+                else
+                {
+                    throw new Exception("No permitions");
+                }
             }
-            return Ok(res);
+            catch(Exception ex)
+            {
+                throw ex;
+            }
         }
 
         [HttpGet("closed")]
@@ -59,20 +82,35 @@ namespace BetGamesAggregator.Controllers
 
         public async Task<IActionResult> GetUserBetsClosed([FromQuery] string userId, DateTime start, DateTime end)
         {
-            ICollection<BetDTO> bets = await betService.GetUserBetsClosed(userId, start, end);
-            ICollection<BetGameDTO> res = new List<BetGameDTO>();
-            foreach (BetDTO bet in bets)
+            try
             {
-                BetGameDTO betDTO = new BetGameDTO(bet);
-                foreach (SelectionDTO selection in bet.Selections)
+                if (Request.Headers.TryGetValue("Authorization", out var header))
                 {
-                    GameDTO game = await gameOddService.GetGame(selection.GameId);
-                    SelectionGameDTO selectionDTO = new SelectionGameDTO(selection.Odd, game, selection.Win);
-                    betDTO.Selections.Add(selectionDTO);
+                    ICollection<BetDTO> bets = await betService.GetUserBetsClosed(userId, start, end, header);
+                    ICollection<BetGameDTO> res = new List<BetGameDTO>();
+                    foreach (BetDTO bet in bets)
+                    {
+                        BetGameDTO betDTO = new BetGameDTO(bet);
+                        foreach (SelectionDTO selection in bet.Selections)
+                        {
+                            GameDTO game = await gameOddService.GetGame(selection.GameId);
+                            SelectionGameDTO selectionDTO = new SelectionGameDTO(selection.Odd, game, selection.Win);
+                            betDTO.Selections.Add(selectionDTO);
+                        }
+                        res.Add(betDTO);
+                    }
+                    return Ok(res);
                 }
-                res.Add(betDTO);
+                else
+                {
+                    throw new Exception("No permitions");
+                }
+
             }
-            return Ok(res);
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         [HttpGet("open")]
@@ -80,20 +118,34 @@ namespace BetGamesAggregator.Controllers
 
         public async Task<IActionResult> GetUserBetsOpen([FromQuery] string userId, DateTime start, DateTime end)
         {
-            ICollection<BetDTO> bets = await betService.GetUserBetsOpen(userId, start, end);
-            ICollection<BetGameDTO> res = new List<BetGameDTO>();
-            foreach (BetDTO bet in bets)
+            try
             {
-                BetGameDTO betDTO = new BetGameDTO(bet);
-                foreach (SelectionDTO selection in bet.Selections)
+                if (Request.Headers.TryGetValue("Authorization", out var header))
                 {
-                    GameDTO game = await gameOddService.GetGame(selection.GameId);
-                    SelectionGameDTO selectionDTO = new SelectionGameDTO(selection.Odd, game, selection.Win);
-                    betDTO.Selections.Add(selectionDTO);
+                    ICollection<BetDTO> bets = await betService.GetUserBetsOpen(userId, start, end, header);
+                    ICollection<BetGameDTO> res = new List<BetGameDTO>();
+                    foreach (BetDTO bet in bets)
+                    {
+                        BetGameDTO betDTO = new BetGameDTO(bet);
+                        foreach (SelectionDTO selection in bet.Selections)
+                        {
+                            GameDTO game = await gameOddService.GetGame(selection.GameId);
+                            SelectionGameDTO selectionDTO = new SelectionGameDTO(selection.Odd, game, selection.Win);
+                            betDTO.Selections.Add(selectionDTO);
+                        }
+                        res.Add(betDTO);
+                    }
+                    return Ok(res);
                 }
-                res.Add(betDTO);
+                else
+                {
+                    throw new Exception("No permitions");
+                }
             }
-            return Ok(res);
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
     }

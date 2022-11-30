@@ -251,7 +251,7 @@
           "Port": "5001"
         }
       ],
-      "UpstreamPathTemplate": "/Bet/multiple",
+      "UpstreamPathTemplate": "/Bet/simple",
       "UpstreamHttpMethod": [ "POST" ]
     },
     {
@@ -263,7 +263,7 @@
           "Port": "5001"
         }
       ],
-      "UpstreamPathTemplate": "/Bet/simple",
+      "UpstreamPathTemplate": "/Bet/multiple",
       "UpstreamHttpMethod": [ "POST" ]
     },
     //BetGamesAggregator

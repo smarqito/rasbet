@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DTO.GameOddDTO
+﻿namespace DTO.GameOddDTO
 {
     public class GameDTO
     {
@@ -12,6 +6,18 @@ namespace DTO.GameOddDTO
         public DateTime StartTime { get; set; }
         public string SportName { get; set; }
         public BetTypeDTO MainBet { get; set; }
+
+        public GameDTO()
+        {
+        }
+
+        public GameDTO(int id, DateTime startTime, string sportName, BetTypeDTO mainBet)
+        {
+            Id = id;
+            StartTime = startTime;
+            SportName = sportName;
+            MainBet = mainBet;
+        }
 
         public GameDTO(GameDTO g)
         {

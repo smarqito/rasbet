@@ -119,13 +119,15 @@ public class GameOddFacade : IGameOddFacade
         return Unit.Value;
     }
 
-    public async Task<ICollection<DTO.GameOddDTO.GameDTO>> GetActiveGames()
+    public async Task<ICollection<CollectiveGameDTO>> GetActiveGames()
     {
-        ICollection<Game> games = await gameOddContext.Game.Where(g => g.State.Equals(GameState.Open))
-                                                     .Include(g => g.Sport)
-                                                     .Include(g => g.Bets).ThenInclude(o => o.Odds)
-                                                     .ToListAsync();
-        return (ICollection<DTO.GameOddDTO.GameDTO>)mapper.Map<ICollection<CollectiveGameDTO>> (games);
+        ICollection<CollectiveGame> collectiveGames = await gameOddContext.Game.OfType<CollectiveGame>()
+                                                                     .Where(g => g.State.Equals(GameState.Open))
+                                                                     .Include(g => g.Sport)
+                                                                     .Include(g => g.Bets)
+                                                                     .ThenInclude(o => o.Odds)
+                                                                     .ToListAsync();
+        return mapper.Map<ICollection<CollectiveGameDTO>>(collectiveGames);
     }
 
     public async Task<double> GetOddValue(int oddId, int betTypeId)

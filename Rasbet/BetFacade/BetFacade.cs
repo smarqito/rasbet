@@ -142,6 +142,20 @@ public class BetFacade : IBetFacade
         }
     }
 
+    public async Task<ICollection<BetDTO>> GetUserBetsByStates(string user, BetState state1, BetState state2, DateTime start, DateTime end)
+    {
+        try
+        {
+            ICollection<Bet> bets = await BetRepository.GetUserBetsByStates(user, state1, state2, start, end);
+            return mapper.Map<ICollection<BetDTO>>(bets);
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
+
+
     public void SendEmail(string to, string subject, string body)
     {
         try
@@ -250,7 +264,7 @@ public class BetFacade : IBetFacade
         }
     }
 
-    public async Task<StatisticsDTO> GetStatisticsByGame(List<int> oddIds)
+    public async Task<StatisticsDTO> GetStatisticsByGame(ICollection<int> oddIds)
     {
         try
         {

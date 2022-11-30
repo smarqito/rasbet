@@ -139,20 +139,40 @@ public class BetRepository : IBetRepository
 
     public async Task<ICollection<Bet>> GetUserBetsByState(string user, BetState state, DateTime start, DateTime end)
     {
-        ICollection<Bet> bets;
+        ICollection<Bet> bets = new List<Bet>();
         if (state == BetState.Open)   
            bets = await _context.Bets.Where(b => b.UserId == user 
                                             && b.State == state
-                                            && b.Start > start && b.Start < end).ToListAsync();
+                                            && b.Start > start).ToListAsync();
         else
            bets = await _context.Bets.Where(b => b.UserId == user 
                                             && b.State == state
-                                            && b.End > start && b.End < end).ToListAsync();
+                                            && b.Start > start && b.End < end).ToListAsync();
 
-        if (bets.Count == 0)
-        {
-            throw new UserWithoutBetsException("O utilizador não tem bets associadas com o estado!");
-        }
+        //if (bets.Count == 0)
+        //{
+        //    throw new UserWithoutBetsException("O utilizador não tem bets associadas com o estado!");
+        //}
+
+        return bets;
+    }
+
+    public async Task<ICollection<Bet>> GetUserBetsByStates(string user, BetState state1, BetState state2, DateTime start, DateTime end)
+    {
+        ICollection<Bet> bets = new List<Bet>();
+        if (state1 == BetState.Open || state2 == BetState.Open)
+            bets = await _context.Bets.Where(b => b.UserId == user
+                                             && (b.State == state1 || b.State == state2)
+                                             && b.Start > start).ToListAsync();
+        else
+            bets = await _context.Bets.Where(b => b.UserId == user
+                                             && (b.State == state1 || b.State == state2)
+                                             && b.Start > start && b.End < end).ToListAsync();
+
+        //if (bets.Count == 0)
+        //{
+        //    throw new UserWithoutBetsException("O utilizador não tem bets associadas com o estado!");
+        //}
 
         return bets;
     }

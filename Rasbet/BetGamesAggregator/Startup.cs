@@ -1,8 +1,12 @@
 ﻿using BetGamesAggregator.Services;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.OpenApi.Models;
 using Polly;
 using Polly.Extensions.Http;
+using System.Net;
+using System.Reflection.PortableExecutable;
+
 namespace BetGamesAggregator
 {
     public class Startup
@@ -27,13 +31,46 @@ namespace BetGamesAggregator
 
             services.AddHttpClient<IGameOddService, GameOddService>(c =>
                 c.BaseAddress = new Uri(Configuration["ApiSettings:GameOddUrl"]));
-                //.AddHttpMessageHandler<LoggingDelegatingHandler>()
-                //.AddPolicyHandler(GetRetryPolicy())
-                //.AddPolicyHandler(GetCircuitBreakerPolicy());
+            //.AddHttpMessageHandler<LoggingDelegatingHandler>()
+            //.AddPolicyHandler(GetRetryPolicy())
+            //.AddPolicyHandler(GetCircuitBreakerPolicy());
 
 
             services.AddControllers();
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "BetGamesAggregator",
+                    Version = "v1"
+                });
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = @"JTW authorization w/ Bearer scheme\n\r
+                                    Enter 'Bearer' [space] and then the token\n\n
+                                    \r\r Example: 'Bearer 12345abdefg'",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT"
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            },
+                        },
+                        Array.Empty<string>()
+                    }
+                });
+            });
             //
             //services.AddHealthChecks()
             //    .AddUrlGroup(new Uri($"{Configuration["ApiSettings:CatalogUrl"]}/swagger/index.html"), "Catalog.API", HealthStatus.Degraded)

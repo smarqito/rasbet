@@ -51,7 +51,7 @@ public class BetController : BaseController
     }
 
     [HttpGet("open")]
-    [Authorize(Roles = "AppUser")]
+    //[Authorize(Roles = "AppUser")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<BetDTO>))]
     public async Task<IActionResult> GetUserBetsOpen([FromQuery] string userId, DateTime start, DateTime end)
     {
@@ -93,10 +93,8 @@ public class BetController : BaseController
     {
         try
         {
-            ICollection<BetDTO> lost = await BetFacade.GetUserBetsByState(userId, BetState.Lost, start, end);
-            ICollection<BetDTO> won = await BetFacade.GetUserBetsByState(userId, BetState.Won, start, end);
-            return Ok(lost.Concat(won));
-
+            ICollection<BetDTO> closed = await BetFacade.GetUserBetsByStates(userId, BetState.Lost, BetState.Won, start, end);
+            return Ok(closed);
         }
         catch (Exception e)
         {

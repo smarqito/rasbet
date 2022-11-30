@@ -12,13 +12,4 @@ public class BetDTO
     public ICollection<SelectionDTO> Selections { get; set; }
     public double Odd { get; set; }
 
-    public BetDTO (double amount, double wonValue, DateTime start, DateTime end, string state, ICollection<SelectionDTO> selections)
-    {
-        Amount = amount;
-        WonValue = wonValue;
-        Start = start;
-        End = end;
-        State = state;
-        Selections = selections;
-    }
 }
