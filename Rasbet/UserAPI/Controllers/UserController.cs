@@ -384,5 +384,24 @@ namespace UserAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Send new password to the user
+        /// </summary>
+        /// <param name="email"> User's email.</param>
+        /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
+        [HttpPut("forgotPWD")]
+        public async Task<IActionResult> ForgotPassword([FromQuery] string email)
+        {
+            try
+            {
+                await userRepository.ForgotPassword(email);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
     }
 }
