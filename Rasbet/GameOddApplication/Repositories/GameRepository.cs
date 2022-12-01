@@ -82,6 +82,12 @@ public class GameRepository : IGameRepository
         }
     }
 
+    public async Task<ICollection<Game>> GetActiveAndSuspendedGames()
+    {
+        return await gameOddContext.Game.Where(x => x.State.Equals(GameState.Suspended) || x.State.Equals(GameState.Open))
+                                        .ToListAsync();
+    }
+
     public async Task<CollectiveGame> GetCollectiveGame(string idSync)
     {
         CollectiveGame g = await gameOddContext.Game.OfType<CollectiveGame>()

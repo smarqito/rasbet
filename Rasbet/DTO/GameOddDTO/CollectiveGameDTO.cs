@@ -9,6 +9,7 @@ namespace DTO.GameOddDTO
     public class CollectiveGameDTO
     {
         public int Id { get; set; }
+        public string Type { get; set; }
         public DateTime StartTime { get; set; }
         public string SportName { get; set; }
         public BetTypeDTO MainBet { get; set; }

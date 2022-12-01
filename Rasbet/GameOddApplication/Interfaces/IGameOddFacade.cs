@@ -24,4 +24,5 @@ public interface IGameOddFacade
     public Task<GameInfoDTO> GetGameInfo(int gameId, bool detailed);
     public Task<DTO.GameOddDTO.GameDTO> GetGame(int gameId);
     public Task<ICollection<SportDTO>> GetSports();
+    public Task<ICollection<CollectiveGameDTO>> GetActiveAndSuspendedGames();
 }

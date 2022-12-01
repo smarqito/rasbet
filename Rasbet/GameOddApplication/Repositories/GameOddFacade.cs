@@ -181,4 +181,10 @@ public class GameOddFacade : IGameOddFacade
         ICollection<Sport> sports = await gameOddContext.Sport.ToListAsync();
         return mapper.Map<ICollection<SportDTO>>(sports);
     }
+
+    public async Task<ICollection<CollectiveGameDTO>> GetActiveAndSuspendedGames()
+    {
+        ICollection<Game> games = await gameRepository.GetActiveAndSuspendedGames();
+        return mapper.Map<ICollection<CollectiveGameDTO>>(games);
+    }
 }

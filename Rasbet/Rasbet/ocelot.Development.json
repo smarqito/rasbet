@@ -391,6 +391,19 @@
       ],
       "UpstreamPathTemplate": "/GameOdd/Sports",
       "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/GameOdd/ActiveAndSuspended",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5002"
+        }
+      ],
+      "UpstreamPathTemplate": "/GameOdd/ActiveAndSuspended",
+      "UpstreamHttpMethod": [ "GET" ],
+      "FileCacheOptions": { "TtlSeconds": 20 }
     }
   ],
   "GlobalConfiguration": {

@@ -166,5 +166,20 @@ namespace GameOddAPI.Controllers
                 return BadRequest(e.Message);
             }
         }
+
+        [HttpGet("ActiveAndSuspended")]
+        public async Task<IActionResult> GetActiveAndSuspendGames()
+        {
+            try
+            {
+                ICollection<CollectiveGameDTO> res = await gameOddFacade.GetActiveAndSuspendedGames();
+                return Ok(res);
+            }
+            catch(Exception e) 
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
     }
 }
