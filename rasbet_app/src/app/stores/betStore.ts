@@ -1,10 +1,4 @@
-import {
-  action,
-  computed,
-  makeObservable,
-  observable,
-  runInAction,
-} from "mobx";
+import { action, makeObservable, observable, runInAction } from "mobx";
 import { toast } from "react-toastify";
 import Agent from "../api/agent";
 import {
@@ -89,31 +83,39 @@ export default class BetStore {
     game: CollectiveGame
   ) => {
     try {
-      var selection: ISelection = {
-        betType: betType,
-        oddValue: oddValue,
-        odd: odd,
-        game: game,
-      };
+      let amountValue = Object.values(amount);
+      let amountValue2: number = Number(amountValue);
+      console.log(amountValue2);
+      if (amountValue2 > 0.01) {
+        var selection: ISelection = {
+          betType: betType,
+          oddValue: oddValue,
+          odd: odd,
+          game: game,
+        };
 
-      var betSimple: ISimpleDetails = {
-        selection: selection,
-        amount: amount,
-        userId: userId,
-      };
+        var betSimple: ISimpleDetails = {
+          selection: selection,
+          amount: amountValue2,
+          userId: userId,
+        };
 
-      var exists = 0;
+        var exists = 0;
 
-      for (let index = 0; index < this.simpleBets.length; index++) {
-        const element = this.simpleBets[index];
-        if (element.selection.odd.id == selection.odd.id) exists = 1;
-      }
+        for (let index = 0; index < this.simpleBets.length; index++) {
+          const element = this.simpleBets[index];
+          if (element.selection.odd.id == selection.odd.id) {
+            exists = 1;
+          }
+        }
+        console.log(betSimple);
 
-      if (!exists) {
-        this.simpleBets.push(betSimple);
-      } else {
-        toast.info("A seleção já foi inserida!");
-      }
+        if (!exists) {
+          this.simpleBets.push(betSimple);
+        } else {
+          toast.info("A seleção já foi inserida!");
+        }
+      } else toast.error("Montante deve ser superior a 10 cêntimos!");
     } catch (error) {
       toast.error("Ocorreu um erro interno!");
       throw error;
@@ -153,34 +155,34 @@ export default class BetStore {
     }
   };
 
-  @computed getNumSimple = () => {
+  @action getNumSimple = () => {
     return this.simpleBets.length;
   };
 
-  @computed getNumMulti = () => {
+  @action getNumMulti = () => {
     return this.betMultiple.selections.length;
   };
 
-  @computed getGanhosSimple = () => {
+  @action getGanhosSimple = () => {
     var res = 0;
     this.simpleBets.map((x) => (res += x.amount * x.selection.oddValue));
     return res;
   };
 
-  @computed getGanhosMultiple = () => {
+  @action getGanhosMultiple = () => {
     var oddMultiple = 1;
     this.betMultiple.selections.map((x) => (oddMultiple *= x.oddValue));
 
     return oddMultiple * this.betMultiple.amount;
   };
 
-  @computed getSimpleAmount = () => {
+  @action getSimpleAmount = () => {
     var res = 0;
     this.simpleBets.map((x) => (res += x.amount));
     return res;
   };
 
-  @computed getOddMultiple = () => {
+  @action getOddMultiple = () => {
     var res = 1;
 
     this.betMultiple.selections.map((x) => (res *= x.oddValue));
@@ -226,34 +228,41 @@ export default class BetStore {
   @action createBetMultiple = async () => {
     this.loading = true;
     try {
-      var createBet: ICreateBetMultiple = {
-        selections: [],
-        amount: this.betMultiple.amount,
-        userId: this.betMultiple.userId,
-      };
-
-      for (let index = 0; index < this.betMultiple.selections.length; index++) {
-        const element = this.betMultiple.selections[index];
-
-        var selection: ICreateSelection = {
-          bettypeId: element.betType.id,
-          oddValue: element.oddValue,
-          oddId: element.odd.id,
-          gameId: element.game.id,
+      if (this.betMultiple.selections.length < 2) {
+        var createBet: ICreateBetMultiple = {
+          selections: [],
+          amount: this.betMultiple.amount,
+          userId: this.betMultiple.userId,
         };
 
-        createBet.selections.push(selection);
+        for (
+          let index = 0;
+          index < this.betMultiple.selections.length;
+          index++
+        ) {
+          const element = this.betMultiple.selections[index];
+
+          var selection: ICreateSelection = {
+            bettypeId: element.betType.id,
+            oddValue: element.oddValue,
+            oddId: element.odd.id,
+            gameId: element.game.id,
+          };
+
+          createBet.selections.push(selection);
+        }
+
+        await Agent.Bet.createBetMultiple(createBet);
+
+        runInAction(() => {
+          this.clearMultiple();
+        });
+
+        toast.info("Aposta criadas com sucesso!");
+
+        this.loading = false;
       }
-
-      await Agent.Bet.createBetMultiple(createBet);
-
-      runInAction(() => {
-        this.clearMultiple();
-      });
-
-      toast.info("Aposta criadas com sucesso!");
-
-      this.loading = false;
+      else toast.error("Tem de ter, no mínimo, 2 seleções!")
     } catch (error) {
       toast.error("Erro ao enviar a aposta. Tente mais tarde!");
       throw error;

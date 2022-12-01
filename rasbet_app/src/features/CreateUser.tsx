@@ -1,80 +1,57 @@
 import { observer } from "mobx-react-lite";
-import {
-  Button,
-  Checkbox,
-  Form,
-  Grid,
-  Header,
-  Segment,
-} from "semantic-ui-react";
+import React, { useContext, useState } from "react";
+import { Button, Form, Grid, Header, Segment } from "semantic-ui-react";
+import { RootStoreContext } from "../app/stores/rootStore";
 import { Field, Form as FinalForm } from "react-final-form";
-import { useContext, useState } from "react";
-import TextInput from "../../app/common/TextInput";
+import { IUserRegister } from "../app/models/user";
+import { FORM_ERROR } from "final-form";
+import TextInput from "../app/common/TextInput";
 import {
   composeValidators,
-  exactLength,
   isEmail,
-  isNumber,
   minLength,
   required,
-} from "../../app/common/Validators";
-import ErrorMessage from "../../app/common/ErrorMessage";
-import { RootStoreContext } from "../../app/stores/rootStore";
-import {
-  AppUserRegisterFormValues,
-  IAppUserRegister,
-} from "../../app/models/user";
-import { FORM_ERROR } from "final-form";
-import SelectInput from "../../app/common/SelectInput";
-import { Languages } from "../../app/common/Languages";
-import DatePicker, { registerLocale } from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import { pt } from "date-fns/locale";
-registerLocale("pt", pt);
+} from "../app/common/Validators";
+import SelectInput from "../app/common/SelectInput";
+import { Languages } from "../app/common/Languages";
+import ErrorMessage from "../app/common/ErrorMessage";
 
 interface IErrors {
   repetePass?: string;
-  dob?: string;
 }
 
-const RegisterForm: React.FC = () => {
+interface IProps {
+  userType: string;
+}
+
+const CreateUser: React.FC<IProps> = ({ userType }) => {
   const rootStore = useContext(RootStoreContext);
-  const { registerAppUser, loading } = rootStore.userStore;
-  const [checkbox, setCheckbox] = useState(false);
-  const [DateValue, setDateValue] = useState(new Date());
+  const { createAdmin, createSpecialist } = rootStore.userStore;
 
-  const [initialValues] = useState(new AppUserRegisterFormValues());
-
-  function getAge(birthDate: Date) {
-    var today = new Date();
-    var age = today.getFullYear() - birthDate.getFullYear();
-    var m = today.getMonth() - birthDate.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
-    }
-    return age;
-  }
+  const [initialValues] = useState();
 
   return (
     <Grid textAlign="center" style={{ height: "70vh" }} verticalAlign="middle">
       <Grid.Column style={{ maxWidth: 450 }}>
-        <Header as="h1" color="black" textAlign="center">
+        <Header as="h2" color="black" textAlign="center">
           Registo
         </Header>
         <FinalForm
-          onSubmit={(values: IAppUserRegister) => {
-            values.notif = checkbox;
-            values.DOB = DateValue;
-            registerAppUser(values).catch((error) => ({
-              [FORM_ERROR]: error,
-            }));
+          onSubmit={(values: IUserRegister) => {
+            if (userType == "specialist") {
+              createSpecialist(values).catch((error) => ({
+                [FORM_ERROR]: error,
+              }));
+            } else {
+              createAdmin(values).catch((error) => ({
+                [FORM_ERROR]: error,
+              }));
+            }
           }}
           validate={(values) => {
             const errors: IErrors = {};
             if (values.password !== values.repetePass)
               errors.repetePass = "Não coincidem!";
-
-            if (getAge(DateValue) < 18) errors.dob = "Idade não é válida";
 
             return errors;
           }}
@@ -133,39 +110,6 @@ const RegisterForm: React.FC = () => {
                   placeholder={Languages[0].text}
                   validate={composeValidators(required)}
                 />
-                <Field
-                  name="NIF"
-                  component={TextInput}
-                  fluid
-                  icon="lock"
-                  iconPosition="left"
-                  placeholder="NIF"
-                  maxLength={9}
-                  validate={composeValidators(
-                    required,
-                    exactLength(9),
-                    isNumber
-                  )}
-                />
-                <Segment>
-                  <DatePicker
-                    selected={DateValue}
-                    onChange={(date) => date && setDateValue(date)}
-                    locale="pt"
-                    dateFormat={"P"}
-                  />
-                </Segment>
-                <Segment>
-                  <Checkbox
-                    name="notif"
-                    label="Deseja ser notificado (por email)?"
-                    checked={checkbox === true}
-                    onChange={() => {
-                      setCheckbox(!checkbox);
-                    }}
-                  />
-                </Segment>
-                {/* {console.log( checkbox)} */}
                 {submitError && !dirtySinceLastSubmit && (
                   <ErrorMessage
                     error={submitError}
@@ -184,4 +128,4 @@ const RegisterForm: React.FC = () => {
   );
 };
 
-export default observer(RegisterForm);
+export default observer(CreateUser);

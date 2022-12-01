@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import React, { useContext } from "react";
 import { Button, Card } from "semantic-ui-react";
-import { IBet, ISelection, ISimpleDetails } from "../../../app/models/bet";
+import { ISimpleDetails } from "../../../app/models/bet";
 import { RootStoreContext } from "../../../app/stores/rootStore";
 
 interface IProps {
@@ -18,10 +18,11 @@ const BetCartSimpleElement: React.FC<IProps> = ({ selection }) => {
         <Card.Header>
           {selection.selection.game.home} - {selection.selection.game.away}
         </Card.Header>
-        <Card.Meta>{selection.selection.betType.type}</Card.Meta>
+        <Card.Meta>{selection.selection.odd.name}</Card.Meta>
         <Card.Description>
-          cota:{selection.selection.oddValue} Montante:{selection.amount}€{" "}
-          Ganhos:{getGanhosSimple()}
+          <b>Cota</b>: {selection.selection.oddValue}<p />
+          <b>Montante</b>: {selection.amount}€ <p />
+          <b>Ganhos</b>: {getGanhosSimple()}
         </Card.Description>
       </Card.Content>
       <Card.Content extra>

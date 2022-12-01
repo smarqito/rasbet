@@ -1,4 +1,4 @@
-import { Button, Card, Grid, Header, Segment } from "semantic-ui-react";
+import { Button, Card, Grid, Header, Label, Segment } from "semantic-ui-react";
 import { Fragment, useContext, useEffect, useState } from "react";
 import { RootStoreContext } from "../../../app/stores/rootStore";
 import { observer } from "mobx-react-lite";
@@ -22,7 +22,25 @@ const BetCart: React.FC = () => {
   const [betType, setBetType] = useState("simple");
 
   function isMultipleValid() {
-    return getOddMultiple() < 1.2;
+    var disabled = false;
+
+    if (getOddMultiple() < 1.2) disabled = true;
+
+    if (!disabled && betMultiple.selections.length < 2) disabled = true;
+    
+    if (!disabled) {
+      for (let index1 = 0; index1 < betMultiple.selections.length; index1++) {
+        const element1 = betMultiple.selections[index1];
+        
+        for (let index2 = 1; index2 < betMultiple.selections.length; index2++) {
+          const element2 = betMultiple.selections[index2];
+          
+          if (element1.game.id == element2.game.id) disabled = true;
+        }
+      }
+    }
+
+    return disabled;
   }
 
   function isSimpleValid() {
@@ -33,60 +51,89 @@ const BetCart: React.FC = () => {
       if (element.selection.oddValue < 1.2) res = true;
     }
 
+    if (!res && simpleBets.length < 1) res = true;
+
     return res;
   }
 
-  useEffect(() => {}, [betType, createBetMultiple, createBetSimple]);
+  useEffect(() => {}, [
+    betType,
+    createBetMultiple,
+    createBetSimple,
+  ]);
 
   return (
-    <Card>
+    <div>
       <Segment.Group>
         <Segment>
-          {betType === "simple" ? (
-            <Header as="h4">A minha aposta ({getNumSimple()})</Header>
-          ) : (
-            <Header as="h4">A minha aposta ({getNumMulti()})</Header>
-          )}
+          <Header as="h4">A sua aposta.</Header>
+        </Segment>
+        <Segment>
           <Grid>
-            <Grid.Row columns={2}>
+            <Grid.Row columns={2} textAlign="center">
               <Grid.Column>
-                <Button type="button" onClick={() => setBetType("simple")}>
-                  Simples
+                <Button as="div" labelPosition="right">
+                  <Button
+                    type="button"
+                    onClick={() => setBetType("simple")}
+                    color="twitter"
+                    floated="left"
+                  >
+                    Simples
+                  </Button>
+                  <Label as="a" basic pointing="left" color="blue">
+                    {getNumSimple()}
+                  </Label>
                 </Button>
               </Grid.Column>
               <Grid.Column>
-                <Button type="button" onClick={() => setBetType("multiple")}>
-                  Múltipla
+                <Button as="div" labelPosition="right">
+                  <Button
+                    type="button"
+                    onClick={() => setBetType("multiple")}
+                    color="twitter"
+                  >
+                    Múltipla
+                  </Button>
+                  <Label as="a" basic pointing="left" color="blue">
+                    {getNumMulti()}
+                  </Label>
                 </Button>
               </Grid.Column>
             </Grid.Row>
           </Grid>
         </Segment>
-        <Segment>
-          {betType === "simple" ? (
-            <Card.Group itemsPerRow={1}>
-              {simpleBets.map((x) => {
-                return <BetCartSimpleElement selection={x} />;
-              })}
-            </Card.Group>
-          ) : (
-            <Card.Group itemsPerRow={1}>
-              {betMultiple.selections.map((x) => {
-                return <BetCartMultipleElement selection={x} />;
-              })}
-            </Card.Group>
-          )}
-        </Segment>
+      </Segment.Group>
+      <Segment style={{ overflow: "auto", maxHeight: "55vh" }}>
+        {betType === "simple" ? (
+          <Card.Group itemsPerRow={1}>
+            {simpleBets.map((x) => {
+              return <BetCartSimpleElement selection={x} />;
+            })}
+          </Card.Group>
+        ) : (
+          <Card.Group itemsPerRow={1}>
+            {betMultiple.selections.map((x) => {
+              return <BetCartMultipleElement selection={x} />;
+            })}
+          </Card.Group>
+        )}
+      </Segment>
+      <Segment.Group>
         <Segment>
           {betType === "simple" ? (
             <Fragment>
-              <Header as="h5">Montate total: {getSimpleAmount()}€</Header>
-              <Header as="h4">Ganhos Possiveis: {getGanhosSimple()} </Header>
+              <div style={{ fontSize: "15px", paddingBottom: "7px" }}>
+                <b>Montate total</b>: {getSimpleAmount()}€
+              </div>
+              <div style={{ fontSize: "16px" }}>
+                <b>Ganhos Possiveis</b>: {getGanhosSimple()}{" "}
+              </div>
             </Fragment>
           ) : (
-            <Fragment>
-              <Header as="h5">Odd Total: {getOddMultiple()}€</Header>
-            </Fragment>
+            <div style={{ fontSize: "16px" }}>
+              <b>Odd Multípla</b>: {getOddMultiple()}{" "}
+            </div>
           )}
         </Segment>
         <Segment>
@@ -113,7 +160,7 @@ const BetCart: React.FC = () => {
           )}
         </Segment>
       </Segment.Group>
-    </Card>
+    </div>
   );
 };
 

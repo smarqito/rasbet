@@ -20,7 +20,6 @@ import { FORM_ERROR } from "final-form";
 
 interface IProps {
   loginFunc: (values: IUserLogin) => any;
-  submitting: boolean;
   loading: boolean;
   isAppUser: boolean;
 }
@@ -28,9 +27,9 @@ interface IProps {
 const LoginForm: React.FC<IProps> = ({
   loginFunc,
   loading,
-  submitting,
   isAppUser,
 }) => {
+  console.log(isAppUser);
   return (
     <Grid textAlign="center" style={{ height: "90vh" }} verticalAlign="middle">
       <Grid.Column style={{ maxWidth: 450 }}>
@@ -90,7 +89,7 @@ const LoginForm: React.FC<IProps> = ({
                   color="green"
                   fluid
                   loading={loading}
-                  disabled={(invalid && !dirtySinceLastSubmit) || submitting}
+                  disabled={(invalid && !dirtySinceLastSubmit)}
                   size="large"
                   content="Aceder"
                 />

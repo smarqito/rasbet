@@ -12,10 +12,13 @@ import { IActiveGame } from "../../../app/models/game";
 import { IOdd } from "../../../app/models/odd";
 import { RootStoreContext } from "../../../app/stores/rootStore";
 import { Field, Form as FinalForm } from "react-final-form";
-import { FormApi, FORM_ERROR, SubmissionErrors } from "final-form";
-import { error } from "console";
 import TextInput from "../../../app/common/TextInput";
-import { required } from "../../../app/common/Validators";
+import {
+  composeValidators,
+  isNumber,
+  required,
+} from "../../../app/common/Validators";
+import { ValidationErrors } from "final-form";
 
 interface IProps {
   game: IActiveGame;
@@ -26,20 +29,21 @@ const ModalAddToCart: React.FC<IProps> = ({ game, odd }) => {
   const rootStore = useContext(RootStoreContext);
   const { user } = rootStore.userStore;
   const { addBetSimple, addMultipleSelection } = rootStore.betStore;
+  const { closeModal } = rootStore.modalStore;
 
   const [checkbox, setCheckbox] = useState(false);
 
   useEffect(() => {}, [checkbox]);
 
   return (
-    <Grid>
-      <Grid.Row>
+    <Grid padded>
+      <Grid.Row columns={1}>
         <Grid.Column>
           <Header as="h3">Como deseja efetuar a sua aposta?</Header>
-          <Header as="h5">
-            (Por defeito é adicionada como parte de uma aopsta múltipla.)
-          </Header>
+          (Por defeito é adicionada como parte de uma aopsta múltipla.)
         </Grid.Column>
+      </Grid.Row>
+      <Grid.Row>
         <GridColumn>
           <Checkbox
             label="Adicionar como aposta simples"
@@ -62,14 +66,8 @@ const ModalAddToCart: React.FC<IProps> = ({ game, odd }) => {
                 odd,
                 game.game
               );
+              closeModal();
             }}
-            // validate={(montante) => {
-            //   var error: string = "";
-
-            //   if (montante < 0.5) error = "Montante inferior ao necessário";
-
-            //   return error;
-            // }}
             render={({ handleSubmit }) => (
               <Form onSubmit={handleSubmit}>
                 <Field
@@ -77,9 +75,9 @@ const ModalAddToCart: React.FC<IProps> = ({ game, odd }) => {
                   fluid
                   component={TextInput}
                   placeholder="Montante desejado"
-                  validate={required}
+                  validate={composeValidators(required, isNumber)}
                 />
-                <Button type="submit" fluid>
+                <Button type="submit" positive>
                   Confirmar aposta!
                 </Button>
               </Form>
@@ -90,15 +88,11 @@ const ModalAddToCart: React.FC<IProps> = ({ game, odd }) => {
         <Grid.Row>
           <Button
             type="submit"
-            fluid
-            onClick={() =>
-              addMultipleSelection(
-                game.game.mainBet,
-                odd.id,
-                odd,
-                game.game
-              )
-            }
+            positive
+            onClick={() => {
+              addMultipleSelection(game.game.mainBet, odd.id, odd, game.game);
+              closeModal();
+            }}
           >
             Confirmar aposta!
           </Button>

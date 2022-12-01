@@ -5,12 +5,11 @@ import LoginForm from "../LoginForm";
 
 const AdminLogin = () => {
   const rootStore = useContext(RootStoreContext);
-  const { login, submitting, loading } = rootStore.userStore;
+  const { loginAdmin, loading } = rootStore.userStore;
 
   return (
     <LoginForm
-      loginFunc={login}
-      submitting={submitting}
+      loginFunc={loginAdmin}
       loading={loading}
       isAppUser={false}
     />

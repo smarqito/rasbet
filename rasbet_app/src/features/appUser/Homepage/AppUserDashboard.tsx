@@ -5,7 +5,6 @@ import BetCart from "../BetCart/BetCart";
 import { useContext, useEffect, useState } from "react";
 import { RootStoreContext } from "../../../app/stores/rootStore";
 import { RouteComponentProps } from "react-router-dom";
-import LoadingComponent from "../../../app/layout/LoadingComponent";
 
 interface DetailsParams {
   id: string;
@@ -18,7 +17,6 @@ const AppUserDashboard: React.FC<RouteComponentProps<DetailsParams>> = ({
   const rootStore = useContext(RootStoreContext);
   const {
     getActiveGames,
-    activeGames,
     gamesFiltered,
     getAllSports,
     allSports,
@@ -63,14 +61,18 @@ const AppUserDashboard: React.FC<RouteComponentProps<DetailsParams>> = ({
             </Grid>
           </Segment>
         </Grid.Column>
-        <Grid.Column width={8} key={"gameList"}>
+        <Grid.Column
+          width={8}
+          key={"gameList"}
+          // style={{ overflow: "auto", maxHeight: "55vh" }}
+        >
           <Container>
             <Header as="h3">Todos os jogos</Header>
             <GameList games={gamesFiltered} loading={loading} />
           </Container>
         </Grid.Column>
         <Grid.Column width={5} key={"BetCart"}>
-          {/* <BetCart /> */}
+          <BetCart />
         </Grid.Column>
       </Grid.Row>
     </Grid>

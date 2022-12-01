@@ -18,8 +18,10 @@ const BetCartMultipleElement: React.FC<IProps> = ({ selection }) => {
         <Card.Header>
           {selection.game.home} - {selection.game.away}
         </Card.Header>
-        <Card.Meta>{selection.betType.type}</Card.Meta>
-        <Card.Description>cota:{selection.oddValue}</Card.Description>
+        <Card.Meta>{selection.odd.name}</Card.Meta>
+        <Card.Description>
+          <b>Cota</b>: {selection.oddValue}
+        </Card.Description>
       </Card.Content>
       <Card.Content extra>
         <Button

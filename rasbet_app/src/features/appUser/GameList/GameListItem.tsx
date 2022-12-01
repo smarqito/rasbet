@@ -5,12 +5,11 @@ import {
   Grid,
   Header,
   Label,
-  Statistic,
+  SemanticCOLORS,
 } from "semantic-ui-react";
-import { CollectiveGame, IActiveGame } from "../../../app/models/game";
+import { IActiveGame } from "../../../app/models/game";
 import { formatRelative } from "date-fns";
 import { pt } from "date-fns/locale";
-import { NavLink } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import { RootStoreContext } from "../../../app/stores/rootStore";
 import ModalAddToCart from "./ModalAddToCart";
@@ -21,6 +20,33 @@ interface IProps {
 const GameListItem: React.FC<IProps> = ({ id, game }) => {
   const rootStore = useContext(RootStoreContext);
   const { openModal } = rootStore.modalStore;
+
+  function buttonColor(odd: number): SemanticCOLORS {
+    var grey: SemanticCOLORS = "grey";
+    var red: SemanticCOLORS = "red";
+    var green: SemanticCOLORS = "green";
+
+    var highest = { id: -1, value: 0 };
+    var lowest = { id: -1, value: 100 };
+
+    game.statistic.statitics.forEach((value, key) => {
+      if (value > highest.value) {
+        highest.value = value;
+        highest.id = key;
+      }
+
+      if (value < lowest.value) {
+        lowest.value = value;
+        lowest.id = key;
+      }
+    });
+
+    if (odd == highest.id) return green;
+
+    if (odd == lowest.id) return red;
+
+    return grey;
+  }
 
   return (
     <Card fluid key={id}>
@@ -37,18 +63,27 @@ const GameListItem: React.FC<IProps> = ({ id, game }) => {
               <Grid.Column key={odd.id} width={3} textAlign="center">
                 <Grid key={"stats&odds"}>
                   <Grid.Row key={odd.name}>
-                    <Button
-                      color="olive"
-                      type="submit"
-                      onClick={() => openModal(<ModalAddToCart game={game} odd={odd} />)}
-                    >
-                      {odd.name} <p /> {odd.value}€
+                    <Button as="div" labelPosition="right">
+                      <Button
+                        color={buttonColor(odd.id)}
+                        type="submit"
+                        onClick={() =>
+                          openModal(<ModalAddToCart game={game} odd={odd} />)
+                        }
+                      >
+                        <div style={{ fontSize: "12px" }}>{odd.name}</div>
+                        <div style={{ fontSize: "12px" }}>{odd.value}</div>
+                      </Button>
+                      <Label
+                        as="a"
+                        basic
+                        key={"stats"}
+                        pointing="left"
+                        color={buttonColor(odd.id)}
+                      >
+                        {game.statistic.statitics.get(odd.id)}%
+                      </Label>
                     </Button>
-                  </Grid.Row>
-                  <Grid.Row key={game.statistic.statitics.get(odd.id)}>
-                    <Label>
-                      {game.statistic.statitics.get(odd.id)}% Apostas
-                    </Label>
                   </Grid.Row>
                 </Grid>
               </Grid.Column>

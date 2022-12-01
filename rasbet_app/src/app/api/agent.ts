@@ -7,8 +7,8 @@ import {
   ICreateBetMultiple,
   ICreateBetSimple,
 } from "../models/bet";
-import { CollectiveGame, IActiveGame, ISport } from "../models/game";
-import { IChangeOdd, IOdd } from "../models/odd";
+import { IActiveGame, ISport } from "../models/game";
+import { IChangeOdd } from "../models/odd";
 import { ICreateTransaction, ITransaction } from "../models/transaction";
 import {
   IAppUser,
@@ -61,16 +61,16 @@ const User = {
   getAdmin: (id: string): Promise<IUser> =>
     requests.get(`/user/admin?id=${id}`),
   updateAppUser: (
-    email: string,
     name: string,
+    email: string,
     lang: string,
     coin: string,
     notif: boolean
-  ) => requests.put(`/user/update/user`, { email, name, lang, coin, notif }),
-  updateSpecialist: (email: string, pass: string, lang: string) =>
-    requests.put(`/user/update/specialist`, { email, pass, lang }),
-  updateAdmin: (email: string, pass: string, lang: string) =>
-    requests.put(`/user/update/admin`, { email, pass, lang }),
+  ) => requests.put(`/user/update/user`, { name, email, lang, coin, notif }),
+  updateSpecialist: (email: string, name: string, lang: string) =>
+    requests.put(`/user/update/specialist`, { email, name, lang }),
+  updateAdmin: (email: string, name: string, lang: string) =>
+    requests.put(`/user/update/admin`, { email, name, lang }),
   updateAppUserSensitive: (
     email: string,
     pass: string,
@@ -96,10 +96,10 @@ const Bet = {
     requests.post(`/Bet/simple`, createBet),
   createBetMultiple: (createBet: ICreateBetMultiple): Promise<IBetMultiple> =>
     requests.post(`/Bet/multiple`, createBet),
-  getUserBetsOpen: (userId: number): Promise<IBet[]> =>
+  getUserBetsOpen: (userId: string): Promise<IBet[]> =>
     requests.get(`/Bet/open`),
-  getUserBetsWon: (userId: number): Promise<IBet[]> => requests.get(`/Bet/won`),
-  getUserBetsLost: (userId: number): Promise<IBet[]> =>
+  getUserBetsWon: (userId: string): Promise<IBet[]> => requests.get(`/Bet/won`),
+  getUserBetsLost: (userId: string): Promise<IBet[]> =>
     requests.get(`/Bet/lost`),
 };
 
@@ -117,7 +117,7 @@ const Game = {
 };
 
 const Wallet = {
-  get: (userId: number): Promise<IWallet> =>
+  get: (userId: string): Promise<IWallet> =>
     requests.get(`/user/?userId=${userId}`),
   depositFunds: (createTran: ICreateTransaction) =>
     requests.put(`/wallet/deposit`, createTran),

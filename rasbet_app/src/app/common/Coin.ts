@@ -1,3 +1,3 @@
-export const Languages = [
+export const Coin = [
     {key: 'euro' , text : 'Euro', value: 'Euro'},
 ];

@@ -5,7 +5,3 @@ export interface IWallet {
     userId: string;
     balance: number;
 }
-
-export interface IWalletDetailed {
-    transactions: number[];
-}

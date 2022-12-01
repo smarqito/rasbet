@@ -1,16 +1,15 @@
 import { observer } from "mobx-react-lite";
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { RootStoreContext } from "../../app/stores/rootStore";
 import LoginForm from "../LoginForm";
 
 const SpecialistLogin = () => {
   const rootStore = useContext(RootStoreContext);
-  const { login, submitting, loading } = rootStore.userStore;
+  const { loginSpecialist, loading } = rootStore.userStore;
 
   return (
     <LoginForm
-      loginFunc={login}
-      submitting={submitting}
+      loginFunc={loginSpecialist}
       loading={loading}
       isAppUser={false}
     />
