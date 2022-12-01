@@ -13,7 +13,6 @@ namespace UserApplication.Repositories;
 public class WalletRepository : IWalletRepository
 {
     private readonly UserContext context;
-    private readonly APIService service = new APIService();
 
     public WalletRepository(UserContext context)
     {
@@ -97,37 +96,6 @@ public class WalletRepository : IWalletRepository
 
     }
 
-    public async Task<AppUser> RegisterBetSimple(CreateSimpleBetDTO dto)
-    {
-        AppUser? user = await context.AppUsers.Where(u => u.Id.Equals(dto.UserId)).FirstOrDefaultAsync();
-
-        if (user == null) throw new Exception("Utilizador não encontrado.");
-
-
-        BetSimple bet = await service.CreateBetSimple(dto);
-
-        user.BetHistory.Append(new AppUserBetHistory(user.Id, bet.Id));
-
-        await context.SaveChangesAsync();
-
-        return user;
-    }
-
-    public async Task<AppUser> RegisterBetMult(CreateMultipleBetDTO dto)
-    {
-        AppUser? user = await context.AppUsers.Where(u => u.Id.Equals(dto.UserId)).FirstOrDefaultAsync();
-
-        if (user == null) throw new Exception("Utilizador não encontrado.");
-
-
-        BetMultiple bet = await service.CreateBetMultiple(dto);
-
-        user.BetHistory.Append(new AppUserBetHistory(user.Id, bet.Id));
-
-        await context.SaveChangesAsync();
-
-        return user;
-    }
 
     public async Task<ICollection<TransactionDTO>> GetTransactions(string userId, DateTime start, DateTime end)
     {
