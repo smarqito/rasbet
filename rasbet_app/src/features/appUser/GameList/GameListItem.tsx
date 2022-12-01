@@ -13,6 +13,7 @@ import { pt } from "date-fns/locale";
 import { observer } from "mobx-react-lite";
 import { RootStoreContext } from "../../../app/stores/rootStore";
 import ModalAddToCart from "./ModalAddToCart";
+import { NavLink } from "react-router-dom";
 interface IProps {
   id: number;
   game: IActiveGame;
@@ -52,7 +53,13 @@ const GameListItem: React.FC<IProps> = ({ id, game }) => {
     <Card fluid key={id}>
       <Grid padded>
         <Grid.Row columns={5} verticalAlign="middle" key={"gameItem"}>
-          <Grid.Column stretched width={7} key={"gameName"}>
+          <Grid.Column
+            stretched
+            width={7}
+            key={"gameName"}
+            as={NavLink}
+            to={`/user/game/details/${game.game.id}`}
+          >
             <Header as={"h3"}>
               {game.game.home} - {game.game.away}
             </Header>
@@ -68,7 +75,7 @@ const GameListItem: React.FC<IProps> = ({ id, game }) => {
                         color={buttonColor(odd.id)}
                         type="submit"
                         onClick={() =>
-                          openModal(<ModalAddToCart game={game} odd={odd} />)
+                          openModal(<ModalAddToCart game={game.game} odd={odd} />)
                         }
                       >
                         <div style={{ fontSize: "12px" }}>{odd.name}</div>

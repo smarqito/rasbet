@@ -15,6 +15,7 @@ import { RootStoreContext } from "../../../app/stores/rootStore";
 import ChangeProfile from "./ChangeProfile";
 import ChangeSensitive from "./ChangeSensitive";
 import Deposit from "./Deposit";
+import TransactionDates from "./TransactionDates";
 import Withdraw from "./Withdraw";
 
 interface DetailsParams {
@@ -32,8 +33,10 @@ const AppUserProfile: React.FC<RouteComponentProps<DetailsParams>> = ({
     getUserBetsLost,
     getUserBetsOpen,
     getUserBetsWon,
+    userBetsFiltered,
   } = rootStore.userStore;
-  const { wallet, allTransactions, getWallet } = rootStore.walletStore;
+  const { wallet, allTransactions, getWallet, getTransactions } =
+    rootStore.walletStore;
   const { openModal } = rootStore.modalStore;
 
   const [userHistory, setUserHistory] = useState("transactions");
@@ -45,6 +48,8 @@ const AppUserProfile: React.FC<RouteComponentProps<DetailsParams>> = ({
   ];
 
   const [betFilter, setBetFilter] = useState("open");
+  // const [DateValueStart, setDateValueStart] = useState(new Date());
+  // const [DateValueEnd, setDateValueEnd] = useState(new Date());
 
   useEffect(() => {
     console.log(betFilter);
@@ -55,7 +60,13 @@ const AppUserProfile: React.FC<RouteComponentProps<DetailsParams>> = ({
     if (betFilter == "lost") getUserBetsLost(match.params.id);
     getAppUser(match.params.id);
     getWallet(match.params.id);
-  }, [betFilter, userHistory, match.params.id]);
+    // getTransactions(match.params.id, DateValueStart, DateValueEnd);
+  }, [
+    betFilter,
+    // DateValueStart, DateValueEnd,
+    userHistory,
+    match.params.id,
+  ]);
 
   const panes = [
     {
@@ -107,7 +118,7 @@ const AppUserProfile: React.FC<RouteComponentProps<DetailsParams>> = ({
               </Grid.Column>
             </Grid.Row>
             <Divider section />
-            <Grid.Row columns={2}>
+            <Grid.Row columns={1}>
               <Grid.Column>
                 <Button
                   fluid
@@ -118,7 +129,7 @@ const AppUserProfile: React.FC<RouteComponentProps<DetailsParams>> = ({
                 />
               </Grid.Column>
             </Grid.Row>
-            <Grid.Row columns={2}>
+            <Grid.Row columns={1}>
               <Grid.Column>
                 <Button
                   fluid
@@ -140,7 +151,7 @@ const AppUserProfile: React.FC<RouteComponentProps<DetailsParams>> = ({
           <Grid padded divided>
             <Grid.Row columns={3}>
               <Grid.Column verticalAlign="middle">
-                <Segment compact inverted>
+                <Segment compact inverted secondary>
                   <Header as="h4">
                     Valor em carteira:
                     {/* {wallet?.balance} */}
@@ -214,7 +225,9 @@ const AppUserProfile: React.FC<RouteComponentProps<DetailsParams>> = ({
                   type="button"
                   color="twitter"
                   fluid
-                  onClick={() => setUserHistory("transactions")}
+                  onClick={() => {
+                    setUserHistory("transactions");
+                  }}
                 >
                   Transações
                 </Button>
@@ -236,13 +249,17 @@ const AppUserProfile: React.FC<RouteComponentProps<DetailsParams>> = ({
               </Fragment>
             ) : (
               <Fragment>
-                {
-                  <Card>
-                    <Card.Header></Card.Header>
-                    <Card.Meta></Card.Meta>
-                    <Card.Description></Card.Description>
-                  </Card>
-                }
+                {userBetsFiltered.map((x) => {
+                  return (
+                    <Card>
+                      <Card.Header>
+                        {x.start.toString()} - {x.end?.toString()}
+                      </Card.Header>
+                      <Card.Meta>Montante apostado: {x.amount}</Card.Meta>
+                      <Card.Description>Ganhos: {x.wonValue}</Card.Description>
+                    </Card>
+                  );
+                })}
               </Fragment>
             )}
           </Card.Group>

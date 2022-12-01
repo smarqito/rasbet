@@ -30,6 +30,7 @@ import { Languages } from "../../app/common/Languages";
 import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { pt } from "date-fns/locale";
+import LoadingComponent from "../../app/layout/LoadingComponent";
 registerLocale("pt", pt);
 
 interface IErrors {
@@ -54,6 +55,9 @@ const RegisterForm: React.FC = () => {
     }
     return age;
   }
+
+  if(loading)
+    <LoadingComponent content="Espere um momento..." />
 
   return (
     <Grid textAlign="center" style={{ height: "70vh" }} verticalAlign="middle">

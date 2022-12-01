@@ -61,11 +61,7 @@ const AppUserDashboard: React.FC<RouteComponentProps<DetailsParams>> = ({
             </Grid>
           </Segment>
         </Grid.Column>
-        <Grid.Column
-          width={8}
-          key={"gameList"}
-          // style={{ overflow: "auto", maxHeight: "55vh" }}
-        >
+        <Grid.Column width={8} key={"gameList"}>
           <Container>
             <Header as="h3">Todos os jogos</Header>
             <GameList games={gamesFiltered} loading={loading} />

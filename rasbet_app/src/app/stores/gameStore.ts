@@ -25,7 +25,7 @@ export default class GameStore {
     this.rootStore = rootStore;
   }
 
-  @observable game: IGame | null = null;
+  @observable game: CollectiveGame | null = null;
   @observable activeGames: IActiveGame[] = [];
   @observable gamesFiltered: IActiveGame[] = [];
   @observable allSports: ISport[] = [];
@@ -62,22 +62,21 @@ export default class GameStore {
     return game;
   };
 
-  // @action loadGame = async (id: number) => {
-  //   this.loading = true;
-  //   let game = this.getGame(id);
-  //   try {
-  //     // let gameInfo = await Agent.Game.getGame(id, true);
-  //     runInAction(() => {
-  //         this.game = gameinfo;
-  //       }
-  //     });
-
-  //     this.loading = false;
-  //   } catch (error) {
-  //     toast.error("Não é possível apresentar o jogo!");
-  //     throw error;
-  //   }
-  // };
+  @action loadGame = async (id: number) => {
+    this.loading = true;
+    let game = this.getGame(id);
+    try {
+      // let gameInfo = await Agent.Game.getGame(id, true);
+      runInAction(() => {
+        this.game = game.game;
+      });
+    } catch (error) {
+      toast.error("Não é possível apresentar o jogo!");
+      throw error;
+    } finally {
+      this.loading = false;
+    }
+  };
 
   @action getActiveGames = async () => {
     this.loading = true;
@@ -86,7 +85,10 @@ export default class GameStore {
       // var games = await Agent.Game.getActiveGames();
 
       // runInAction(() => {
+      //   if(games){
       //   this.activeGames = games;
+      //   }
+      //   else toast.error("Sem jogos ativos!")
       // });
 
       var betType1: IBetType = {
@@ -157,12 +159,12 @@ export default class GameStore {
 
       this.activeGames.push(a1);
       this.activeGames.push(a2);
-
-      this.loading = false;
     } catch (error) {
       this.loading = false;
-      toast.error("Sem jogos ativos!");
+      toast.error("Ocorreu um erro interno!");
       throw error;
+    } finally {
+      this.loading = false;
     }
   };
 
@@ -172,7 +174,6 @@ export default class GameStore {
         (x) => x.game.sport == sport.name
       );
       this.gamesFiltered = gamesBySport;
-
     } catch (error) {
       toast.error("Ocorreu um erro interno!");
       throw error;
@@ -185,7 +186,10 @@ export default class GameStore {
       // var sports = await Agent.Game.getAllSports();
 
       // runInAction(() => {
+      // if (sports) {
       //   this.allSports = sports;
+      // }
+      // else toast.error("Sem desportos disponíveis!");
       // });
 
       var s1: ISport = { name: "Futebol" };
@@ -193,11 +197,12 @@ export default class GameStore {
 
       this.allSports.push(s1);
       this.allSports.push(s2);
-
-      this.loading = false;
     } catch (error) {
+      this.loading = false;
       toast.error("Sem desportos disponíveis!");
       throw error;
+    } finally {
+      this.loading = false;
     }
   };
 }

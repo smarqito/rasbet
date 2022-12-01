@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useContext, useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { ToastContainer } from "react-toastify";
 import {
@@ -23,6 +23,9 @@ import AdminLogin from "../../features/admin/AdminLogin";
 import SpecialistLogin from "../../features/specialist/SpecialistLogin";
 import CreationMenu from "../../features/admin/Homepage/CreationMenu";
 import ASProfile from "../../features/ASProfile";
+import { RootStoreContext } from "../stores/rootStore";
+import LoadingComponent from "./LoadingComponent";
+import SpecialistHomepage from "../../features/specialist/Homepage/SpecialistHomepage";
 
 const App: React.FC<RouteComponentProps> = () => {
   // const rootStore = useContext(RootStoreContext);
@@ -95,6 +98,12 @@ const App: React.FC<RouteComponentProps> = () => {
                   exact
                   path="/specialist/profile/:id"
                   component={ASProfile}
+                  roles={["Specialist"]}
+                />
+                <PrivateRoute
+                  exact
+                  path="/specialist/homepage/:id"
+                  component={SpecialistHomepage}
                   roles={["Specialist"]}
                 />
                 <Route path="/*" component={NotFound} />

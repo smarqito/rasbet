@@ -215,13 +215,13 @@ export default class BetStore {
       runInAction(() => {
         this.clearSimple();
       });
-
-      toast.info("Aposta(s) simple(s) criada(s) com sucesso!");
-
-      this.loading = false;
     } catch (error) {
+      this.loading = false;
       toast.error("Erro ao enviar a aposta. Tente mais tarde!");
       throw error;
+    } finally {
+      this.loading = false;
+      toast.info("Aposta(s) simple(s) criada(s) com sucesso!");
     }
   };
 
@@ -257,15 +257,13 @@ export default class BetStore {
         runInAction(() => {
           this.clearMultiple();
         });
-
-        toast.info("Aposta criadas com sucesso!");
-
-        this.loading = false;
-      }
-      else toast.error("Tem de ter, no mínimo, 2 seleções!")
+      } else toast.error("Tem de ter, no mínimo, 2 seleções!");
     } catch (error) {
       toast.error("Erro ao enviar a aposta. Tente mais tarde!");
       throw error;
+    } finally {
+      toast.info("Aposta criadas com sucesso!");
+      this.loading = false;
     }
   };
 }

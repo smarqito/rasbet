@@ -8,7 +8,7 @@ import {
   GridColumn,
   Header,
 } from "semantic-ui-react";
-import { IActiveGame } from "../../../app/models/game";
+import { CollectiveGame, IActiveGame } from "../../../app/models/game";
 import { IOdd } from "../../../app/models/odd";
 import { RootStoreContext } from "../../../app/stores/rootStore";
 import { Field, Form as FinalForm } from "react-final-form";
@@ -21,7 +21,7 @@ import {
 import { ValidationErrors } from "final-form";
 
 interface IProps {
-  game: IActiveGame;
+  game: CollectiveGame;
   odd: IOdd;
 }
 
@@ -61,10 +61,10 @@ const ModalAddToCart: React.FC<IProps> = ({ game, odd }) => {
               addBetSimple(
                 montante,
                 user!.id,
-                game.game.mainBet,
+                game.mainBet,
                 odd.value,
                 odd,
-                game.game
+                game
               );
               closeModal();
             }}
@@ -90,7 +90,7 @@ const ModalAddToCart: React.FC<IProps> = ({ game, odd }) => {
             type="submit"
             positive
             onClick={() => {
-              addMultipleSelection(game.game.mainBet, odd.id, odd, game.game);
+              addMultipleSelection(game.mainBet, odd.id, odd, game);
               closeModal();
             }}
           >

@@ -77,9 +77,10 @@ export default class WalletStore {
     }
   };
 
-  @action getTransaction = async (userId: string, start: Date, end: Date) => {
+  @action getTransactions = async (userId: string, start: Date, end: Date) => {
     this.loading = true;
     try {
+      console.log(userId, this.wallet?.userId);
       if (this.wallet!.userId == userId) {
         let transactions = await Agent.Wallet.getTransactions(
           userId,

@@ -17,6 +17,7 @@ import {
 } from "../app/common/Validators";
 import ErrorMessage from "../app/common/ErrorMessage";
 import { FORM_ERROR } from "final-form";
+import LoadingComponent from "../app/layout/LoadingComponent";
 
 interface IProps {
   loginFunc: (values: IUserLogin) => any;
@@ -29,7 +30,11 @@ const LoginForm: React.FC<IProps> = ({
   loading,
   isAppUser,
 }) => {
-  console.log(isAppUser);
+  
+  if(loading) {
+    <LoadingComponent content="Espere um momento..." />
+  }
+
   return (
     <Grid textAlign="center" style={{ height: "90vh" }} verticalAlign="middle">
       <Grid.Column style={{ maxWidth: 450 }}>
