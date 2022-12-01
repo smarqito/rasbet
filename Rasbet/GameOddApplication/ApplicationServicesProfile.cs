@@ -13,11 +13,9 @@ public class ApplicationServicesProfile : Profile
         CreateMap<BetType, BetTypeDTO>()
             .ForMember(x => x.Type, o => o.MapFrom(b => b.GetType().BaseType.Name));
         CreateMap<Game, GameDTO>()
-            .ForMember(x => x.MainBet, o => o.MapFrom(g => g.Bets.Where(x => x.GetType().BaseType.Name.Equals("H2h")).FirstOrDefault()))
-            .ForMember(x => x.Type, o => o.MapFrom(b => b.GetType().BaseType.Name));
+            .ForMember(x => x.MainBet, o => o.MapFrom(g => g.Bets.Where(x => x.GetType().BaseType.Name.Equals("H2h")).FirstOrDefault()));
         CreateMap<CollectiveGame, CollectiveGameDTO>()
-             .ForMember(x => x.MainBet, o => o.MapFrom(g => g.Bets.Where(x => x.GetType().BaseType.Name.Equals("H2h")).FirstOrDefault()))
-             .ForMember(x => x.Type, o => o.MapFrom(b => b.GetType().BaseType.Name));
+             .ForMember(x => x.MainBet, o => o.MapFrom(g => g.Bets.Where(x => x.GetType().BaseType.Name.Equals("H2h")).FirstOrDefault()));
         CreateMap<Game, GameInfoDTO>();
         CreateMap<BetType, BetInfoDTO>();
         CreateMap<Sport, SportDTO>();

@@ -3,7 +3,7 @@
     public class GameDTO
     {
         public int Id { get; set; }
-        public string Type { get; set; }
+        public string State { get; set; }
         public DateTime StartTime { get; set; }
         public string SportName { get; set; }
         public BetTypeDTO MainBet { get; set; }
