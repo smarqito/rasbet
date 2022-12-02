@@ -1,5 +1,4 @@
-﻿using Domain;
-using GameOddApplication.Interfaces;
+﻿using GameOddApplication.Interfaces;
 using GameOddPersistance;
 using Microsoft.EntityFrameworkCore;
 using System;

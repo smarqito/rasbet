@@ -1,4 +1,3 @@
-using Domain;
 using DTO;
 using DTO.BetDTO;
 using DTO.UserDTO;

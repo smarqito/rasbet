@@ -1,5 +1,4 @@
-﻿using Domain;
-using Domain.ResultDomain;
+﻿using Domain.ResultDomain;
 using DTO.GetGamesRespDTO;
 using GameOddApplication.Exceptions;
 using GameOddApplication.Interfaces;
