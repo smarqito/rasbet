@@ -87,6 +87,7 @@ public class WalletController : BaseController
     /// <param name="end">The date that ends the period of time of the transactions.</param>
     /// <returns>The transactions made on that period of  time by the given user.</returns>
     [HttpGet("transactions")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<TransactionDTO>))]
     public async Task<IActionResult> GetTransactions(string userId, DateTime start, DateTime end)
     {
         try
@@ -101,7 +102,7 @@ public class WalletController : BaseController
     }
 
     [HttpPatch("bet")]
-    public async Task<IActionResult> AddBetToHistory([FromQuery] string userId, int betId, int oddId)
+    public async Task<IActionResult> AddBetToHistory([FromQuery] string userId, int betId)
     {
         try
         {
