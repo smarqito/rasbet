@@ -24,17 +24,24 @@ const SensitiveConfirm: React.FC = () => {
       <Grid.Row>
         <Grid.Column>
           <FinalForm
-            onSubmit={(code: string) => {
+            onSubmit={(values: { email: string; code: string }) => {
               if (user?.role == "AppUser") {
-                updateAppUserSensitiveConfirm(code).catch((error) => ({
-                  [FORM_ERROR]: error,
-                }));
+                updateAppUserSensitiveConfirm(values.email, values.code).catch(
+                  (error) => ({
+                    [FORM_ERROR]: error,
+                  })
+                );
               } else if (user?.role == "Admin") {
-                updateAdminSensitiveConfirm(code).catch((error) => ({
-                  [FORM_ERROR]: error,
-                }));
+                updateAdminSensitiveConfirm(values.email, values.code).catch(
+                  (error) => ({
+                    [FORM_ERROR]: error,
+                  })
+                );
               } else {
-                updateSpecialistSensitiveConfirm(code).catch((error) => ({
+                updateSpecialistSensitiveConfirm(
+                  values.email,
+                  values.code
+                ).catch((error) => ({
                   [FORM_ERROR]: error,
                 }));
               }

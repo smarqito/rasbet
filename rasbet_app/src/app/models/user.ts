@@ -27,11 +27,11 @@ export interface IUserRegister {
   name: string;
   email: string;
   password: string;
-  repetePass: string;
   language: string;
 }
 
 export interface IAppUserRegister extends IUserRegister {
+  repetePass: string;
   NIF: string;
   DOB: Date;
   notif: boolean;
@@ -121,18 +121,7 @@ export class AppUserRegisterFormValues implements IAppUserRegister {
   }
 }
 
-export class AdminRegisterFromValues implements IUserRegister {
-  name: string = "";
-  email: string = "";
-  password: string = "";
-  repetePass: string = "";
-  language: string = "PT";
-  constructor(init?: IUserRegister) {
-    Object.assign(this, init);
-  }
-}
-
-export class SpecialistRegisterFromValues implements IUserRegister {
+export class UserRegisterFormValues implements IUserRegister {
   name: string = "";
   email: string = "";
   password: string = "";

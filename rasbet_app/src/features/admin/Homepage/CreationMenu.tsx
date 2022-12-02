@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { RouteComponentProps } from "react-router-dom";
-import { Grid, Header, Segment, Tab } from "semantic-ui-react";
+import { Button, Grid, Header, Segment, Tab } from "semantic-ui-react";
 import { Form as FinalForm } from "react-final-form";
 import { IAppUserRegister, IUserRegister } from "../../../app/models/user";
 import { useContext, useEffect, useState } from "react";
@@ -16,6 +16,9 @@ const CreationMenu: React.FC<RouteComponentProps<DetailsParams>> = ({
   match,
   history,
 }) => {
+  const rootStore = useContext(RootStoreContext);
+  const { openModal } = rootStore.modalStore;
+
   useEffect(() => {}, [match.params.id]);
 
   const panes = [
@@ -24,7 +27,11 @@ const CreationMenu: React.FC<RouteComponentProps<DetailsParams>> = ({
       render: () => (
         <Tab.Pane attached={false}>
           <Segment padded secondary>
-            <CreateUser userType="specialist" />{" "}
+            <Button
+              primary
+              content="Criar um novo especialist"
+              onClick={() => openModal(<CreateUser userType="specialist" />)}
+            />
           </Segment>
         </Tab.Pane>
       ),
@@ -34,7 +41,11 @@ const CreationMenu: React.FC<RouteComponentProps<DetailsParams>> = ({
       render: () => (
         <Tab.Pane attached={false}>
           <Segment padded secondary>
-            <CreateUser userType="admin" />
+            <Button
+              primary
+              content="Criar um novo administrador"
+              onClick={() => openModal(<CreateUser userType="admin" />)}
+            />
           </Segment>
         </Tab.Pane>
       ),

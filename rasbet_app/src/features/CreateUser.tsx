@@ -3,7 +3,7 @@ import React, { useContext, useState } from "react";
 import { Button, Form, Grid, Header, Segment } from "semantic-ui-react";
 import { RootStoreContext } from "../app/stores/rootStore";
 import { Field, Form as FinalForm } from "react-final-form";
-import { IUserRegister } from "../app/models/user";
+import { IUserRegister, UserRegisterFormValues } from "../app/models/user";
 import { FORM_ERROR } from "final-form";
 import TextInput from "../app/common/TextInput";
 import {
@@ -27,12 +27,13 @@ interface IProps {
 const CreateUser: React.FC<IProps> = ({ userType }) => {
   const rootStore = useContext(RootStoreContext);
   const { createAdmin, createSpecialist } = rootStore.userStore;
+  const { closeModal } = rootStore.modalStore;
 
-  const [initialValues] = useState();
+  const [initialValues] = useState(new UserRegisterFormValues());
 
   return (
-    <Grid textAlign="center" style={{ height: "70vh" }} verticalAlign="middle">
-      <Grid.Column style={{ maxWidth: 450 }}>
+    <Grid textAlign="center" verticalAlign="middle">
+      <Grid.Column>
         <Header as="h2" color="black" textAlign="center">
           Registo
         </Header>
@@ -47,14 +48,15 @@ const CreateUser: React.FC<IProps> = ({ userType }) => {
                 [FORM_ERROR]: error,
               }));
             }
+            closeModal();
           }}
-          validate={(values) => {
-            const errors: IErrors = {};
-            if (values.password !== values.repetePass)
-              errors.repetePass = "Não coincidem!";
+          // validate={(values) => {
+          //   const errors: IErrors = {};
+          //   if (values.password !== values.repetePass)
+          //     errors.repetePass = "Não coincidem!";
 
-            return errors;
-          }}
+          //   return errors;
+          // }}
           initialValues={initialValues}
           render={({
             handleSubmit,

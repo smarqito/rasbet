@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { Fragment, useContext, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { Container, Dropdown, Icon, Menu } from "semantic-ui-react";
 import { RootStoreContext } from "../../app/stores/rootStore";
@@ -8,6 +8,13 @@ import { observer } from "mobx-react-lite";
 const NavBar: React.FC = () => {
   const rootStore = useContext(RootStoreContext);
   const { user, logout } = rootStore.userStore;
+  const { wallet, getWallet } = rootStore.walletStore;
+
+  useEffect(() => {
+    if (user?.role === "AppUser") {
+      getWallet(user.id);
+    }
+  }, [user]);
 
   return (
     <div>
@@ -52,29 +59,32 @@ const NavBar: React.FC = () => {
             />
             <Menu.Item position="right">
               {user.role === "AppUser" ? (
-                <Dropdown
-                  pointing="top left"
-                  text={`Bem Vindo, ${user.name}`}
-                >
-                  <Dropdown.Menu>
-                    <IsAuthorized
-                      component={
-                        <Dropdown.Item
-                          as={NavLink}
-                          to={`/user/profile/${user.id}`}
-                          text="Meu perfil"
-                          icon="user"
-                        />
-                      }
-                      roles={["AppUser"]}
-                    />
-                    <Dropdown.Item
-                      onClick={logout}
-                      text="Logout"
-                      icon="power"
-                    />
-                  </Dropdown.Menu>
-                </Dropdown>
+                <Fragment>
+                  ({wallet?.balance})
+                  <Dropdown
+                    pointing="top left"
+                    text={`Bem Vindo, ${user.name}`}
+                  >
+                    <Dropdown.Menu>
+                      <IsAuthorized
+                        component={
+                          <Dropdown.Item
+                            as={NavLink}
+                            to={`/user/profile/${user.id}`}
+                            text="Meu perfil"
+                            icon="user"
+                          />
+                        }
+                        roles={["AppUser"]}
+                      />
+                      <Dropdown.Item
+                        onClick={logout}
+                        text="Logout"
+                        icon="power"
+                      />
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </Fragment>
               ) : (
                 <Dropdown pointing="top left" text={`Bem Vindo, ${user.name}`}>
                   <Dropdown.Menu>

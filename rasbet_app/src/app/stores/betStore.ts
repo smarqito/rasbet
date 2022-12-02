@@ -1,4 +1,10 @@
-import { action, makeObservable, observable, runInAction } from "mobx";
+import {
+  action,
+  computed,
+  makeObservable,
+  observable,
+  runInAction,
+} from "mobx";
 import { toast } from "react-toastify";
 import Agent from "../api/agent";
 import {
@@ -83,10 +89,7 @@ export default class BetStore {
     game: CollectiveGame
   ) => {
     try {
-      let amountValue = Object.values(amount);
-      let amountValue2: number = Number(amountValue);
-      console.log(amountValue2);
-      if (amountValue2 > 0.01) {
+      if (amount > 0.01) {
         var selection: ISelection = {
           betType: betType,
           oddValue: oddValue,
@@ -96,7 +99,7 @@ export default class BetStore {
 
         var betSimple: ISimpleDetails = {
           selection: selection,
-          amount: amountValue2,
+          amount: amount,
           userId: userId,
         };
 
@@ -136,15 +139,10 @@ export default class BetStore {
         game: game,
       };
 
-      var exists = 0;
-
-      for (let index = 0; index < this.betMultiple.selections.length; index++) {
-        const element = this.betMultiple.selections[index];
-
-        if (element.odd.id == odd.id) exists = 1;
-      }
-
-      if (!exists) {
+      let exists = this.betMultiple.selections.filter(
+        (x) => x.odd.id == odd.id
+      );
+      if (exists.length === 0) {
         this.betMultiple.selections.push(selection);
       } else {
         toast.info("A seleção já foi inserida!");
@@ -176,19 +174,15 @@ export default class BetStore {
     return oddMultiple * this.betMultiple.amount;
   };
 
-  @action getSimpleAmount = () => {
-    var res = 0;
-    this.simpleBets.map((x) => (res += x.amount));
-    return res;
-  };
+  @computed get getSimpleAmount() {
+    return this.simpleBets.map((x) => x.amount * 1).reduce((p, c) => p + c, 0);
+  }
 
-  @action getOddMultiple = () => {
-    var res = 1;
-
-    this.betMultiple.selections.map((x) => (res *= x.oddValue));
-
-    return res;
-  };
+  @computed get getOddMultiple() {
+    return this.betMultiple.selections
+      .map((x) => x.oddValue.valueOf())
+      .reduce((p, c) => p * c, 1);
+  }
 
   @action createBetSimple = async () => {
     this.loading = true;
@@ -228,7 +222,7 @@ export default class BetStore {
   @action createBetMultiple = async () => {
     this.loading = true;
     try {
-      if (this.betMultiple.selections.length < 2) {
+      if (this.betMultiple.selections.length > 1) {
         var createBet: ICreateBetMultiple = {
           selections: [],
           amount: this.betMultiple.amount,
@@ -257,12 +251,12 @@ export default class BetStore {
         runInAction(() => {
           this.clearMultiple();
         });
+        toast.info("Aposta criadas com sucesso!");
       } else toast.error("Tem de ter, no mínimo, 2 seleções!");
     } catch (error) {
       toast.error("Erro ao enviar a aposta. Tente mais tarde!");
       throw error;
     } finally {
-      toast.info("Aposta criadas com sucesso!");
       this.loading = false;
     }
   };

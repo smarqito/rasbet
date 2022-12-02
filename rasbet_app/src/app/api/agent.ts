@@ -1,13 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import { toast } from "react-toastify";
-import {
-  IBet,
-  IBetMultiple,
-  IBetSimple,
-  ICreateBetMultiple,
-  ICreateBetSimple,
-} from "../models/bet";
-import { IActiveGame, ISport } from "../models/game";
+import { IBet, ICreateBetMultiple, ICreateBetSimple } from "../models/bet";
+import { CollectiveGame, IActiveGame, ISport } from "../models/game";
 import { IChangeOdd } from "../models/odd";
 import { ICreateTransaction, ITransaction } from "../models/transaction";
 import {
@@ -66,7 +60,7 @@ const User = {
     lang: string,
     coin: string,
     notif: boolean
-  ) => requests.put(`/user/update/user`, { name, email, lang, coin, notif }),
+  ) => requests.put(`/user/update/user`, { email, name, lang, coin, notif }),
   updateSpecialist: (email: string, name: string, lang: string) =>
     requests.put(`/user/update/specialist`, { email, name, lang }),
   updateAdmin: (email: string, name: string, lang: string) =>
@@ -81,26 +75,29 @@ const User = {
     requests.put(`/user/sensitive/admin`, { email, pass }),
   updateSpecialSensitive: (email: string, pass: string) =>
     requests.put(`/user/sensitive/specialist`, { email, pass }),
-  updateAppUserSensitiveConfirm: (code: string) =>
-    requests.put(`/user/sensitive/confirm`, { code }),
-  updateAdminSensitiveConfirm: (code: string) =>
-    requests.put(`/user/sensitive/admin/confirm`, { code }),
-  updateSpecialistSensitiveConfirm: (code: string) =>
-    requests.put(`/user/sensitive/specialist/confirm`, { code }),
-  // Necessário logout?
+  updateAppUserSensitiveConfirm: (email: string, code: string) =>
+    requests.put(`/user/sensitive/confirm`, { email, code }),
+  updateAdminSensitiveConfirm: (email: string, code: string) =>
+    requests.put(`/user/sensitive/admin/confirm`, { email, code }),
+  updateSpecialistSensitiveConfirm: (email: string, code: string) =>
+    requests.put(`/user/sensitive/specialist/confirm`, { email, code }),
+  changePass: (email: string) => requests.put(`/user/forgotPWD`, { email }),
   logout: (id: string) => requests.post(`/user/logout`, id),
 };
 
 const Bet = {
-  createBetSimple: (createBet: ICreateBetSimple): Promise<IBetSimple> =>
+  createBetSimple: (createBet: ICreateBetSimple): Promise<IBet> =>
     requests.post(`/Bet/simple`, createBet),
-  createBetMultiple: (createBet: ICreateBetMultiple): Promise<IBetMultiple> =>
+  createBetMultiple: (createBet: ICreateBetMultiple): Promise<IBet> =>
     requests.post(`/Bet/multiple`, createBet),
-  getUserBetsOpen: (userId: string): Promise<IBet[]> =>
-    requests.get(`/Bet/open`),
-  getUserBetsWon: (userId: string): Promise<IBet[]> => requests.get(`/Bet/won`),
-  getUserBetsLost: (userId: string): Promise<IBet[]> =>
-    requests.get(`/Bet/lost`),
+  getUserBetsOpen: (userId: string, start: Date, end: Date): Promise<IBet[]> =>
+    requests.get(`/Bet/open?userId=${userId}&start=${end}`),
+  getUserBetsWon: (userId: string, start: Date, end: Date): Promise<IBet[]> =>
+    requests.get(`/Bet/won?userId=${userId}&start=${end}`),
+  getUserBetsLost: (userId: string, start: Date, end: Date): Promise<IBet[]> =>
+    requests.get(`/Bet/lost?userId=${userId}&start=${end}`),
+  getUserBetsClose: (userId: string, start: Date, end: Date): Promise<IBet[]> =>
+    requests.get(`/Bet/closed?userId=${userId}&start=${end}`),
 };
 
 const Game = {
@@ -114,6 +111,10 @@ const Game = {
   getActiveGames: (): Promise<IActiveGame[]> =>
     requests.get(`/GameOdd/activeGames`),
   getAllSports: (): Promise<ISport[]> => requests.get(`/GameOdd/sports`),
+  getActiveAndSuspended: (): Promise<IActiveGame[]> =>
+    requests.get(`/GameOdd/ActiveAndSuspended`),
+  getGame: (gameId: number): Promise<CollectiveGame> =>
+    requests.get(`/GameOdd?gameId=${gameId}`),
 };
 
 const Wallet = {

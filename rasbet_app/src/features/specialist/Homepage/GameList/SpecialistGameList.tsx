@@ -1,9 +1,9 @@
 import { Card } from "semantic-ui-react";
 import { observer } from "mobx-react-lite";
-import GameListItem from "./GameListItem";
-import { IActiveGame, IGame } from "../../../app/models/game";
-import ListItemNotFound from "../../../app/common/ListItemNotFound";
+import { IActiveGame } from "../../../../app/models/game";
+import ListItemNotFound from "../../../../app/common/ListItemNotFound";
 import { Fragment } from "react";
+import SpecialistGameItem from "./SpecialistGameItem";
 
 interface IProps {
   games: IActiveGame[];
@@ -20,7 +20,7 @@ const GameList: React.FC<IProps> = ({ games, loading }) => {
       {hasElements() ? (
         <Card.Group>
           {games.map((x) => (
-            <GameListItem key={x.game.id} id={x.game.id} game={x} />
+            <SpecialistGameItem key={x.game.id} id={x.game.id} game={x} />
           ))}
         </Card.Group>
       ) : (

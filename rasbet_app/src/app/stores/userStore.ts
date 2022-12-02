@@ -65,20 +65,12 @@ export default class UserStore {
   @action loginAdmin = async (values: IUserLogin) => {
     this.loading = true;
     try {
-      // const user = await Agent.User.login(values);
-      // runInAction(() => {
-      //   this.user = user;
-      //   this.role = user.role;
-      // });
+      const user = await Agent.User.login(values);
+      runInAction(() => {
+        this.user = user;
+        this.role = user.role;
+      });
 
-      const user: IUser = {
-        id: "1",
-        name: "Marco Antonio",
-        email: "smarqito@gmail.com",
-        language: "Português",
-        token: "tokenMarco",
-        role: "Admin",
-      };
       if (user.role == "Admin") {
         if (values.email == user.email && values.password == "123456") {
           this.user = user;
@@ -101,20 +93,11 @@ export default class UserStore {
   @action loginAppUser = async (values: IUserLogin) => {
     this.loading = true;
     try {
-      // const user = await Agent.User.login(values);
-      // runInAction(() => {
-      //   this.user = user;
-      //   this.role = user.role;
-      // });
-
-      const user: IUser = {
-        id: "0",
-        name: "Jose Alberto",
-        email: "jafmalheiro@live.com.pt",
-        language: "Português",
-        token: "tokenJose",
-        role: "AppUser",
-      };
+      const user = await Agent.User.login(values);
+      runInAction(() => {
+        this.user = user;
+        this.role = user.role;
+      });
 
       if (user.role == "AppUser") {
         if (values.email == user.email && values.password == "123456") {
@@ -138,20 +121,11 @@ export default class UserStore {
   @action loginSpecialist = async (values: IUserLogin) => {
     this.loading = true;
     try {
-      // const user = await Agent.User.login(values);
-      // runInAction(() => {
-      //   this.user = user;
-      //   this.role = user.role;
-      // });
-
-      const user: IUser = {
-        id: "3",
-        name: "Miguel",
-        email: "miguel@gmail.com",
-        language: "Português",
-        token: "tokenMiguel",
-        role: "Specialist",
-      };
+      const user = await Agent.User.login(values);
+      runInAction(() => {
+        this.user = user;
+        this.role = user.role;
+      });
 
       if (user.role == "Specialist") {
         if (values.email == user.email && values.password == "123456") {
@@ -218,7 +192,7 @@ export default class UserStore {
 
   @action logout = async () => {
     try {
-      // await Agent.User.logout(this.user!.id);
+      await Agent.User.logout(this.user!.id);
       this.rootStore.commonStore.setToken(null);
       this.user = null;
       history.push("/");
@@ -234,7 +208,7 @@ export default class UserStore {
     this.loading = true;
     try {
       var password = "";
-      //password = Agent.User.changePassByEmail(email);
+      await Agent.User.changePass(email);
       toast.info("Email enviado com nova Palavra-Passe!", {
         onClose: history.goBack,
         autoClose: 1000,
@@ -244,6 +218,20 @@ export default class UserStore {
       throw error;
     } finally {
       this.loading = false;
+    }
+  };
+
+  @action getUser = (userType: string, id: string) => {
+    switch (userType) {
+      case "Admin":
+        this.getAdmin(id);
+        break;
+      case "Appuser":
+        this.getAppUser(id);
+        break;
+      case "Specialist":
+        this.getSpecialist(id);
+        break;
     }
   };
 
@@ -388,10 +376,13 @@ export default class UserStore {
     }
   };
 
-  @action updateAppUserSensitiveConfirm = async (code: string) => {
+  @action updateAppUserSensitiveConfirm = async (
+    email: string,
+    code: string
+  ) => {
     this.loading = true;
     try {
-      await Agent.User.updateAppUserSensitiveConfirm(code);
+      await Agent.User.updateAppUserSensitiveConfirm(email, code);
       toast.info("Alteração efetuado com sucesso!");
     } catch (error) {
       toast.error("Falha ao atualizar os dados sensíveis do utilizador!");
@@ -401,10 +392,10 @@ export default class UserStore {
     }
   };
 
-  @action updateAdminSensitiveConfirm = async (code: string) => {
+  @action updateAdminSensitiveConfirm = async (email: string, code: string) => {
     this.loading = true;
     try {
-      await Agent.User.updateAdminSensitiveConfirm(code);
+      await Agent.User.updateAdminSensitiveConfirm(email, code);
       toast.info("Alteração efetuado com sucesso!");
     } catch (error) {
       toast.error("Falha ao atualizar os dados sensíveis do utilizador!");
@@ -414,10 +405,13 @@ export default class UserStore {
     }
   };
 
-  @action updateSpecialistSensitiveConfirm = async (code: string) => {
+  @action updateSpecialistSensitiveConfirm = async (
+    email: string,
+    code: string
+  ) => {
     this.loading = true;
     try {
-      await Agent.User.updateSpecialistSensitiveConfirm(code);
+      await Agent.User.updateSpecialistSensitiveConfirm(email, code);
       toast.info("Alteração efetuado com sucesso!");
     } catch (error) {
       toast.error("Falha ao atualizar os dados sensíveis do utilizador!");
@@ -427,10 +421,10 @@ export default class UserStore {
     }
   };
 
-  @action getUserBetsOpen = async (id: string) => {
+  @action getUserBetsOpen = async (id: string, start: Date, end: Date) => {
     this.loading = true;
     try {
-      var bets: IBet[] = await Agent.Bet.getUserBetsOpen(id);
+      var bets: IBet[] = await Agent.Bet.getUserBetsOpen(id, start, end);
 
       if (bets) {
         return bets;
@@ -443,10 +437,10 @@ export default class UserStore {
     }
   };
 
-  @action getUserBetsWon = async (id: string) => {
+  @action getUserBetsWon = async (id: string, start: Date, end: Date) => {
     this.loading = true;
     try {
-      var bets: IBet[] = await Agent.Bet.getUserBetsWon(id);
+      var bets: IBet[] = await Agent.Bet.getUserBetsWon(id, start, end);
 
       if (bets) {
         return bets;
@@ -459,10 +453,10 @@ export default class UserStore {
     }
   };
 
-  @action getUserBetsLost = async (id: string) => {
+  @action getUserBetsLost = async (id: string, start: Date, end: Date) => {
     this.loading = true;
     try {
-      var bets: IBet[] = await Agent.Bet.getUserBetsLost(id);
+      var bets: IBet[] = await Agent.Bet.getUserBetsLost(id, start, end);
 
       if (bets) {
         return bets;

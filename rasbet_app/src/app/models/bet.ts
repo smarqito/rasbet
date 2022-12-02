@@ -11,15 +11,14 @@ export interface IBet {
   end?: Date;
   state: betState;
   user: string;
+  selections: ISelectionGame[];
+  odd: number
 }
 
-export interface IBetSimple extends IBet {
-  selection: ISelection;
-}
-
-export interface IBetMultiple extends IBet {
-  oddMultiple: number;
-  selections: ISelection[];
+export interface ISelectionGame {
+  odd: number;
+  game: IGame;
+  win: boolean;
 }
 
 export interface ISelection {
@@ -28,6 +27,7 @@ export interface ISelection {
   odd: IOdd;
   game: CollectiveGame;
 }
+
 export interface IBetDetails {
   amount: number;
   userId: string;
@@ -43,8 +43,8 @@ export interface IMultipleDetails extends IBetDetails {
 
 export interface ICreateSelection {
   bettypeId: number;
-  oddValue: number;
   oddId: number;
+  oddValue: number;
   gameId: number;
 }
 

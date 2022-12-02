@@ -8,6 +8,7 @@ export interface ISport {
 
 export interface IGame {
   id: number;
+  state: GameState;
   start: Date;
   sport: string;
   mainBet: IBetType;

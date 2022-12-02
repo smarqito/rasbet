@@ -24,18 +24,22 @@ const BetCart: React.FC = () => {
   function isMultipleValid() {
     var disabled = false;
 
-    if (getOddMultiple() < 1.2) disabled = true;
+    if (getOddMultiple < 1.2) disabled = true;
 
     if (!disabled && betMultiple.selections.length < 2) disabled = true;
-    
+
     if (!disabled) {
       for (let index1 = 0; index1 < betMultiple.selections.length; index1++) {
         const element1 = betMultiple.selections[index1];
-        
-        for (let index2 = 1; index2 < betMultiple.selections.length; index2++) {
+
+        for (let index2 = 0; index2 < betMultiple.selections.length; index2++) {
           const element2 = betMultiple.selections[index2];
-          
-          if (element1.game.id == element2.game.id) disabled = true;
+
+          if (
+            element1.odd.id !== element2.odd.id &&
+            element1.game.id == element2.game.id
+          )
+            disabled = true;
         }
       }
     }
@@ -48,7 +52,8 @@ const BetCart: React.FC = () => {
 
     for (let index = 0; index < simpleBets.length; index++) {
       const element = simpleBets[index];
-      if (element.selection.oddValue < 1.2) res = true;
+      if (element.selection.oddValue < 1.2 || element.selection.oddValue < 0.01)
+        res = true;
     }
 
     if (!res && simpleBets.length < 1) res = true;
@@ -56,11 +61,7 @@ const BetCart: React.FC = () => {
     return res;
   }
 
-  useEffect(() => {}, [
-    betType,
-    createBetMultiple,
-    createBetSimple,
-  ]);
+  useEffect(() => {}, [betType, createBetMultiple, createBetSimple]);
 
   return (
     <div>
@@ -107,14 +108,14 @@ const BetCart: React.FC = () => {
       <Segment style={{ overflow: "auto", maxHeight: "55vh" }}>
         {betType === "simple" ? (
           <Card.Group itemsPerRow={1}>
-            {simpleBets.map((x) => {
-              return <BetCartSimpleElement selection={x} />;
+            {simpleBets.map((x, i) => {
+              return <BetCartSimpleElement key={i} selection={x} />;
             })}
           </Card.Group>
         ) : (
           <Card.Group itemsPerRow={1}>
-            {betMultiple.selections.map((x) => {
-              return <BetCartMultipleElement selection={x} />;
+            {betMultiple.selections.map((x, i) => {
+              return <BetCartMultipleElement key={i} selection={x} />;
             })}
           </Card.Group>
         )}
@@ -124,7 +125,7 @@ const BetCart: React.FC = () => {
           {betType === "simple" ? (
             <Fragment>
               <div style={{ fontSize: "15px", paddingBottom: "7px" }}>
-                <b>Montate total</b>: {getSimpleAmount()}€
+                <b>Montate total</b>: {getSimpleAmount}€
               </div>
               <div style={{ fontSize: "16px" }}>
                 <b>Ganhos Possiveis</b>: {getGanhosSimple()}{" "}
@@ -132,7 +133,7 @@ const BetCart: React.FC = () => {
             </Fragment>
           ) : (
             <div style={{ fontSize: "16px" }}>
-              <b>Odd Multípla</b>: {getOddMultiple()}{" "}
+              <b>Odd Multípla</b>: {getOddMultiple.toFixed(2)}{" "}
             </div>
           )}
         </Segment>

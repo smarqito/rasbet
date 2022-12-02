@@ -8,6 +8,7 @@ import {
   Dropdown,
   Grid,
   Header,
+  Input,
   Segment,
   Tab,
 } from "semantic-ui-react";
@@ -15,8 +16,12 @@ import { RootStoreContext } from "../../../app/stores/rootStore";
 import ChangeProfile from "./ChangeProfile";
 import ChangeSensitive from "./ChangeSensitive";
 import Deposit from "./Deposit";
-import TransactionDates from "./TransactionDates";
 import Withdraw from "./Withdraw";
+import DatePicker, { registerLocale } from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { pt } from "date-fns/locale";
+import ListItemNotFound from "../../../app/common/ListItemNotFound";
+registerLocale("pt", pt);
 
 interface DetailsParams {
   id: string;
@@ -39,34 +44,33 @@ const AppUserProfile: React.FC<RouteComponentProps<DetailsParams>> = ({
     rootStore.walletStore;
   const { openModal } = rootStore.modalStore;
 
-  const [userHistory, setUserHistory] = useState("transactions");
-
   const betFilterTypes = [
-    { key: 1, text: "open", value: 1 },
-    { key: 2, text: "won", value: 2 },
-    { key: 3, text: "lost", value: 3 },
+    { key: 1, text: "open", value: "open" },
+    { key: 2, text: "won", value: "won" },
+    { key: 3, text: "lost", value: "lost" },
   ];
 
-  const [betFilter, setBetFilter] = useState("open");
-  // const [DateValueStart, setDateValueStart] = useState(new Date());
-  // const [DateValueEnd, setDateValueEnd] = useState(new Date());
+  const [betFilter, setBetFilter] = useState<
+    string | number | boolean | (string | number | boolean)[] | undefined
+  >("open");
+
+  const [DateValueEnd, setDateValueEnd] = useState(new Date());
 
   useEffect(() => {
     console.log(betFilter);
-    if (betFilter == "open") getUserBetsOpen(match.params.id);
+    if (betFilter == "open")
+      getUserBetsOpen(match.params.id, new Date(2001, 1, 1), DateValueEnd);
 
-    if (betFilter == "won") getUserBetsWon(match.params.id);
+    if (betFilter == "won")
+      getUserBetsWon(match.params.id, new Date(2001, 1, 1), DateValueEnd);
 
-    if (betFilter == "lost") getUserBetsLost(match.params.id);
+    if (betFilter == "lost")
+      getUserBetsLost(match.params.id, new Date(2001, 1, 1), DateValueEnd);
+
     getAppUser(match.params.id);
     getWallet(match.params.id);
-    // getTransactions(match.params.id, DateValueStart, DateValueEnd);
-  }, [
-    betFilter,
-    // DateValueStart, DateValueEnd,
-    userHistory,
-    match.params.id,
-  ]);
+    getTransactions(match.params.id, new Date(2001, 1, 1), DateValueEnd);
+  }, [betFilter, setBetFilter, DateValueEnd, match.params.id]);
 
   const panes = [
     {
@@ -77,29 +81,20 @@ const AppUserProfile: React.FC<RouteComponentProps<DetailsParams>> = ({
             <Grid.Row columns={2} textAlign="center">
               <Grid.Column>
                 <Header as="h4">Nome: </Header>
-                <Segment tertiary>
-                  {/* {appUserDetails?.name} */}
-                  José Malheiro
-                </Segment>
+                <Segment tertiary>{appUserDetails?.name}</Segment>
               </Grid.Column>
               <Grid.Column>
                 <Grid>
                   <Grid.Row columns={1} textAlign="center">
                     <Grid.Column>
                       <Header as="h4"> Language:</Header>
-                      <Segment tertiary>
-                        {/* {appUserDetails?.language} */}
-                        Português
-                      </Segment>
+                      <Segment tertiary>{appUserDetails?.language}</Segment>
                     </Grid.Column>
                   </Grid.Row>
                   <Grid.Row columns={1} textAlign="center">
                     <Grid.Column>
                       <Header as="h4">Moeda:</Header>
-                      <Segment tertiary>
-                        {/* {appUserDetails?.coin} */}
-                        Euro(€)
-                      </Segment>
+                      <Segment tertiary>{appUserDetails?.coin}(€)</Segment>
                     </Grid.Column>
                   </Grid.Row>
                   <Grid.Row columns={1} textAlign="center">
@@ -154,8 +149,7 @@ const AppUserProfile: React.FC<RouteComponentProps<DetailsParams>> = ({
                 <Segment compact inverted secondary>
                   <Header as="h4">
                     Valor em carteira:
-                    {/* {wallet?.balance} */}
-                    55€
+                    {wallet?.balance}
                   </Header>
                 </Segment>
               </Grid.Column>
@@ -185,84 +179,101 @@ const AppUserProfile: React.FC<RouteComponentProps<DetailsParams>> = ({
       ),
     },
     {
-      menuItem: "Histórico",
+      menuItem: "Histórico Apostas",
       render: () => (
         <Tab.Pane>
           <Grid celled>
             <Grid.Row columns={1} textAlign="center">
               <Grid.Column>
-                <Header>Histórico</Header>
+                <Header>Histórico de Apostas</Header>
               </Grid.Column>
             </Grid.Row>
-            <Grid.Row columns={2} textAlign="center">
+            <Grid.Row columns={1} textAlign="center">
               <Grid.Column>
-                <Grid>
-                  <Grid.Row columns={2}>
-                    <Grid.Column width={10}>
-                      <Button
-                        type="button"
-                        color="twitter"
-                        fluid
-                        onClick={() => setUserHistory("bets")}
-                      >
-                        Apostas
-                      </Button>
-                    </Grid.Column>
-                    <Grid.Column width={6}>
+                <Grid centered>
+                  <Grid.Row columns={2} textAlign="left">
+                    <Grid.Column>
                       <Dropdown
                         options={betFilterTypes}
                         selection
-                        onChange={() => {
-                          setBetFilter(betFilter);
+                        value={betFilter}
+                        onChange={(_, data) => {
+                          setBetFilter(data.value);
                         }}
                       />
                     </Grid.Column>
+                    <Grid.Row>
+                      <DatePicker
+                        selected={DateValueEnd}
+                        onChange={(date) => date && setDateValueEnd(date)}
+                        locale="pt"
+                        dateFormat={"P"}
+                      />
+                    </Grid.Row>
                   </Grid.Row>
                 </Grid>
               </Grid.Column>
+            </Grid.Row>
+          </Grid>
+          {userBetsFiltered.length == 0 ? (
+            <ListItemNotFound content="Não existem apostas realizadas!" />
+          ) : (
+            <Card.Group>
+              {userBetsFiltered.map((x) => {
+                return (
+                  <Card>
+                    <Card.Header>
+                      {x.start.toString()} - {x.end?.toString()}
+                    </Card.Header>
+                    <Card.Meta>Montante apostado: {x.amount}</Card.Meta>
+                    <Card.Description>Ganhos: {x.wonValue}</Card.Description>
+                  </Card>
+                );
+              })}
+            </Card.Group>
+          )}
+        </Tab.Pane>
+      ),
+    },
+    {
+      menuItem: "Histórico Transações",
+      render: () => (
+        <Tab.Pane>
+          <Grid padded celled>
+            <Grid.Row columns={1} textAlign="center">
               <Grid.Column>
-                <Button
-                  type="button"
-                  color="twitter"
-                  fluid
-                  onClick={() => {
-                    setUserHistory("transactions");
-                  }}
-                >
-                  Transações
-                </Button>
+                <Header>Histórico de Transações!</Header>
+              </Grid.Column>
+            </Grid.Row>
+            <Grid.Row columns={1} textAlign="left">
+              <Grid.Column>
+                <DatePicker
+                  selected={DateValueEnd}
+                  onChange={(date) => date && setDateValueEnd(date)}
+                  locale="pt"
+                  dateFormat={"P"}
+                />
               </Grid.Column>
             </Grid.Row>
           </Grid>
-          <Card.Group>
-            {userHistory === "transactions" ? (
-              <Fragment>
-                {allTransactions.map((x) => {
-                  return (
-                    <Card>
-                      <Card.Header>{x.type}</Card.Header>
-                      <Card.Meta>{x.date.toString()}</Card.Meta>
-                      <Card.Description>{x.value}</Card.Description>
-                    </Card>
-                  );
-                })}
-              </Fragment>
-            ) : (
-              <Fragment>
-                {userBetsFiltered.map((x) => {
-                  return (
-                    <Card>
-                      <Card.Header>
-                        {x.start.toString()} - {x.end?.toString()}
-                      </Card.Header>
-                      <Card.Meta>Montante apostado: {x.amount}</Card.Meta>
-                      <Card.Description>Ganhos: {x.wonValue}</Card.Description>
-                    </Card>
-                  );
-                })}
-              </Fragment>
-            )}
-          </Card.Group>
+          {allTransactions.length == 0 ? (
+            <Fragment>
+              <p />
+              <ListItemNotFound content="Não existem transações até a data colocada!" />
+            </Fragment>
+          ) : (
+            <Card.Group>
+              {allTransactions.map((x) => {
+                return (
+                  <Card>
+                    <Card.Header>{x.type}</Card.Header>
+                    <Card.Meta>{x.date.toString()}</Card.Meta>
+                    <Card.Description>{x.value}</Card.Description>
+                  </Card>
+                );
+              })}
+            </Card.Group>
+          )}
         </Tab.Pane>
       ),
     },

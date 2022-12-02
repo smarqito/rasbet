@@ -15,6 +15,7 @@ import {
   ISport,
   IStatistics,
 } from "../models/game";
+import { IChangeOdd } from "../models/odd";
 import { RootStore } from "./rootStore";
 
 export default class GameStore {
@@ -28,6 +29,7 @@ export default class GameStore {
   @observable game: CollectiveGame | null = null;
   @observable activeGames: IActiveGame[] = [];
   @observable gamesFiltered: IActiveGame[] = [];
+  @observable allGames: IActiveGame[] = [];
   @observable allSports: ISport[] = [];
   @observable loading = false;
 
@@ -66,9 +68,9 @@ export default class GameStore {
     this.loading = true;
     let game = this.getGame(id);
     try {
-      // let gameInfo = await Agent.Game.getGame(id, true);
+      let gameInfo = await Agent.Game.getGame(id);
       runInAction(() => {
-        this.game = game.game;
+        this.game = gameInfo;
       });
     } catch (error) {
       toast.error("Não é possível apresentar o jogo!");
@@ -82,85 +84,32 @@ export default class GameStore {
     this.loading = true;
 
     try {
-      // var games = await Agent.Game.getActiveGames();
+      var games = await Agent.Game.getActiveGames();
 
-      // runInAction(() => {
-      //   if(games){
-      //   this.activeGames = games;
-      //   }
-      //   else toast.error("Sem jogos ativos!")
-      // });
-
-      var betType1: IBetType = {
-        id: 0,
-        type: "UNFINISHED",
-        odds: [
-          { id: 1, name: "Sporting", value: 1.19 },
-          { id: 2, name: "Empate", value: 3.19 },
-          { id: 3, name: "Varzim", value: 7.19 },
-        ],
-      };
-
-      var betType2: IBetType = {
-        id: 1,
-        type: "UNFINISHED",
-        odds: [
-          { id: 1, name: "Benfica", value: 1.19 },
-          { id: 2, name: "Empate", value: 3.19 },
-          { id: 3, name: "Porto", value: 7.19 },
-        ],
-      };
-
-      var game1: CollectiveGame = {
-        id: 0,
-        start: new Date(),
-        sport: "Futebol",
-        mainBet: betType1,
-        home: "Sporting",
-        away: "Varzim",
-      };
-
-      var game2: CollectiveGame = {
-        id: 1,
-        start: new Date(),
-        sport: "Futebol",
-        mainBet: betType2,
-        home: "Benfica",
-        away: "Porto",
-      };
-
-      var statitics1: IStatistics = {
-        betCount: 3,
-        statitics: new Map<number, number>(),
-      };
-
-      var statitics2: IStatistics = {
-        betCount: 3,
-        statitics: new Map<number, number>(),
-      };
-
-      statitics1.statitics.set(1, 23);
-      statitics1.statitics.set(2, 47);
-      statitics1.statitics.set(3, 30);
-
-      statitics2.statitics.set(1, 30);
-      statitics2.statitics.set(2, 60);
-      statitics2.statitics.set(3, 10);
-
-      var a1: IActiveGame = {
-        game: game1,
-        statistic: statitics1,
-      };
-
-      var a2: IActiveGame = {
-        game: game2,
-        statistic: statitics2,
-      };
-
-      this.activeGames.push(a1);
-      this.activeGames.push(a2);
+      runInAction(() => {
+        if (games) {
+          this.activeGames = games;
+        } else toast.error("Sem jogos ativos!");
+      });
     } catch (error) {
+      toast.error("Ocorreu um erro interno!");
+      throw error;
+    } finally {
       this.loading = false;
+    }
+  };
+
+  @action getActiveAndSuspended = async () => {
+    this.loading = true;
+    try {
+      var games = await Agent.Game.getActiveAndSuspended();
+
+      runInAction(() => {
+        if (games) {
+          this.allGames = games;
+        } else toast.error("Sem jogos disponíveis!");
+      });
+    } catch (error) {
       toast.error("Ocorreu um erro interno!");
       throw error;
     } finally {
@@ -183,23 +132,71 @@ export default class GameStore {
   @action getAllSports = async () => {
     this.loading = true;
     try {
-      // var sports = await Agent.Game.getAllSports();
+      var sports = await Agent.Game.getAllSports();
 
-      // runInAction(() => {
-      // if (sports) {
-      //   this.allSports = sports;
-      // }
-      // else toast.error("Sem desportos disponíveis!");
-      // });
-
-      var s1: ISport = { name: "Futebol" };
-      var s2: ISport = { name: "teste" };
-
-      this.allSports.push(s1);
-      this.allSports.push(s2);
+      runInAction(() => {
+        if (sports) {
+          this.allSports = sports;
+        } else toast.error("Sem desportos disponíveis!");
+      });
     } catch (error) {
-      this.loading = false;
       toast.error("Sem desportos disponíveis!");
+      throw error;
+    } finally {
+      this.loading = false;
+    }
+  };
+
+  @action suspendGame = async (gameId: number, specialistId: string) => {
+    this.loading = true;
+    try {
+      await Agent.Game.suspendGame(gameId, specialistId);
+      toast.info("Jogo suspendido!");
+    } catch (error) {
+      toast.error("Erro ao suspender o jogo!");
+      throw error;
+    } finally {
+      this.loading = false;
+    }
+  };
+
+  @action finishGame = async (
+    gameId: number,
+    result: string,
+    specialistId: string
+  ) => {
+    this.loading = true;
+    try {
+      await Agent.Game.finishGame(gameId, result, specialistId);
+      toast.info("Jogo terminado!");
+    } catch (error) {
+      toast.error("Erro ao terminar o jogo!");
+      throw error;
+    } finally {
+      this.loading = false;
+    }
+  };
+
+  @action activateGame = async (gameId: number, specialistId: string) => {
+    this.loading = true;
+    try {
+      await Agent.Game.activateGame(gameId, specialistId);
+      toast.info("Jogo ativado");
+    } catch (error) {
+      toast.error("Erro ao ativar jogo!");
+      throw error;
+    } finally {
+      this.loading = false;
+    }
+  };
+
+  @action changeOdds = async (change: IChangeOdd) => {
+    this.loading = true;
+    try {
+      await Agent.Game.changeOdds(change);
+      toast.info("Odd alterada!");
+    } catch (error) {
+      toast.error("Erro ao alterar a odd!");
       throw error;
     } finally {
       this.loading = false;
