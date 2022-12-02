@@ -2,6 +2,7 @@
 using Domain;
 using DTO;
 using DTO.BetDTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BetAPI.Controllers;
@@ -16,6 +17,7 @@ public class BetController : BaseController
     }
 
     [HttpPost("simple")]
+    [Authorize(Roles ="AppUser")]
     public async Task<IActionResult> CreateBetSimple([FromBody] CreateSimpleBetDTO create)
     {
         try
@@ -32,6 +34,7 @@ public class BetController : BaseController
     }
 
     [HttpPost("multiple")]
+    [Authorize(Roles = "AppUser")]
     public async Task<IActionResult> CreateBetMultiple([FromBody] CreateMultipleBetDTO create) 
     {
         try
@@ -48,11 +51,13 @@ public class BetController : BaseController
     }
 
     [HttpGet("open")]
-    public async Task<IActionResult> GetUserBetsOpen([FromQuery] string userId)
+    //[Authorize(Roles = "AppUser")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<BetDTO>))]
+    public async Task<IActionResult> GetUserBetsOpen([FromQuery] string userId, DateTime start, DateTime end)
     {
         try
         {
-            ICollection<Bet> bets = await BetFacade.GetUserBetsByState(userId, BetState.Open);
+            ICollection<BetDTO> bets = await BetFacade.GetUserBetsByState(userId, BetState.Open, start, end);
 
             return Ok(bets);
 
@@ -64,11 +69,13 @@ public class BetController : BaseController
     }
 
     [HttpGet("won")]
-    public async Task<IActionResult> GetUserBetsWon([FromQuery] string userId)
+    [Authorize(Roles = "AppUser")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<BetDTO>))]
+    public async Task<IActionResult> GetUserBetsWon([FromQuery] string userId, DateTime start, DateTime end)
     {
         try
         {
-            ICollection<Bet> bets = await BetFacade.GetUserBetsByState(userId, BetState.Won);
+            ICollection<BetDTO> bets = await BetFacade.GetUserBetsByState(userId, BetState.Won, start, end);
 
             return Ok(bets);
 
@@ -79,74 +86,15 @@ public class BetController : BaseController
         }
     }
 
-    [HttpGet("lost")]
-    public async Task<IActionResult> GetUserBetsLost([FromQuery] string userId) 
+    [HttpGet("closed")]
+    [Authorize(Roles = "AppUser")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<BetDTO>))]
+    public async Task<IActionResult> GetUserBetsClosed([FromQuery] string userId, DateTime start, DateTime end) 
     {
         try
         {
-            ICollection<Bet> bets = await BetFacade.GetUserBetsByState(userId, BetState.Lost);
-            return Ok(bets);
-
-        }
-        catch (Exception e)
-        {
-            throw new Exception(e.Message);
-        }
-    }
-
-    [HttpGet("amount")]
-    public async Task<IActionResult> GetUserBetsByAmount([FromBody] GetUserBetsByValueDTO get)
-    {
-        try
-        {
-            ICollection<Bet> bets = await BetFacade.GetUserBetsByAmount(get.UserId, get.value);
-            return Ok(bets);
-
-        }
-        catch (Exception e)
-        {
-            throw new Exception(e.Message);
-        }
-    }
-
-    [HttpGet("wonValue")]
-    public async Task<IActionResult> GetUserBetsByWonValue([FromBody] GetUserBetsByValueDTO get)
-    {
-        try
-        {
-            ICollection<Bet> bets = await BetFacade.GetUserBetsByWonValue(get.UserId, get.value);
-            return Ok(bets);
-
-        }
-        catch (Exception e)
-        {
-            throw new Exception(e.Message);
-        }
-    }
-
-    [HttpGet("start")]
-    public async Task<IActionResult> GetUserBetsByStart([FromBody] GetUserBetsByDateDTO get)
-    {
-        try
-        {
-            ICollection<Bet> bets = await BetFacade.GetUserBetsByStart(get.UserId, get.DateTime);
-            return Ok(bets);
-
-        }
-        catch (Exception e)
-        {
-            throw new Exception(e.Message);
-        }
-    }
-
-    [HttpGet("end")]
-    public async Task<IActionResult> GetUserBetsByEnd([FromBody] GetUserBetsByDateDTO get)
-    {
-        try
-        {
-            ICollection<Bet> bets = await BetFacade.GetUserBetsByStart(get.UserId, get.DateTime);
-            return Ok(bets);
-
+            ICollection<BetDTO> closed = await BetFacade.GetUserBetsByStates(userId, BetState.Lost, BetState.Won, start, end);
+            return Ok(closed);
         }
         catch (Exception e)
         {

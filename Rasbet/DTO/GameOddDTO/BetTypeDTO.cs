@@ -9,5 +9,6 @@ namespace DTO.GameOddDTO;
 public class BetTypeDTO
 {
     public int Id { get; set; }
+    public string Type { get; set; }
     public ICollection<OddDTO> Odds { get; set; }
 }

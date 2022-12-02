@@ -12,13 +12,17 @@ namespace GameOddApplication.Interfaces;
 
 public interface IGameOddFacade
 {
-    public Task<Unit> UpdateGameOdd(ICollection<GameDTO> games, string sportName);
-    public Task<Unit> FinishGame(int id, string result, string specialistId);
-    public Task<Unit> FinishGame(string id, string result);
-    public Task<Unit> FinishGame(string id, string result, string? specialistId);
+    public Task<Unit> UpdateGameOdd(ICollection<DTO.GetGamesRespDTO.GameDTO> games, string sportName);
+    public Task<Unit> FinishGame(int gameId, string result, string specialistId);
+    public Task<Unit> FinishGame(string gameId, string result);
+    public Task<Unit> FinishGame(string gameId, string result, string? specialistId);
     public Task<Unit> ActivateGame(int gameId, string specialistId);
     public Task<Unit> SuspendGame(int gameId, string specialistId);
-    public Task<ICollection<ActiveGameDTO>> GetActiveGames();
+    public Task<ICollection<CollectiveGameDTO>> GetActiveGames();
     public Task<double> GetOddValue(int oddId, int betTypeId);
     public Task<Unit> ChangeOdds(string specialistId, int betTypeId, Dictionary<int, double> newOdds);
+    public Task<GameInfoDTO> GetGameInfo(int gameId, bool detailed);
+    public Task<DTO.GameOddDTO.GameDTO> GetGame(int gameId);
+    public Task<ICollection<SportDTO>> GetSports();
+    public Task<ICollection<CollectiveGameDTO>> GetActiveAndSuspendedGames();
 }

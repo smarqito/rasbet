@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace DTO.GameOddDTO;
 
-public class ActiveGameDTO
+public class BetInfoDTO
 {
     public int Id { get; set; }
-    public DateTime StartTime { get; set; }
-    public string SportName { get; set; }
-    public ICollection<BetTypeDTO> Bets { get; set; }
+    public ICollection<int> OddsId { get; set; }
 }

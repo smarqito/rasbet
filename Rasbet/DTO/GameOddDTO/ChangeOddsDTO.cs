@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DTO;
+namespace DTO.GameOddDTO;
 
 public class ChangeOddsDTO
 {

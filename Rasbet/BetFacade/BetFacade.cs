@@ -1,9 +1,12 @@
-﻿using BetApplication.Errors;
+﻿using AutoMapper;
+using BetApplication.Errors;
 using BetApplication.Interfaces;
 using Domain;
 using DTO;
 using DTO.BetDTO;
+using DTO.GameOddDTO;
 using DTO.UserDTO;
+using System.Net.Mail;
 
 namespace BetFacade;
 
@@ -11,15 +14,26 @@ public class BetFacade : IBetFacade
 {
     public IBetRepository BetRepository;
     public ISelectionRepository SelectionRepository;
+    public IMapper mapper;
     public APIService APIService = new();
 
     public BetFacade(IBetRepository betRepository,
-                     ISelectionRepository selectionRepository)
+                     ISelectionRepository selectionRepository,
+                     IMapper mapper)
     {
         BetRepository = betRepository;
         SelectionRepository = selectionRepository;
+        this.mapper= mapper;
+
     }
 
+    public bool GameAvailable(DateTime start, string state)
+    {
+        if (start < DateTime.Now && state.Equals(GameState.Open))
+            return true;
+        else
+            return false;
+    }
     // Métodos para o BetController
     public async Task<BetSimple> CreateBetSimple(double amount,
                                                  string userId,
@@ -28,6 +42,13 @@ public class BetFacade : IBetFacade
         BetSimple? bet;
         try
         {
+            GameInfoDTO game = await APIService.GetGame(selectionDTO.GameId, false);
+            if (!GameAvailable(game.StartTime, game.State))
+            {
+                throw new GameNotAvailableException($"Game {selectionDTO.GameId} is not available");
+            }
+            
+
             double server_odd = await APIService.GetOdd(selectionDTO.BetTypeId, selectionDTO.OddId);
             
             Selection newS = await CreateSelection(selectionDTO.BetTypeId, selectionDTO.OddId, selectionDTO.Odd, selectionDTO.GameId, server_odd);
@@ -41,7 +62,7 @@ public class BetFacade : IBetFacade
 
         try
         {
-            await APIService.WithdrawUserBalance(new DTO.UserDTO.TransactionDTO(userId, amount));
+            await APIService.WithdrawUserBalance(new TransactionDTO(userId, amount, nameof(Withdraw)), bet.Id);
             return bet;
         }
         catch (Exception e)
@@ -61,6 +82,12 @@ public class BetFacade : IBetFacade
         {
             try
             {
+                GameInfoDTO game = await APIService.GetGame(selectionDTO.GameId, false);
+                if (!GameAvailable(game.StartTime, game.State))
+                {
+                    throw new GameNotAvailableException($"Game {selectionDTO.GameId} is not available");
+                }
+
                 double server_odd = await APIService.GetOdd(selectionDTO.BetTypeId, selectionDTO.OddId);
 
                 Selection newS = await CreateSelection(selectionDTO.BetTypeId,
@@ -73,6 +100,7 @@ public class BetFacade : IBetFacade
             }
             catch (Exception e)
             {
+                await SelectionRepository.RemoveSelections(selections);
                 throw new Exception(e.Message);
             }
         }
@@ -91,7 +119,7 @@ public class BetFacade : IBetFacade
         }
         try
         {
-            await APIService.WithdrawUserBalance(new DTO.UserDTO.TransactionDTO(userId, amount));
+            await APIService.WithdrawUserBalance(new DTO.UserDTO.TransactionDTO(userId, amount, nameof(Withdraw)), bet.Id);
             return bet;
         }
         catch (Exception e)
@@ -101,22 +129,12 @@ public class BetFacade : IBetFacade
         }
     }
 
-    public async Task<ICollection<Bet>> GetUserBetsByState(string user, BetState state)
+    public async Task<ICollection<BetDTO>> GetUserBetsByState(string user, BetState state, DateTime start, DateTime end)
     {
         try
         {
-            return await BetRepository.GetUserBetsByState(user, state);
-        }
-        catch (Exception e)
-        {
-            throw new Exception(e.Message);
-        }
-    }
-    public async Task<ICollection<Bet>> GetUserBetsByStart(string user, DateTime start)
-    {
-        try
-        {
-            return await GetUserBetsByStart(user, start);
+            ICollection<Bet> bets = await BetRepository.GetUserBetsByState(user, state, start, end);
+            return mapper.Map<ICollection<BetDTO>>(bets);
         }
         catch (Exception e)
         {
@@ -124,11 +142,12 @@ public class BetFacade : IBetFacade
         }
     }
 
-    public async Task<ICollection<Bet>> GetUserBetsByAmount(string user, double amount)
+    public async Task<ICollection<BetDTO>> GetUserBetsByStates(string user, BetState state1, BetState state2, DateTime start, DateTime end)
     {
         try
         {
-            return await GetUserBetsByAmount(user, amount);
+            ICollection<Bet> bets = await BetRepository.GetUserBetsByStates(user, state1, state2, start, end);
+            return mapper.Map<ICollection<BetDTO>>(bets);
         }
         catch (Exception e)
         {
@@ -136,23 +155,22 @@ public class BetFacade : IBetFacade
         }
     }
 
-    public async Task<ICollection<Bet>> GetUserBetsByEnd(string user, DateTime end)
-    {
-        try
-        {
-            return await GetUserBetsByEnd(user, end);
-        }
-        catch (Exception e)
-        {
-            throw new Exception(e.Message);
-        }
-    }
 
-    public async Task<ICollection<Bet>> GetUserBetsByWonValue(string user, double wonValue)
+    public void SendEmail(string to, string subject, string body)
     {
         try
         {
-            return await GetUserBetsByWonValue(user, wonValue);
+            string from = "rasbet.apostasdesportivas@outlook.com";
+            MailMessage message = new MailMessage(from, to, subject, body);
+            SmtpClient client = new SmtpClient("smtp-mail.outlook.com");
+
+            client.EnableSsl = true;
+            client.Port = 587;
+            client.UseDefaultCredentials = false;
+            client.DeliveryMethod = SmtpDeliveryMethod.Network;
+            client.Credentials = new System.Net.NetworkCredential(from, "Ra$bet2022");
+            client.Send(message);
+            client.Dispose();
         }
         catch (Exception e)
         {
@@ -166,29 +184,45 @@ public class BetFacade : IBetFacade
         bool resp = false;
         try
         {
-            ICollection<Bet> won_bets;
+            ICollection<Bet> finished_bets;
 
-            if (finishedGames.Count > 0)
+
+            foreach (var finishedGame in finishedGames)
             {
-                foreach (var finishedGame in finishedGames)
+                ICollection<Selection> selecs = await SelectionRepository.GetSelectionByType(finishedGame.BetTypeId);
+                finished_bets = await BetRepository.UpdateBets(selecs, finishedGame.WinnerOddIds);
+
+                if (finished_bets.Count > 0)
                 {
-                    ICollection<Selection> selecs = await SelectionRepository.GetSelectionByType(finishedGame.BetTypeId);
-                    won_bets = await BetRepository.UpdateBets(selecs, finishedGame.WinnerOddIds);
-
-                    if (won_bets.Count > 0)
+                    foreach (var bet in finished_bets)
                     {
-                        foreach (var bet in won_bets)
-                        {
-                            await APIService.DepositUserBalance(new DTO.UserDTO.TransactionDTO(bet.UserId, bet.WonValue));
-                        }
-                        resp = true;
-                    }
-                }
 
-                return resp;
+                        UserSimpleDTO dto = await APIService.GetUserSimple(bet.UserId);
+                        if (dto.Notifications)
+                        {
+                            string subject = "Resultado da aposta";
+                            string body = "";
+                            if (bet.State == BetState.Lost)
+                            {
+                                body = $"Olá!\nPerdeu a aposta que realizou no dia {bet.Start}.\nBoas apostas.";
+                            }
+
+                            if (bet.State == BetState.Won)
+                            {
+                                body = $"Olá!\nGanhou {bet.WonValue} {dto.Coin} na aposta que realizou no dia {bet.Start}.\nBoas apostas.";
+                                await APIService.DepositUserBalance(new TransactionDTO(bet.UserId, bet.WonValue, nameof(Deposit)));
+                            }
+
+                            SendEmail(dto.Email, subject, body);
+                        }
+                    }
+                    resp = true;
+                }
             }
 
-            else throw new FinishedGamesInvalidException("Os jogos enviados são inválidos!");
+            return resp;
+
+
         }
         catch (Exception e)
         {
@@ -231,4 +265,15 @@ public class BetFacade : IBetFacade
         }
     }
 
+    public async Task<StatisticsDTO> GetStatisticsByGame(ICollection<int> oddIds)
+    {
+        try
+        {
+            return await SelectionRepository.GetStatisticsByGame(oddIds);
+        }
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+    }
 }

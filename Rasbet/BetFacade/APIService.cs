@@ -1,5 +1,6 @@
 ﻿using Domain;
 using Domain.ResultDomain;
+using DTO.GameOddDTO;
 using DTO.UserDTO;
 using System.Globalization;
 using System.Net.Http.Json;
@@ -43,29 +44,40 @@ public class APIService
     }
     
     //ir buscar bettype por id
-    public async Task<Game> GetGame(int gameId)
+    public async Task<GameInfoDTO> GetGame(int gameId, bool detailed)
     {
-        HttpResponseMessage resp = await _httpClientGameOdd.GetAsync($"GameOdd/game?gameId={gameId}");
+        HttpResponseMessage resp = await _httpClientGameOdd.GetAsync($"GameOdd/GameInfo?gameId={gameId}&detailed={detailed}");
         resp.EnsureSuccessStatusCode();
-        return await resp.Content.ReadFromJsonAsync<Game>();
+        return await resp.Content.ReadFromJsonAsync<GameInfoDTO>();
     }
 
     //get user by id
-    public async Task<User> GetUser(int userId)
+    public async Task<User> GetUser(string userId)
     {
         HttpResponseMessage resp = await _httpClientUser.GetAsync($"User?userId={userId}");
         resp.EnsureSuccessStatusCode();
         return await resp.Content.ReadFromJsonAsync<User>();
     }
 
+    //get user simple by id
+    public async Task<UserSimpleDTO> GetUserSimple(string userId)
+    {
+        HttpResponseMessage resp = await _httpClientUser.GetAsync($"User/userSimple?id={userId}");
+        resp.EnsureSuccessStatusCode();
+        return await resp.Content.ReadFromJsonAsync<UserSimpleDTO>();
+    }
+
+
     //withdraw dinheiro do user
-    public async Task WithdrawUserBalance(TransactionDTO dto)
+    public async Task WithdrawUserBalance(TransactionDTO dto, int betId)
     {
         StringContent content = new(JsonSerializer.Serialize(dto),
                                     Encoding.UTF8,
                                     "application/json");
         HttpResponseMessage resp = await _httpClientUser.PutAsync($"Wallet/withdraw", content);
         resp.EnsureSuccessStatusCode();
+        HttpResponseMessage resp2 = await _httpClientUser.PatchAsync($"Wallet/bet?userId={dto.UserId}&betId={betId}", null);
+        resp2.EnsureSuccessStatusCode();
     }
 
     //deposit dinheiro no user

@@ -1,7 +1,11 @@
 using Domain.UserDomain;
+using DTO.UserDTO;
+using Infrastructure;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Net.Mail;
+using System.Text.RegularExpressions;
 using UserApplication.Interfaces;
 using UserPersistence;
 
@@ -13,16 +17,19 @@ public class UserRepository : IUserRepository
     private readonly UserManager<User> userManager;
     private readonly SignInManager<User> signInManager;
     private readonly RoleManager<IdentityRole> roleManager;
+    private readonly IJwtGenerator jwtGenerator;
 
     public UserRepository(UserContext context,
                           UserManager<User> userManager,
                           SignInManager<User> signInManager,
-                          RoleManager<IdentityRole> roleManager)
+                          RoleManager<IdentityRole> roleManager,
+                          IJwtGenerator jwtGenerator)
     {
         this.context = context;
         this.userManager = userManager;
         this.signInManager = signInManager;
         this.roleManager = roleManager;
+        this.jwtGenerator = jwtGenerator;
     }
 
     /// <summary>
@@ -37,8 +44,10 @@ public class UserRepository : IUserRepository
     /// <param name="language"> User's preferred language. </param>
     /// <returns>The user, if the register was successfull.</returns>
     /// <exception>The user is under age or the chosen e-mail is already in use.</exception>
-    public async Task<AppUser> RegisterAppUser(string name, string email, string password, string nif, DateTime dob, bool notifications, string language)
+    public async Task<AppUser> RegisterAppUser(string name, string email, string password, string passwordRepeated, string nif, DateTime dob, bool notifications, string language)
     {
+        if (!password.Equals(passwordRepeated))
+            throw new Exception("As 2 passwords são diferentes");
         User user = await userManager.FindByEmailAsync(email);
 
         var today = DateTime.Today;
@@ -158,14 +167,19 @@ public class UserRepository : IUserRepository
     /// <param name="password"> Given password. </param>
     /// <returns>The user, if the log in was successfull.</returns>
     /// <exception>The given e-mail doesn't correspond to an user or the password was incorrect.</exception>
-    public async Task<User> Login(string email, string password)
+    public async Task<UserDTO> Login(string email, string password)
     {
-        var user = await userManager.FindByEmailAsync(email);
+        User user = await userManager.FindByEmailAsync(email);
         if (user == null) throw new Exception("E-mail inexistente.");
 
         var result = await signInManager.PasswordSignInAsync(email, password, false, false);
         if (result == SignInResult.Success)
-            return user;
+        {
+            string role = (await userManager.GetRolesAsync(user))[0];
+            string token = await jwtGenerator.CreateToken(user);
+            UserDTO userDto = new UserDTO(user.Id,user.Name, user.Email, user.Language, token, role);
+            return userDto;
+        }
         throw new Exception("Password incorreta.");
     }
 
@@ -202,6 +216,22 @@ public class UserRepository : IUserRepository
         if (user == null) throw new Exception("Utilizador não encontrado.");
 
         if (role_name == "AppUser") return (AppUser)user;
+
+        throw new Exception("Utilizador não encontrado.");
+
+    }
+
+    /// <summary>
+    /// Retrieves an user based on its id.
+    /// </summary>
+    /// <param name="id"> Id of the user to be retrieved.</param>
+    /// <returns>The user, if it exists.</returns>
+    /// <exception>The given id doesn't correspond to an user.</exception>
+    public async Task<AppUser> GetUserSimple(string id)
+    {
+        var user = await userManager.FindByIdAsync(id);
+        if (user != null) 
+            return (AppUser) user;
 
         throw new Exception("Utilizador não encontrado.");
 
@@ -255,10 +285,12 @@ public class UserRepository : IUserRepository
         AppUser? user = await context.AppUsers.Where(u => u.Email.Equals(email)).FirstOrDefaultAsync();
 
         if (user == null) throw new Exception("E-mail inexistente.");
-
-        user.Name = name;
-        user.Language = language;
-        user.Coin = coin;
+        if(name != null)
+            user.Name = name;
+        if (language != null)
+            user.Language = language;
+        if (coin != null)
+            user.Coin = coin;
         user.Notifications = notifications;
 
         await context.SaveChangesAsync();
@@ -270,12 +302,12 @@ public class UserRepository : IUserRepository
     {
         try
         {
-            string from = "rasbet.apostasdesportivas@gmail.com";
+            string from = "rasbet.apostasdesportivas@outlook.com";
             MailMessage message = new MailMessage(from, to, subject, body);
-            SmtpClient client = new SmtpClient("smtp.gmail.com");
+            SmtpClient client = new SmtpClient("smtp-mail.outlook.com");
 
             client.EnableSsl = true;
-            client.Port = 465;
+            client.Port = 587;
             client.UseDefaultCredentials = false;
             client.DeliveryMethod = SmtpDeliveryMethod.Network;
             client.Credentials = new System.Net.NetworkCredential(from, "Ra$bet2022");
@@ -304,12 +336,14 @@ public class UserRepository : IUserRepository
         if (user == null) throw new Exception("E-mail inexistente.");
 
         string code = userManager.GenerateNewAuthenticatorKey();
+
         UpdateInfo update = new UpdateInfo(email, password, iban, phoneno, code);
         await context.Updates.AddAsync(update);
+
         await context.SaveChangesAsync();
         string subject = "Confirmação de alterações no perfil";
-        string message = code;
-        SendEmail(email, subject, code);
+        string body = $"Olá!\nO seu código de confirmação é {code}.\nBoas apostas.";
+        SendEmail(email, subject, body);
 
         return user;
     }
@@ -327,13 +361,15 @@ public class UserRepository : IUserRepository
 
         if (user == null) throw new Exception("E-mail inexistente.");
 
-        string code = await userManager.GetAuthenticatorKeyAsync(user);
-        UpdateInfo u = new UpdateInfo(email, password, code);
-        context.Updates.Add(u);
+        string code = userManager.GenerateNewAuthenticatorKey();
+
+        UpdateInfo update = new UpdateInfo(email, password, code);
+        await context.Updates.AddAsync(update);
+
         await context.SaveChangesAsync();
         string subject = "Confirmação de alterações no perfil";
-        string message = code;
-        SendEmail(email, subject, code);
+        string body = $"Olá!\nO seu código de confirmação é {code}.\nBoas apostas.";
+        SendEmail(email, subject, body);
 
         return user;
     }
@@ -351,13 +387,15 @@ public class UserRepository : IUserRepository
 
         if (user == null) throw new Exception("E-mail inexistente.");
 
-        string code = await userManager.GetAuthenticatorKeyAsync(user);
-        UpdateInfo u = new UpdateInfo(email, password, code);
-        context.Updates.Add(u);
+        string code = userManager.GenerateNewAuthenticatorKey();
+
+        UpdateInfo update = new UpdateInfo(email, password, code);
+        await context.Updates.AddAsync(update);
+
         await context.SaveChangesAsync();
         string subject = "Confirmação de alterações no perfil";
-        string message = code;
-        SendEmail(email, subject, code);
+        string body = $"Olá!\nO seu código de confirmação é {code}.\nBoas apostas.";
+        SendEmail(email, subject, body);
 
         return user;
     }
@@ -375,14 +413,24 @@ public class UserRepository : IUserRepository
         if (user == null) throw new Exception("E-mail inexistente.");
 
         UpdateInfo? info = await context.Updates.Where(u => u.Email.Equals(email)).FirstOrDefaultAsync();
+
         if (info == null) throw new Exception("Utilizador não tem updates.");
+
         if (code.Equals(info.ConfirmationCode))
         {
-            user.IBAN = info.IBAN;
-            await userManager.RemovePasswordAsync(user);
-            await userManager.AddPasswordAsync(user, info.Password);
-            await userManager.SetPhoneNumberAsync(user, info.PhoneNumber);
-            info.Accepted = true;
+            if (info.IBAN != null)
+                user.IBAN = info.IBAN;
+
+            if (info.Password != null)
+            {
+                await userManager.RemovePasswordAsync(user);
+                await userManager.AddPasswordAsync(user, info.Password);
+            }
+
+            if (info.PhoneNumber != null)
+                await userManager.SetPhoneNumberAsync(user, info.PhoneNumber);
+
+            context.Updates.Remove(info);
             await context.SaveChangesAsync();
             return user;
         }
@@ -412,7 +460,7 @@ public class UserRepository : IUserRepository
         {
             await userManager.RemovePasswordAsync(user);
             await userManager.AddPasswordAsync(user, info.Password);
-            info.Accepted = true;
+            context.Updates.Remove(info);
             await context.SaveChangesAsync();
             return user;
         }
@@ -441,7 +489,7 @@ public class UserRepository : IUserRepository
         {
             await userManager.RemovePasswordAsync(user);
             await userManager.AddPasswordAsync(user, info.Password);
-            info.Accepted = true;
+            context.Updates.Remove(info);
             await context.SaveChangesAsync();
         }
         else
@@ -466,8 +514,10 @@ public class UserRepository : IUserRepository
 
         if (user == null) throw new Exception("E-mail inexistente.");
 
-        user.Name = name;
-        user.Language = language;
+        if(name != null)
+            user.Name = name;
+        if (language != null)
+            user.Language = language;
 
         await context.SaveChangesAsync();
 
@@ -488,12 +538,42 @@ public class UserRepository : IUserRepository
 
         if (user == null) throw new Exception("E-mail inexistente.");
 
-        user.Name = name;
-        user.Language = language;
+        if(name != null)
+            user.Name = name;
+        if (language != null)
+            user.Language = language;
 
         await context.SaveChangesAsync();
 
         return user;
     }
 
+    /// <summary>
+    /// Send new password to user.
+    /// </summary>
+    /// <param name="email"> User's email.</param>
+    /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
+    /// <exception>The given e-mail doesn't correspond to an user.</exception>
+    public async Task ForgotPassword(string email)
+    {
+        User? user = await context.Users.Where(u => u.Email.Equals(email)).FirstOrDefaultAsync();
+
+        if (user == null) throw new Exception("E-mail inexistente.");
+
+        string new_pw = userManager.GenerateNewAuthenticatorKey();
+        string pattern = @"([A-Z])";
+        Regex regex = new Regex(pattern);
+        new_pw = regex.Replace(new_pw, p => p.ToString().ToLower(), 1);
+
+        await userManager.RemovePasswordAsync(user);
+        await userManager.AddPasswordAsync(user, new_pw);
+
+        await context.SaveChangesAsync();
+
+
+        string subject = "Nova palavra-passe";
+        string body = $"Olá!\nA sua nova palavra passe é {new_pw}. Pode alterá-la, se assim desejar, através do nosso site.\nBoas apostas.";
+
+        SendEmail(email, subject, body);
+    }
 }

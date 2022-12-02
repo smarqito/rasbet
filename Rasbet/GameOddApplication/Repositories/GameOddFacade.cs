@@ -46,9 +46,9 @@ public class GameOddFacade : IGameOddFacade
     }
 
 
-    public async Task<Unit> UpdateGameOdd(ICollection<GameDTO> games, string sportName)
+    public async Task<Unit> UpdateGameOdd(ICollection<DTO.GetGamesRespDTO.GameDTO> games, string sportName)
     {
-        foreach (GameDTO game in games)
+        foreach (DTO.GetGamesRespDTO.GameDTO game in games)
         {
             if (await gameRepository.HasGame(game.Id))
             {
@@ -59,7 +59,8 @@ public class GameOddFacade : IGameOddFacade
                 else //O jogo ainda não acabou, atualizar as odds se necessário
                 {
                     CollectiveGame g = await gameRepository.GetCollectiveGame(game.Id);
-                    await betTypeRepository.UpdateBets(game.Bookmakers, g.AwayTeam, g.Id);
+                    if(g.SpecialistId != null)
+                        await betTypeRepository.UpdateBets(game.Bookmakers, g.AwayTeam, g.Id);
                 }
             }
             else if (game.Completed == false)
@@ -118,13 +119,15 @@ public class GameOddFacade : IGameOddFacade
         return Unit.Value;
     }
 
-    public async Task<ICollection<ActiveGameDTO>> GetActiveGames()
+    public async Task<ICollection<CollectiveGameDTO>> GetActiveGames()
     {
-        ICollection<Game> games = await gameOddContext.Game.Where(g => g.State.Equals(GameState.Open))
-                                                     .Include(g => g.Sport)
-                                                     .Include(g => g.Bets).ThenInclude(o => o.Odds)
-                                                     .ToListAsync();
-        return mapper.Map<ICollection<ActiveGameDTO>>(games);
+        ICollection<CollectiveGame> collectiveGames = await gameOddContext.Game.OfType<CollectiveGame>()
+                                                                     .Where(g => g.State.Equals(GameState.Open))
+                                                                     .Include(g => g.Sport)
+                                                                     .Include(g => g.Bets)
+                                                                     .ThenInclude(o => o.Odds)
+                                                                     .ToListAsync();
+        return mapper.Map<ICollection<CollectiveGameDTO>>(collectiveGames);
     }
 
     public async Task<double> GetOddValue(int oddId, int betTypeId)
@@ -154,5 +157,34 @@ public class GameOddFacade : IGameOddFacade
         return Unit.Value;
     }
 
-    
+    public async Task<GameInfoDTO> GetGameInfo(int gameId, bool detailed)
+    {
+        IQueryable<Game> game = gameOddContext.Game.Where(x => x.Id.Equals(gameId));
+        if (detailed)
+        {
+            game.Include(x => x.Bets);
+        }
+        Game? g = await game.FirstOrDefaultAsync();
+        if (g == null)
+            throw new GameNotFoundException($"Game {gameId} not exists!");
+        return mapper.Map<GameInfoDTO>(g);
+    }
+
+    public async Task<DTO.GameOddDTO.GameDTO> GetGame(int gameId)
+    {
+        Game g = await gameRepository.GetGame(gameId);
+        return mapper.Map<DTO.GameOddDTO.GameDTO>(g);
+    }
+
+    public async Task<ICollection<SportDTO>> GetSports()
+    {
+        ICollection<Sport> sports = await gameOddContext.Sport.ToListAsync();
+        return mapper.Map<ICollection<SportDTO>>(sports);
+    }
+
+    public async Task<ICollection<CollectiveGameDTO>> GetActiveAndSuspendedGames()
+    {
+        ICollection<Game> games = await gameRepository.GetActiveAndSuspendedGames();
+        return mapper.Map<ICollection<CollectiveGameDTO>>(games);
+    }
 }

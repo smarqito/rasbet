@@ -3,7 +3,9 @@ using BetApplication.Interfaces;
 using BetPersistence;
 using Domain;
 using Domain.ResultDomain;
+using DTO.BetDTO;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.ObjectModel;
 
 namespace BetApplication.Repositories;
 
@@ -81,9 +83,41 @@ public class SelectionRepository : ISelectionRepository
     {
         ICollection<Selection> server_selections = await _context.Selections.Where(x => x.BetTypeId ==bettype).ToListAsync();
 
-        if (server_selections.Count == 0)
-            throw new NoSelectionsWithTypeException("Não existem seleções com apostas do tipo!");
+        //if (server_selections.Count == 0)
+        //    throw new NoSelectionsWithTypeException("Não existem seleções com apostas do tipo!");
 
         return server_selections;
+    }
+
+    public async Task RemoveSelections(ICollection<Selection> selections)
+    {
+        foreach(Selection s in selections)
+        {
+            _context.Selections.Remove(s);
+        }
+        await _context.SaveChangesAsync();
+    }
+
+
+    public async Task<StatisticsDTO> GetStatisticsByGame(ICollection<int> oddIds)
+    {
+        Dictionary<int, int> count = new Dictionary<int, int>();
+        int total = 0;
+        foreach(int oddId in oddIds)
+        {
+            int n = await _context.Selections.Where(s => s.OddId == oddId).CountAsync();
+            count[oddId] = n;
+            total += n;
+        }
+
+        Dictionary<int, int> statistics = new Dictionary<int, int>();
+        int div = Math.Max(1, total);
+        foreach (int oddId in oddIds)
+        {
+            statistics[oddId] = (int)Math.Round((Double)(count[oddId] / div) * 100);
+        }
+
+        return new StatisticsDTO(total, statistics);
+
     }
 }

@@ -1,8 +1,8 @@
-using Domain;
 using DTO;
 using DTO.BetDTO;
 using DTO.UserDTO;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.ObjectModel;
 using UserApplication.Errors;
 using UserApplication.Interfaces;
 using UserPersistence;
@@ -12,7 +12,6 @@ namespace UserApplication.Repositories;
 public class WalletRepository : IWalletRepository
 {
     private readonly UserContext context;
-    private readonly APIService service = new APIService();
 
     public WalletRepository(UserContext context)
     {
@@ -96,45 +95,28 @@ public class WalletRepository : IWalletRepository
 
     }
 
-    public async Task<AppUser> RegisterBetSimple(CreateSimpleBetDTO dto)
-    {
-        AppUser? user = await context.AppUsers.Where(u => u.Id.Equals(dto.UserId)).FirstOrDefaultAsync();
 
-        if (user == null) throw new Exception("Utilizador não encontrado.");
-
-
-        BetSimple bet = await service.CreateBetSimple(dto);
-
-        user.BetHistory.Append(new AppUserBetHistory(user.Id, bet.Id));
-
-        await context.SaveChangesAsync();
-
-        return user;
-    }
-
-    public async Task<AppUser> RegisterBetMult(CreateMultipleBetDTO dto)
-    {
-        AppUser? user = await context.AppUsers.Where(u => u.Id.Equals(dto.UserId)).FirstOrDefaultAsync();
-
-        if (user == null) throw new Exception("Utilizador não encontrado.");
-
-
-        BetMultiple bet = await service.CreateBetMultiple(dto);
-
-        user.BetHistory.Append(new AppUserBetHistory(user.Id, bet.Id));
-
-        await context.SaveChangesAsync();
-
-        return user;
-    }
-
-    public async Task<ICollection<DTO.TransactionDTO>> GetTransactions(string userId, DateTime start, DateTime end)
+    public async Task<ICollection<TransactionDTO>> GetTransactions(string userId, DateTime start, DateTime end)
     {
         ICollection<Transaction> transactions = await context.Wallet.Where(u => u.Id.Equals(userId))
                                                                     .SelectMany(x => x.Transactions)
                                                                     .Where(x => x.Date > start && x.Date < end) 
                                                                     .ToListAsync();
 
-        throw new NotImplementedException();
+        ICollection<TransactionDTO> transactionsDTO = new Collection<TransactionDTO>();
+        foreach (Transaction transaction in transactions)
+        {
+            TransactionDTO dto = new TransactionDTO(transaction.Balance, transaction.Date, transaction.GetType().BaseType.Name);
+            transactionsDTO.Add(dto);
+        }
+
+        return transactionsDTO;
+    }
+
+    public async Task AddBetToHistory(string userId, int betId)
+    {
+        AppUserBetHistory bet = new AppUserBetHistory(userId, betId);
+        await context.UserBetHistory.AddAsync(bet);
+        await context.SaveChangesAsync();
     }
 }

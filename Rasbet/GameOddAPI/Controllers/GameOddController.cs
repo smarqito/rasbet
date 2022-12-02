@@ -1,9 +1,9 @@
 ﻿using Domain;
-using DTO;
 using DTO.GameOddDTO;
 using DTO.GetGamesRespDTO;
 using GameOddApplication.Interfaces;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GameOddAPI.Controllers
@@ -25,6 +25,7 @@ namespace GameOddAPI.Controllers
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
         [HttpPatch("suspend")]
+        [Authorize(Roles = "Specialist")]
         public async Task<IActionResult> SuspendGame([FromQuery] int gameId, string specialistId)
         {
             try
@@ -46,6 +47,7 @@ namespace GameOddAPI.Controllers
         /// <param name="specialistId"></param>
         /// <returns></returns>
         [HttpPatch("finish")]
+        [Authorize(Roles = "Specialist")]
         public async Task<IActionResult> FinishGame([FromQuery] int gameId, string result, string specialistId)
         {
             try
@@ -60,6 +62,7 @@ namespace GameOddAPI.Controllers
         }
 
         [HttpPatch("activate")]
+        [Authorize(Roles = "Specialist")]
         public async Task<IActionResult> ActivateGame([FromQuery] int gameId, string specialistId)
         {
             try
@@ -74,12 +77,12 @@ namespace GameOddAPI.Controllers
         }
 
         [HttpGet("activeGames")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<ActiveGameDTO>))]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<CollectiveGameDTO>))]
         public async Task<IActionResult> GetActivesGames()
         {
             try
             {
-                ICollection<ActiveGameDTO> games = await gameOddFacade.GetActiveGames();
+                ICollection<CollectiveGameDTO> games = await gameOddFacade.GetActiveGames();
                 return Ok(games);
             }
             catch (Exception e)
@@ -104,6 +107,7 @@ namespace GameOddAPI.Controllers
         }
 
         [HttpPatch("odds")]
+        [Authorize(Roles = "Specialist")]
         public async Task<IActionResult> ChangeOdds([FromBody] ChangeOddsDTO odds)
         {
             try
@@ -119,9 +123,62 @@ namespace GameOddAPI.Controllers
         }
 
         [HttpGet("GameInfo")]
-        public async Task<IActionResult> GetGameInfo([FromQuery] int gameId)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GameInfoDTO))]
+        public async Task<IActionResult> GetGameInfo([FromQuery] int gameId, bool detailed)
         {
-            throw new NotImplementedException();
+            try
+            {
+                GameInfoDTO game = await gameOddFacade.GetGameInfo(gameId, detailed);
+                return Ok(game);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
+
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DTO.GameOddDTO.GameDTO))]
+        public async Task<IActionResult> GetGame([FromQuery] int gameId)
+        {
+            try
+            {
+                DTO.GameOddDTO.GameDTO resp = await gameOddFacade.GetGame(gameId);
+                return Ok(resp);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet("Sports")]
+        public async Task<IActionResult> GetAllSports()
+        {
+            try
+            {
+                ICollection<SportDTO> resp = await gameOddFacade.GetSports();
+                return Ok(resp);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet("ActiveAndSuspended")]
+        public async Task<IActionResult> GetActiveAndSuspendGames()
+        {
+            try
+            {
+                ICollection<CollectiveGameDTO> res = await gameOddFacade.GetActiveAndSuspendedGames();
+                return Ok(res);
+            }
+            catch(Exception e) 
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
     }
 }

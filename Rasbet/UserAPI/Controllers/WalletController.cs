@@ -4,6 +4,8 @@ using UserApplication.Interfaces;
 using DTO.UserDTO;
 using Microsoft.AspNetCore.Identity;
 using DTO.BetDTO;
+using Microsoft.AspNetCore.Authorization;
+using DTO.GameOddDTO;
 
 namespace UserAPI.Controllers;
 
@@ -26,12 +28,14 @@ public class WalletController : BaseController
     /// </summary>
     /// <param name="userId">Id of the user whose wallet we want to retrieve.</param>
     /// <returns></returns>
-    [HttpGet("{userId}")]
-    public async Task<WalletDTO> Get(string userId)
+    [HttpGet]
+    [Authorize(Roles ="AppUser")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(WalletDTO))]
+    public async Task<IActionResult> Get([FromQuery]string userId)
     {
         WalletDTO dto = await walletRepository.Get(userId);
 
-        return dto;
+        return Ok(dto);
     }
 
     /// <summary>
@@ -39,6 +43,7 @@ public class WalletController : BaseController
     /// </summary>
     /// <param name="value"></param>
     [HttpPut("deposit")]
+    [Authorize(Roles = "AppUser")]
     public async Task<IActionResult> DepositFunds([FromBody] TransactionDTO transaction)
     {
         try
@@ -58,6 +63,7 @@ public class WalletController : BaseController
     /// </summary>
     /// <param name="value"> Value to withdraw. </param>
     [HttpPut("withdraw")]
+    [Authorize(Roles = "AppUser")]
     public async Task<IActionResult> WithdrawFunds([FromBody] TransactionDTO transaction)
     {
         try
@@ -74,65 +80,38 @@ public class WalletController : BaseController
     }
 
     /// <summary>
-    /// Register a bet to users wallet history
-    ///     - update account balance
-    ///     - insert into wallet history
-    ///     - keep the bet in open state until POST bet/result
-    /// </summary>
-    /// <param name="userId"> Id of the user who made the bet.</param>
-    /// <param name="betId"> Id of the bet.</param>
-    /// <param name="value"> Value of the bet.</param>
-    /// <param name="odd"> Odd of the bet.</param>
-    [HttpPost("bet/simple")]
-    public async Task<IActionResult> RegisterBetSimple([FromBody] CreateSimpleBetDTO bet)
-    {
-        try
-        {
-            await walletRepository.RegisterBetSimple(bet);
-            return Ok();
-        }
-        catch (Exception e)
-        {
-            return BadRequest(e.Message);
-        }
-    }
-
-    /// <summary>
-    /// Register a bet to users wallet history
-    ///     - update account balance
-    ///     - insert into wallet history
-    ///     - keep the bet in open state until POST bet/result
-    /// </summary>
-    /// <param name="userId"> Id of the user who made the bet.</param>
-    /// <param name="betId"> Id of the bet.</param>
-    /// <param name="value"> Value of the bet.</param>
-    /// <param name="odd"> Odd of the bet.</param>
-    [HttpPost("bet/multiple")]
-    public async Task<IActionResult> RegisterBetMult([FromBody] CreateMultipleBetDTO bet)
-    {
-        try
-        {
-            await walletRepository.RegisterBetMult(bet);
-            return Ok();
-        }
-        catch (Exception e)
-        {
-            return BadRequest(e.Message);
-        }
-    }
-
-    /// <summary>
     /// Get all transactions between 2 dates
     /// </summary>
-    /// <param name="userId"></param>
-    /// <param name="start"></param>
-    /// <param name="end"></param>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
+    /// <param name="userId">Id of the user</param>
+    /// <param name="start">The date that starts the period of time of the transactions.</param>
+    /// <param name="end">The date that ends the period of time of the transactions.</param>
+    /// <returns>The transactions made on that period of  time by the given user.</returns>
     [HttpGet("transactions")]
-    public Task<IActionResult> GetTransactions(string userId, DateTime start, DateTime end)
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<TransactionDTO>))]
+    public async Task<IActionResult> GetTransactions(string userId, DateTime start, DateTime end)
     {
-        throw new NotImplementedException();
+        try
+        {
+            ICollection<TransactionDTO> transactions = await walletRepository.GetTransactions(userId, start, end);
+            return Ok(transactions);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 
+    [HttpPatch("bet")]
+    public async Task<IActionResult> AddBetToHistory([FromQuery] string userId, int betId)
+    {
+        try
+        {
+            await walletRepository.AddBetToHistory(userId, betId);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
 }

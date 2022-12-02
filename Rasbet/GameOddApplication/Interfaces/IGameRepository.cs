@@ -19,4 +19,5 @@ public interface IGameRepository
     public Task<Unit> CreateIndividuallGame(Sport sport, string idSync, DateTime date, ICollection<string> Players, ICollection<BetType> bets);
     public Task<Unit> ChangeGameState(Game game, string specialistId, GameState state);
     public Task<Unit> ChangeGameState(Game g, GameState state);
+    public Task<ICollection<Game>> GetActiveAndSuspendedGames();
 }

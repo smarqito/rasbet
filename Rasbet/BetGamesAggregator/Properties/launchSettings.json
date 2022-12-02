@@ -3,16 +3,16 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:6040",
-      "sslPort": 0
+      "applicationUrl": "http://localhost:44596",
+      "sslPort": 44324
     }
   },
   "profiles": {
-    "GameOddPersistanve": {
+    "BetGamesAggregator": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
-      "applicationUrl": "http://localhost:5023",
+      "applicationUrl": "https://localhost:7126;http://localhost:6001",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

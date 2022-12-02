@@ -1,7 +1,9 @@
 using Domain;
 using Domain.UserDomain;
+using DTO.GameOddDTO;
 using DTO.LoginUserDTO;
 using DTO.UserDTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UserApplication.Interfaces;
 
@@ -22,14 +24,15 @@ namespace UserAPI.Controllers
         /// </summary>
         /// <param name="user"> Information used to log in an user (e-mail and password).</param>
         /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
-        [HttpPost("login")] 
+        [HttpPost("login")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserDTO))]
         public async Task<IActionResult> Login([FromBody] LoginUserDTO user)
         {
             try
             {
-                User u = await userRepository.Login(user.Email, 
+                UserDTO u = await userRepository.Login(user.Email, 
                                                     user.Password);
-                return Ok();
+                return Ok(u);
             }
             catch (Exception e)
             {
@@ -72,6 +75,7 @@ namespace UserAPI.Controllers
                 await userRepository.RegisterAppUser(registerApp.Name,
                                                      registerApp.Email,
                                                      registerApp.Password,
+                                                     registerApp.PasswordRepeated,
                                                      registerApp.NIF,
                                                      registerApp.DOB,
                                                      registerApp.Notifications,
@@ -135,12 +139,13 @@ namespace UserAPI.Controllers
         /// </summary>
         /// <param name="id"> Id of the user to be retrieved.</param>
         /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
-        [HttpGet("appuser/{id}")]
-        public async Task<AppUserDTO> GetAppUser(string id)
+        [HttpGet("appuser")]
+        public async Task<AppUserDTO> GetAppUser([FromQuery]string id)
         {
             try { 
                AppUser user = await userRepository.GetAppUser(id);
-               AppUserDTO dto = new AppUserDTO(user.Name, 
+               AppUserDTO dto = new AppUserDTO(user.Id,
+                                               user.Name, 
                                                user.Language, 
                                                user.Email, 
                                                user.IBAN, 
@@ -163,13 +168,37 @@ namespace UserAPI.Controllers
         /// </summary>
         /// <param name="id"> Id of the user to be retrieved.</param>
         /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
-        [HttpGet("specialist/{id}")]
-        public async Task<UserDTO> GetSpecialist(string id)
+        [HttpGet("userSimple")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserSimpleDTO))]
+        public async Task<IActionResult> GetUserSimple([FromQuery] string id)
+        {
+            try
+            {
+                AppUser user = await userRepository.GetUserSimple(id);
+
+                UserSimpleDTO dto = new UserSimpleDTO(user.Email, user.Language, user.Coin, user.Notifications);
+
+                return Ok(dto);
+            }
+            catch (Exception e)
+            {
+                return BadRequest();
+            }
+        }
+
+
+        /// <summary>
+        /// Retrieve UserDTO based on user id
+        /// </summary>
+        /// <param name="id"> Id of the user to be retrieved.</param>
+        /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
+        [HttpGet("specialist")]
+        public async Task<UserDTO> GetSpecialist([FromQuery] string id)
         {
             try
             {
                 Specialist user = await userRepository.GetSpecialist(id);
-                UserDTO dto = new UserDTO(user.Name, user.Email, user.Language);
+                UserDTO dto = new UserDTO(user.Id, user.Name, user.Email, user.Language);
                 return dto;
             }
             catch (Exception e)
@@ -184,13 +213,13 @@ namespace UserAPI.Controllers
         /// </summary>
         /// <param name="id"> Id of the user to be retrieved.</param>
         /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
-        [HttpGet("admin/{id}")]
-        public async Task<UserDTO> GetAdmin(string id)
+        [HttpGet("admin")]
+        public async Task<UserDTO> GetAdmin([FromQuery] string id)
         {
             try
             {
                 Admin user = await userRepository.GetAdmin(id);
-                UserDTO dto = new UserDTO(user.Name, user.Email, user.Language);
+                UserDTO dto = new UserDTO(user.Id, user.Name, user.Email, user.Language);
                 return dto;
             }
             catch (Exception e)
@@ -224,6 +253,7 @@ namespace UserAPI.Controllers
         /// <param name="updateInfo"> </param>
         /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
         [HttpPut("sensitive/user")]
+        [Authorize(Roles ="AppUser")]
         public async Task<IActionResult> UpdateAppUserSensitive([FromBody] SensitiveAppUserDTO updateInfo){
             try {   
                 await userRepository.UpdateAppUserSensitive(updateInfo.Email, updateInfo.Password, updateInfo.IBAN, updateInfo.PhoneNumber);
@@ -353,5 +383,25 @@ namespace UserAPI.Controllers
                 return BadRequest(e.Message);
             }
         }
+
+        /// <summary>
+        /// Send new password to the user
+        /// </summary>
+        /// <param name="email"> User's email.</param>
+        /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
+        [HttpPut("forgotPWD")]
+        public async Task<IActionResult> ForgotPassword([FromQuery] string email)
+        {
+            try
+            {
+                await userRepository.ForgotPassword(email);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
     }
 }
