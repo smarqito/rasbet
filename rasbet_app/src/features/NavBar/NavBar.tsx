@@ -1,6 +1,13 @@
 import React, { Fragment, useContext, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import { Container, Dropdown, Icon, Menu } from "semantic-ui-react";
+import {
+  Container,
+  Dropdown,
+  Grid,
+  Icon,
+  Image,
+  Menu,
+} from "semantic-ui-react";
 import { RootStoreContext } from "../../app/stores/rootStore";
 import IsAuthorized from "../../app/common/IsAuthorized";
 import { observer } from "mobx-react-lite";
@@ -21,6 +28,15 @@ const NavBar: React.FC = () => {
       {user && (
         <Menu fixed="top" inverted color="green" stackable>
           <Container>
+            <Menu.Item>
+              <Grid>
+                <Grid.Row columns={1}>
+                  <Grid.Column>
+                    <Image src="/assets/rasbet_logo.png" size="tiny" />
+                  </Grid.Column>
+                </Grid.Row>
+              </Grid>
+            </Menu.Item>
             <IsAuthorized
               component={
                 <Menu.Item
@@ -60,7 +76,7 @@ const NavBar: React.FC = () => {
             <Menu.Item position="right">
               {user.role === "AppUser" ? (
                 <Fragment>
-                  ({wallet?.balance})
+                  ({wallet?.balance}€)
                   <Dropdown
                     pointing="top left"
                     text={`Bem Vindo, ${user.name}`}

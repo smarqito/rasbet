@@ -27,7 +27,7 @@ import SpecialistHomepage from "../../features/specialist/Homepage/SpecialistHom
 
 const App: React.FC<RouteComponentProps> = () => {
   return (
-    <Fragment>
+    <div>
       <ModalContainer />
       <ToastContainer position="bottom-right" />
       <Switch>
@@ -103,7 +103,7 @@ const App: React.FC<RouteComponentProps> = () => {
         />
         <Route path="/*" component={NotFound} />
       </Switch>
-    </Fragment>
+    </div>
   );
 };
 

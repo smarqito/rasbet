@@ -67,23 +67,17 @@ export default class UserStore {
     try {
       const user = await Agent.User.login(values);
       runInAction(() => {
-        this.user = user;
-        this.role = user.role;
+        if (user) {
+          if (user.role == "Admin") {
+            this.user = user;
+            this.role = user.role;
+            this.rootStore.commonStore.setToken(user.token);
+            history.push(getIn[user.role] + `/${user.id}`);
+          } else toast.error("Utilizador não válido!");
+        } else toast.error("Utilizador ou Password errados!");
       });
-
-      if (user.role == "Admin") {
-        if (values.email == user.email && values.password == "123456") {
-          this.user = user;
-          this.role = user.role;
-          this.rootStore.commonStore.setToken(user.token);
-          history.push(getIn[user.role] + `/${user.name}`);
-        } else {
-          toast.error("Utilizador ou Password errados!");
-        }
-      } else toast.error("Utilizador não válido!");
     } catch (error) {
-      this.loading = false;
-      toast.error("Utilizador ou Password errados!");
+      toast.error("Ocorreu um erro interno!");
       throw error;
     } finally {
       this.loading = false;
@@ -95,23 +89,17 @@ export default class UserStore {
     try {
       const user = await Agent.User.login(values);
       runInAction(() => {
-        this.user = user;
-        this.role = user.role;
+        if (user) {
+          if (user.role == "AppUser") {
+            this.user = user;
+            this.role = user.role;
+            this.rootStore.commonStore.setToken(user.token);
+            history.push(getIn[user.role] + `/${user.id}`);
+          } else toast.error("Utilizador não válido!");
+        } else toast.error("Utilizador ou Password errados!");
       });
-
-      if (user.role == "AppUser") {
-        if (values.email == user.email && values.password == "123456") {
-          this.user = user;
-          this.role = user.role;
-          this.rootStore.commonStore.setToken(user.token);
-          history.push(getIn[user.role] + `/${user.name}`);
-        } else {
-          toast.error("Utilizador ou Password errados!");
-        }
-      } else toast.error("Utilizador não válido!");
     } catch (error) {
-      this.loading = false;
-      toast.error("Utilizador ou Password errados!");
+      toast.error("Ocorreu um erro interno!");
       throw error;
     } finally {
       this.loading = false;
@@ -123,23 +111,17 @@ export default class UserStore {
     try {
       const user = await Agent.User.login(values);
       runInAction(() => {
-        this.user = user;
-        this.role = user.role;
+        if (user) {
+          if (user.role == "Specialist") {
+            this.user = user;
+            this.role = user.role;
+            this.rootStore.commonStore.setToken(user.token);
+            history.push(getIn[user.role] + `/${user.id}`);
+          } else toast.error("Utilizador não válido!");
+        } else toast.error("Utilizador ou Password errados!");
       });
-
-      if (user.role == "Specialist") {
-        if (values.email == user.email && values.password == "123456") {
-          this.user = user;
-          this.role = user.role;
-          this.rootStore.commonStore.setToken(user.token);
-          history.push(getIn[user.role] + `/${user.name}`);
-        } else {
-          toast.error("Utilizador ou Password errados!");
-        }
-      } else toast.error("Utilizador não válido!");
     } catch (error) {
-      this.loading = false;
-      toast.error("Utilizador ou Password errados!");
+      toast.error("Ocorreu um erro interno!");
       throw error;
     } finally {
       this.loading = false;
@@ -243,6 +225,7 @@ export default class UserStore {
 
       runInAction(() => {
         if (newUser) this.appUserDetails = newUser;
+        else toast.error("Falha no load do utilizador!");
       });
     } catch (error) {
       toast.error("Falha ao ir buscar o utilizador!");
@@ -260,6 +243,7 @@ export default class UserStore {
 
       runInAction(() => {
         if (newUser) this.user = newUser;
+        else toast.error("Falha no load do utilizador!");
       });
     } catch (error) {
       toast.error("Falha ao ir buscar o utilizador!");
@@ -277,6 +261,7 @@ export default class UserStore {
 
       runInAction(() => {
         if (newUser) this.user = newUser;
+        else toast.error("Falha no load do utilizador!");
       });
     } catch (error) {
       toast.error("Falha ao ir buscar o utilizador!");
@@ -427,7 +412,8 @@ export default class UserStore {
       var bets: IBet[] = await Agent.Bet.getUserBetsOpen(id, start, end);
 
       if (bets) {
-        return bets;
+        this.clearBets();
+        this.userBetsFiltered = bets;
       } else toast.error("Sem apostas realizadas!");
     } catch (error) {
       toast.error("Sem apostas realizadas!");
@@ -443,7 +429,8 @@ export default class UserStore {
       var bets: IBet[] = await Agent.Bet.getUserBetsWon(id, start, end);
 
       if (bets) {
-        return bets;
+        this.clearBets();
+        this.userBetsFiltered = bets;
       } else toast.error("Sem apostas realizadas!");
     } catch (error) {
       toast.error("Sem apostas realizadas!");
@@ -453,13 +440,14 @@ export default class UserStore {
     }
   };
 
-  @action getUserBetsLost = async (id: string, start: Date, end: Date) => {
+  @action getUserBetsClosed = async (id: string, start: Date, end: Date) => {
     this.loading = true;
     try {
-      var bets: IBet[] = await Agent.Bet.getUserBetsLost(id, start, end);
+      var bets: IBet[] = await Agent.Bet.getUserBetsClose(id, start, end);
 
       if (bets) {
-        return bets;
+        this.clearBets();
+        this.userBetsFiltered = bets;
       } else toast.error("Sem apostas realizadas!");
     } catch (error) {
       toast.error("Sem apostas realizadas!");

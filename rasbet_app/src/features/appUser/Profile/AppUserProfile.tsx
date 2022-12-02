@@ -35,9 +35,9 @@ const AppUserProfile: React.FC<RouteComponentProps<DetailsParams>> = ({
   const {
     appUserDetails,
     getAppUser,
-    getUserBetsLost,
     getUserBetsOpen,
     getUserBetsWon,
+    getUserBetsClosed,
     userBetsFiltered,
   } = rootStore.userStore;
   const { wallet, allTransactions, getWallet, getTransactions } =
@@ -47,7 +47,7 @@ const AppUserProfile: React.FC<RouteComponentProps<DetailsParams>> = ({
   const betFilterTypes = [
     { key: 1, text: "open", value: "open" },
     { key: 2, text: "won", value: "won" },
-    { key: 3, text: "lost", value: "lost" },
+    { key: 3, text: "close", value: "close" },
   ];
 
   const [betFilter, setBetFilter] = useState<
@@ -64,8 +64,8 @@ const AppUserProfile: React.FC<RouteComponentProps<DetailsParams>> = ({
     if (betFilter == "won")
       getUserBetsWon(match.params.id, new Date(2001, 1, 1), DateValueEnd);
 
-    if (betFilter == "lost")
-      getUserBetsLost(match.params.id, new Date(2001, 1, 1), DateValueEnd);
+    if (betFilter == "closed")
+      getUserBetsClosed(match.params.id, new Date(2001, 1, 1), DateValueEnd);
 
     getAppUser(match.params.id);
     getWallet(match.params.id);
@@ -143,7 +143,7 @@ const AppUserProfile: React.FC<RouteComponentProps<DetailsParams>> = ({
       menuItem: "Carteira",
       render: () => (
         <Tab.Pane>
-          <Grid padded divided>
+          <Grid padded divided relaxed>
             <Grid.Row columns={3}>
               <Grid.Column verticalAlign="middle">
                 <Segment compact inverted secondary>
@@ -182,7 +182,7 @@ const AppUserProfile: React.FC<RouteComponentProps<DetailsParams>> = ({
       menuItem: "Histórico Apostas",
       render: () => (
         <Tab.Pane>
-          <Grid celled>
+          <Grid padded celled>
             <Grid.Row columns={1} textAlign="center">
               <Grid.Column>
                 <Header>Histórico de Apostas</Header>

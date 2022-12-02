@@ -5,6 +5,7 @@ import {
   Form,
   Grid,
   Header,
+  Image,
   Segment,
 } from "semantic-ui-react";
 import { Field, Form as FinalForm } from "react-final-form";
@@ -56,134 +57,138 @@ const RegisterForm: React.FC = () => {
     return age;
   }
 
-  if(loading)
-    <LoadingComponent content="Espere um momento..." />
+  if (loading) <LoadingComponent content="Espere um momento..." />;
 
   return (
-    <Grid textAlign="center" style={{ height: "70vh" }} verticalAlign="middle">
-      <Grid.Column style={{ maxWidth: 450 }}>
-        <Header as="h1" color="black" textAlign="center">
-          Registo
-        </Header>
-        <FinalForm
-          onSubmit={(values: IAppUserRegister) => {
-            values.notif = checkbox;
-            values.DOB = DateValue;
-            registerAppUser(values).catch((error) => ({
-              [FORM_ERROR]: error,
-            }));
-          }}
-          validate={(values) => {
-            const errors: IErrors = {};
-            if (values.password !== values.repetePass)
-              errors.repetePass = "Não coincidem!";
+    <Grid textAlign="center" style={{ height: "100vh" }} verticalAlign="middle">
+      <Grid.Row columns={2}>
+        <Grid.Column style={{ maxWidth: 450 }} width={11}>
+          <Header as="h1" color="black" textAlign="center">
+            Registo
+          </Header>
+          <FinalForm
+            onSubmit={(values: IAppUserRegister) => {
+              values.notif = checkbox;
+              values.DOB = DateValue;
+              registerAppUser(values).catch((error) => ({
+                [FORM_ERROR]: error,
+              }));
+            }}
+            validate={(values) => {
+              const errors: IErrors = {};
+              if (values.password !== values.repetePass)
+                errors.repetePass = "Não coincidem!";
 
-            if (getAge(DateValue) < 18) errors.dob = "Idade não é válida";
+              if (getAge(DateValue) < 18) errors.dob = "Idade não é válida";
 
-            return errors;
-          }}
-          initialValues={initialValues}
-          render={({
-            handleSubmit,
-            submitError,
-            invalid,
-            dirtySinceLastSubmit,
-          }) => (
-            <Form onSubmit={handleSubmit} size="large">
-              <Segment stacked>
-                <Field
-                  name="name"
-                  fluid
-                  component={TextInput}
-                  icon="user"
-                  iconPosition="left"
-                  placeholder="Nome de Utilizador"
-                  validate={required}
-                />
-                <Field
-                  name="email"
-                  component={TextInput}
-                  fluid
-                  icon="user"
-                  iconPosition="left"
-                  placeholder="E-mail"
-                  validate={composeValidators(required, isEmail)}
-                />
-                <Field
-                  name="password"
-                  component={TextInput}
-                  fluid
-                  icon="lock"
-                  iconPosition="left"
-                  placeholder="Password"
-                  type="password"
-                  validate={composeValidators(required, minLength(6))}
-                />
-                <Field
-                  name="repetePass"
-                  component={TextInput}
-                  fluid
-                  icon="lock"
-                  iconPosition="left"
-                  placeholder="Repita a Password"
-                  type="password"
-                  validate={composeValidators(required, minLength(6))}
-                />
-                <Field
-                  fluid
-                  name="language"
-                  component={SelectInput}
-                  options={Languages}
-                  placeholder={Languages[0].text}
-                  validate={composeValidators(required)}
-                />
-                <Field
-                  name="NIF"
-                  component={TextInput}
-                  fluid
-                  icon="lock"
-                  iconPosition="left"
-                  placeholder="NIF"
-                  maxLength={9}
-                  validate={composeValidators(
-                    required,
-                    exactLength(9),
-                    isNumber
+              return errors;
+            }}
+            initialValues={initialValues}
+            render={({
+              handleSubmit,
+              submitError,
+              invalid,
+              dirtySinceLastSubmit,
+            }) => (
+              <Form onSubmit={handleSubmit} size="large">
+                <Segment stacked>
+                  <Field
+                    name="name"
+                    fluid
+                    component={TextInput}
+                    icon="user"
+                    iconPosition="left"
+                    placeholder="Nome de Utilizador"
+                    validate={required}
+                  />
+                  <Field
+                    name="email"
+                    component={TextInput}
+                    fluid
+                    icon="user"
+                    iconPosition="left"
+                    placeholder="E-mail"
+                    validate={composeValidators(required, isEmail)}
+                  />
+                  <Field
+                    name="password"
+                    component={TextInput}
+                    fluid
+                    icon="lock"
+                    iconPosition="left"
+                    placeholder="Password"
+                    type="password"
+                    validate={composeValidators(required, minLength(6))}
+                  />
+                  <Field
+                    name="repetePass"
+                    component={TextInput}
+                    fluid
+                    icon="lock"
+                    iconPosition="left"
+                    placeholder="Repita a Password"
+                    type="password"
+                    validate={composeValidators(required, minLength(6))}
+                  />
+                  <Field
+                    fluid
+                    name="language"
+                    component={SelectInput}
+                    options={Languages}
+                    placeholder={Languages[0].text}
+                    validate={composeValidators(required)}
+                  />
+                  <Field
+                    name="NIF"
+                    component={TextInput}
+                    fluid
+                    icon="lock"
+                    iconPosition="left"
+                    placeholder="NIF"
+                    maxLength={9}
+                    validate={composeValidators(
+                      required,
+                      exactLength(9),
+                      isNumber
+                    )}
+                  />
+                  <Segment>
+                    <DatePicker
+                      selected={DateValue}
+                      onChange={(date) => date && setDateValue(date)}
+                      locale="pt"
+                      dateFormat={"P"}
+                    />
+                  </Segment>
+                  <Segment>
+                    <Checkbox
+                      name="notif"
+                      label="Deseja ser notificado (por email)?"
+                      checked={checkbox === true}
+                      onChange={() => {
+                        setCheckbox(!checkbox);
+                      }}
+                    />
+                  </Segment>
+                  {/* {console.log( checkbox)} */}
+                  {submitError && !dirtySinceLastSubmit && (
+                    <ErrorMessage
+                      error={submitError}
+                      text="Parâmetros incorretos!"
+                    />
                   )}
-                />
-                <Segment>
-                  <DatePicker
-                    selected={DateValue}
-                    onChange={(date) => date && setDateValue(date)}
-                    locale="pt"
-                    dateFormat={"P"}
-                  />
+                  <Button color="green" fluid size="large" type="submit">
+                    Registar-se
+                  </Button>
                 </Segment>
-                <Segment>
-                  <Checkbox
-                    name="notif"
-                    label="Deseja ser notificado (por email)?"
-                    checked={checkbox === true}
-                    onChange={() => {
-                      setCheckbox(!checkbox);
-                    }}
-                  />
-                </Segment>
-                {/* {console.log( checkbox)} */}
-                {submitError && !dirtySinceLastSubmit && (
-                  <ErrorMessage
-                    error={submitError}
-                    text="Parâmetros incorretos!"
-                  />
-                )}
-                <Button color="green" fluid size="large" type="submit">
-                  Registar-se
-                </Button>
-              </Segment>
-            </Form>
-          )}
-        />
-      </Grid.Column>
+              </Form>
+            )}
+          />
+        </Grid.Column>
+        <Grid.Column width={5} >
+          <Image src="/assets/fundo_login.png" size="big"/>
+        </Grid.Column>
+      </Grid.Row>
     </Grid>
   );
 };
