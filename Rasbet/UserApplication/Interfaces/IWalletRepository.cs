@@ -10,4 +10,5 @@ public interface IWalletRepository
     Task DepositFunds(string id, double value);
     Task WithdrawFunds(string id, double value);
     Task<ICollection<TransactionDTO>> GetTransactions(string userId, DateTime start, DateTime end);
+    Task AddBetToHistory(string userId, int betId);
 }

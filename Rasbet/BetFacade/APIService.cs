@@ -69,13 +69,15 @@ public class APIService
 
 
     //withdraw dinheiro do user
-    public async Task WithdrawUserBalance(TransactionDTO dto)
+    public async Task WithdrawUserBalance(TransactionDTO dto, int betId)
     {
         StringContent content = new(JsonSerializer.Serialize(dto),
                                     Encoding.UTF8,
                                     "application/json");
         HttpResponseMessage resp = await _httpClientUser.PutAsync($"Wallet/withdraw", content);
         resp.EnsureSuccessStatusCode();
+        HttpResponseMessage resp2 = await _httpClientUser.PatchAsync($"Wallet/bet?userId={dto.UserId}&betId={betId}", null);
+        resp2.EnsureSuccessStatusCode();
     }
 
     //deposit dinheiro no user

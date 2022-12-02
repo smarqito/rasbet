@@ -113,4 +113,11 @@ public class WalletRepository : IWalletRepository
 
         return transactionsDTO;
     }
+
+    public async Task AddBetToHistory(string userId, int betId)
+    {
+        AppUserBetHistory bet = new AppUserBetHistory(userId, betId);
+        await context.UserBetHistory.AddAsync(bet);
+        await context.SaveChangesAsync();
+    }
 }

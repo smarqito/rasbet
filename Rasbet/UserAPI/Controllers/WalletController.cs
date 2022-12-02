@@ -99,4 +99,18 @@ public class WalletController : BaseController
             return BadRequest(e.Message);
         }
     }
+
+    [HttpPatch("bet")]
+    public async Task<IActionResult> AddBetToHistory([FromQuery] string userId, int betId, int oddId)
+    {
+        try
+        {
+            await walletRepository.AddBetToHistory(userId, betId);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
 }
