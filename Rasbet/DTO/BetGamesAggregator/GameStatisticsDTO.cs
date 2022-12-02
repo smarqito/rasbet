@@ -13,7 +13,7 @@ namespace DTO.BetGamesAggregator
     {
         public StatisticsDTO Statistics { get; set; }
 
-        public GameStatisticsDTO(int id, DateTime startTime, string sportName, BetTypeDTO mainBet, string homeTeam, string awayTeam) : base(id, startTime, sportName, mainBet, homeTeam, awayTeam)
+        public GameStatisticsDTO() : base()
         {
         }
 

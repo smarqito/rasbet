@@ -16,6 +16,10 @@ namespace DTO.GameOddDTO
         public string HomeTeam { get; set; }
         public string AwayTeam { get; set; }
 
+        public CollectiveGameDTO()
+        {
+        }
+
         public CollectiveGameDTO(int id, string state, DateTime startTime, string sportName, BetTypeDTO mainBet, string homeTeam, string awayTeam)
         {
             Id = id;
