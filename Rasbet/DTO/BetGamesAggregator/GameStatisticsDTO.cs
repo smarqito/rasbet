@@ -9,15 +9,15 @@ using System.Threading.Tasks;
 
 namespace DTO.BetGamesAggregator
 {
-    public class GameStatisticsDTO : GameOddDTO.GameDTO
+    public class GameStatisticsDTO : CollectiveGameDTO
     {
         public StatisticsDTO Statistics { get; set; }
 
-        public GameStatisticsDTO(int id, DateTime startTime, string sportName, BetTypeDTO mainBet) : base(id, startTime, sportName, mainBet)
+        public GameStatisticsDTO(int id, DateTime startTime, string sportName, BetTypeDTO mainBet, string homeTeam, string awayTeam) : base(id, startTime, sportName, mainBet, homeTeam, awayTeam)
         {
         }
 
-        public GameStatisticsDTO(GameOddDTO.GameDTO game) : base(game)
+        public GameStatisticsDTO(CollectiveGameDTO game) : base(game)
         {
         }
     }

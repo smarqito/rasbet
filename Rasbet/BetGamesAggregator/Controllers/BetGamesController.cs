@@ -31,7 +31,7 @@ namespace BetGamesAggregator.Controllers
                 ICollection<GameStatisticsDTO> res = new List<GameStatisticsDTO>();
                 foreach (CollectiveGameDTO game in games)
                 {
-                    GameStatisticsDTO s = new GameStatisticsDTO(game.Id, game.StartTime, game.SportName, game.MainBet);
+                    GameStatisticsDTO s = new GameStatisticsDTO(game);
                     s.Statistics = await betService.GetStatisticsByGame(game.MainBet.Odds.Select(x => x.Id).ToList());
                     res.Add(s);
                 }
