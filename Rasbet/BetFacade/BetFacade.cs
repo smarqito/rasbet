@@ -186,45 +186,43 @@ public class BetFacade : IBetFacade
         {
             ICollection<Bet> finished_bets;
 
-            if (finishedGames.Count > 0)
+
+            foreach (var finishedGame in finishedGames)
             {
-                foreach (var finishedGame in finishedGames)
+                ICollection<Selection> selecs = await SelectionRepository.GetSelectionByType(finishedGame.BetTypeId);
+                finished_bets = await BetRepository.UpdateBets(selecs, finishedGame.WinnerOddIds);
+
+                if (finished_bets.Count > 0)
                 {
-                    ICollection<Selection> selecs = await SelectionRepository.GetSelectionByType(finishedGame.BetTypeId);
-                    finished_bets = await BetRepository.UpdateBets(selecs, finishedGame.WinnerOddIds);
-
-                    if (finished_bets.Count > 0)
+                    foreach (var bet in finished_bets)
                     {
-                        foreach (var bet in finished_bets)
+
+                        UserSimpleDTO dto = await APIService.GetUserSimple(bet.UserId);
+                        if (dto.Notifications)
                         {
-                  
-                            UserSimpleDTO dto = await APIService.GetUserSimple(bet.UserId);
-                            if (dto.Notifications)
+                            string subject = "Resultado da aposta";
+                            string body = "";
+                            if (bet.State == BetState.Lost)
                             {
-                                string subject = "Resultado da aposta";
-                                string body = "";
-                                if (bet.State == BetState.Lost)
-                                {
-                                    body = $"Olá!\nPerdeu a aposta que realizou no dia {bet.Start}.\nBoas apostas.";
-                                }
-
-                                if (bet.State == BetState.Won)
-                                {
-                                    body = $"Olá!\nGanhou {bet.WonValue} {dto.Coin} na aposta que realizou no dia {bet.Start}.\nBoas apostas.";
-                                    await APIService.DepositUserBalance(new TransactionDTO(bet.UserId, bet.WonValue, nameof(Deposit)));
-                                }
-
-                                SendEmail(dto.Email, subject, body);
+                                body = $"Olá!\nPerdeu a aposta que realizou no dia {bet.Start}.\nBoas apostas.";
                             }
-                        }
-                        resp = true;
-                    }
-                }
 
-                return resp;
+                            if (bet.State == BetState.Won)
+                            {
+                                body = $"Olá!\nGanhou {bet.WonValue} {dto.Coin} na aposta que realizou no dia {bet.Start}.\nBoas apostas.";
+                                await APIService.DepositUserBalance(new TransactionDTO(bet.UserId, bet.WonValue, nameof(Deposit)));
+                            }
+
+                            SendEmail(dto.Email, subject, body);
+                        }
+                    }
+                    resp = true;
+                }
             }
 
-            else throw new FinishedGamesInvalidException("Os jogos enviados são inválidos!");
+            return resp;
+
+
         }
         catch (Exception e)
         {

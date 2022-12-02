@@ -5,6 +5,7 @@ using GameOddApplication.Interfaces;
 using GameOddPersistance;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Domain;
 
 namespace GameOddApplication.Repositories;
 

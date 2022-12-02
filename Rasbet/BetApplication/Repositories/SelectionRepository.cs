@@ -83,8 +83,8 @@ public class SelectionRepository : ISelectionRepository
     {
         ICollection<Selection> server_selections = await _context.Selections.Where(x => x.BetTypeId ==bettype).ToListAsync();
 
-        if (server_selections.Count == 0)
-            throw new NoSelectionsWithTypeException("Não existem seleções com apostas do tipo!");
+        //if (server_selections.Count == 0)
+        //    throw new NoSelectionsWithTypeException("Não existem seleções com apostas do tipo!");
 
         return server_selections;
     }
