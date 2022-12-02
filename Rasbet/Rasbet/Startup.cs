@@ -29,6 +29,14 @@ public class Startup
         services.AddOcelot()
                 .AddCacheManager(settings => settings.WithDictionaryHandle());
 
+        services.AddCors(opt =>
+        {
+            opt.AddPolicy("CorsPolicy", policy =>
+            {
+                policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000");
+            });
+        });
+
 
         //services.AddControllers(opt =>
         //{
@@ -59,6 +67,7 @@ public class Startup
             endpoints.MapControllers();
         });
 
+        app.UseCors("CorsPolicy");
         await app.UseOcelot();
     }
 }

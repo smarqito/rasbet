@@ -27,7 +27,7 @@ const AppUserDashboard: React.FC<RouteComponentProps<DetailsParams>> = ({
     loading,
   } = rootStore.gameStore;
 
-  const [sport, setSport] = useState({ name: "Futebol" });
+  const [sport, setSport] = useState({ name: "Football" });
 
   useEffect(() => {
     clearActive();

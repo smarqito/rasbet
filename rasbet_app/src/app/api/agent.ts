@@ -13,7 +13,7 @@ import {
 } from "../models/user";
 import { IWallet } from "../models/wallet";
 
-axios.defaults.baseURL = process.env.REACT_APP_API_URL;
+axios.defaults.baseURL = "http://localhost:8000";
 
 const responseBody = (response: AxiosResponse) => response.data;
 
@@ -44,7 +44,7 @@ const requests = {
 const User = {
   login: (user: IUserLogin): Promise<IUser> =>
     requests.post(`/user/login`, user),
-  registerAppUser: (user: IAppUserRegister) => requests.post(`/user`, user),
+  registerAppUser: (user: IAppUserRegister) => requests.post(`/User/user`, user),
   registerAdmin: (user: IUserRegister) => requests.post(`/user/admin`, user),
   registerSpecialist: (user: IUserRegister) =>
     requests.post(`/user/specialist`, user),
@@ -119,7 +119,7 @@ const Game = {
 
 const Wallet = {
   get: (userId: string): Promise<IWallet> =>
-    requests.get(`/user/?userId=${userId}`),
+    requests.get(`/Wallet?userId=${userId}`),
   depositFunds: (createTran: ICreateTransaction) =>
     requests.put(`/wallet/deposit`, createTran),
   withdrawFunds: (createTran: ICreateTransaction) =>
