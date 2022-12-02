@@ -199,20 +199,23 @@ public class BetFacade : IBetFacade
                         {
                   
                             UserSimpleDTO dto = await APIService.GetUserSimple(bet.UserId);
-                            string subject = "Resultado da aposta";
-                            string body = "";
-                            if(bet.State == BetState.Lost)
+                            if (dto.Notifications)
                             {
-                                body = $"Olá!\nPerdeu a aposta que realizou no dia {bet.Start}.\nBoas apostas.";
-                            }
+                                string subject = "Resultado da aposta";
+                                string body = "";
+                                if (bet.State == BetState.Lost)
+                                {
+                                    body = $"Olá!\nPerdeu a aposta que realizou no dia {bet.Start}.\nBoas apostas.";
+                                }
 
-                            if(bet.State == BetState.Won)
-                            { 
-                                body = $"Olá!\nGanhou {bet.WonValue} {dto.Coin} na aposta que realizou no dia {bet.Start}.\nBoas apostas.";
-                                await APIService.DepositUserBalance(new TransactionDTO(bet.UserId, bet.WonValue, nameof(Deposit)));
-                            }
+                                if (bet.State == BetState.Won)
+                                {
+                                    body = $"Olá!\nGanhou {bet.WonValue} {dto.Coin} na aposta que realizou no dia {bet.Start}.\nBoas apostas.";
+                                    await APIService.DepositUserBalance(new TransactionDTO(bet.UserId, bet.WonValue, nameof(Deposit)));
+                                }
 
-                            SendEmail(dto.Email, subject, body);
+                                SendEmail(dto.Email, subject, body);
+                            }
                         }
                         resp = true;
                     }

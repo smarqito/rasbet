@@ -176,7 +176,7 @@ namespace UserAPI.Controllers
             {
                 AppUser user = await userRepository.GetUserSimple(id);
 
-                UserSimpleDTO dto = new UserSimpleDTO(user.Email, user.Language, user.Coin);
+                UserSimpleDTO dto = new UserSimpleDTO(user.Email, user.Language, user.Coin, user.Notifications);
 
                 return Ok(dto);
             }
