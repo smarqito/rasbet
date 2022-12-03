@@ -26,13 +26,13 @@ const UpdateSASensitive: React.FC = () => {
           <FinalForm
             onSubmit={(values: IUserChangeSensitive) => {
               if (user?.role == "Admin") {
-                updateAdminSensitive(user!.email, values.pass).catch(
+                updateAdminSensitive(user!.email, values.password).catch(
                   (error) => ({
                     [FORM_ERROR]: error,
                   })
                 );
               } else {
-                updateSpecialistSensitive(user!.email, values.pass).catch(
+                updateSpecialistSensitive(user!.email, values.password).catch(
                   (error) => ({
                     [FORM_ERROR]: error,
                   })

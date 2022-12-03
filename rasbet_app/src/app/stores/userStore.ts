@@ -48,6 +48,14 @@ export default class UserStore {
     this.userBetsFiltered = [];
   };
 
+  @action clearUser = () => {
+    this.user = null;
+  };
+
+  @action clearAppUserDetails = () => {
+    this.appUserDetails = null;
+  };
+
   @action hasRole = (roles: string[]) => {
     let isAuthorized = false;
     if (this.user) {
@@ -88,7 +96,7 @@ export default class UserStore {
     this.loading = true;
     try {
       const user = await Agent.User.login(values);
-      this.rootStore.betStore.loadCart()
+      this.rootStore.betStore.loadCart();
       runInAction(() => {
         if (user) {
           if (user.role == "AppUser") {
@@ -177,7 +185,7 @@ export default class UserStore {
     try {
       await Agent.User.logout(this.user!.id);
       this.rootStore.commonStore.setToken(null);
-      this.user = null;
+      this.clearUser();
       history.push("/");
     } catch (error) {
       toast.error("Ocorreu um erro interno!");
@@ -414,9 +422,9 @@ export default class UserStore {
       if (bets) {
         this.clearBets();
         this.userBetsFiltered = bets;
-      } else toast.error("Sem apostas realizadas!");
+      } else toast.info("Sem apostas realizadas!");
     } catch (error) {
-      toast.error("Sem apostas realizadas!");
+      toast.error("Ocorreu um erro interno!");
       throw error;
     } finally {
       this.loading = false;
@@ -431,9 +439,9 @@ export default class UserStore {
       if (bets) {
         this.clearBets();
         this.userBetsFiltered = bets;
-      } else toast.error("Sem apostas realizadas!");
+      } else toast.info("Sem apostas realizadas!");
     } catch (error) {
-      toast.error("Sem apostas realizadas!");
+      toast.error("Ocorreu um erro interno!");
       throw error;
     } finally {
       this.loading = false;
@@ -448,9 +456,9 @@ export default class UserStore {
       if (bets) {
         this.clearBets();
         this.userBetsFiltered = bets;
-      } else toast.error("Sem apostas realizadas!");
+      } else toast.info("Sem apostas realizadas!");
     } catch (error) {
-      toast.error("Sem apostas realizadas!");
+      toast.error("Ocorreu um erro interno!");
       throw error;
     } finally {
       this.loading = false;

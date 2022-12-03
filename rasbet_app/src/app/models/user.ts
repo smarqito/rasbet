@@ -48,8 +48,8 @@ export interface IAppUserChangeProfile extends IUserChangeProfile {
 }
 
 export interface IAppUserChangeSensitive extends IUserChangeSensitive {
-  iban: string;
-  phone: string;
+  IBAN: string;
+  phoneNumber: string;
 }
 
 export interface IUserChangeProfile {
@@ -58,7 +58,7 @@ export interface IUserChangeProfile {
 }
 
 export interface IUserChangeSensitive {
-  pass: string;
+  password: string;
 }
 
 export class UserChangeProfile implements IUserChangeProfile {
@@ -70,7 +70,7 @@ export class UserChangeProfile implements IUserChangeProfile {
   }
 }
 export class UserChangeSensitive implements IUserChangeSensitive {
-  pass: string = "";
+  password: string = "";
 
   constructor(init?: IAppUserChangeProfile) {
     Object.assign(this, init);
@@ -87,9 +87,9 @@ export class AppUserChangeProfile implements IAppUserChangeProfile {
   }
 }
 export class AppUserChangeSensitive implements IAppUserChangeSensitive {
-  pass: string = "";
-  iban: string = "";
-  phone: string = "";
+  IBAN: string = "";
+  phoneNumber: string = "";
+  password: string = "";
 
   constructor(init?: IAppUserChangeProfile) {
     Object.assign(this, init);

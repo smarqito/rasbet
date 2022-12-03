@@ -40,9 +40,9 @@ const ChangeProfile: React.FC = () => {
             onSubmit={(values: IAppUserChangeSensitive) => {
               updateAppUserSensitive(
                 user!.email,
-                values.pass,
-                values.iban,
-                values.phone
+                values.password,
+                values.IBAN,
+                values.phoneNumber
               ).catch((error) => ({
                 [FORM_ERROR]: error,
               }));
@@ -55,19 +55,20 @@ const ChangeProfile: React.FC = () => {
                 <Segment stacked>
                   <Field
                     fluid
-                    name="pass"
+                    name="password"
                     component={TextInput}
                     placeholder="Nova Palavra-Passe"
                     validate={required}
+                    type="password"
                   />
                   <Field
-                    name="iban"
+                    name="IBAN"
                     component={TextInput}
                     placeholder="Novo IBAN"
                     validate={required}
                   />
                   <Field
-                    name="phone"
+                    name="phoneNumber"
                     component={TextInput}
                     placeholder="Novo número de telemóvel"
                     validate={required}
