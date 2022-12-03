@@ -1,26 +1,32 @@
 import { Card } from "semantic-ui-react";
 import { observer } from "mobx-react-lite";
 import GameListItem from "./GameListItem";
-import { IActiveGame, IGame } from "../../../app/models/game";
+import { ISport } from "../../../app/models/game";
 import ListItemNotFound from "../../../app/common/ListItemNotFound";
-import { Fragment } from "react";
+import { Fragment, useCallback, useContext, useEffect } from "react";
+import { RootStoreContext } from "../../../app/stores/rootStore";
 
-interface IProps {
-  games: IActiveGame[];
-  loading: boolean;
-}
+const GameList: React.FC = () => {
+  const rootStore = useContext(RootStoreContext);
+  const {
+    getActiveGames,
+    getActiveGamesBySport,
+    clearActive,
+  } = rootStore.gameStore;
 
-const GameList: React.FC<IProps> = ({ games, loading }) => {
-  function hasElements() {
-    return games.length != 0;
-  }
+  useEffect(() => {
+    getActiveGames();
+    return () => {
+      clearActive();
+    };
+  }, [getActiveGames]);
 
   return (
     <Fragment>
-      {hasElements() ? (
+      {getActiveGamesBySport.length > 0 ? (
         <Card.Group>
-          {games.map((x) => (
-            <GameListItem key={x.game.id} id={x.game.id} game={x} />
+          {getActiveGamesBySport.map((x) => (
+            <GameListItem key={x.id} game={x} />
           ))}
         </Card.Group>
       ) : (

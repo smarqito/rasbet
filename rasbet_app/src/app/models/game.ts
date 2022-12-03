@@ -9,14 +9,14 @@ export interface ISport {
 export interface IGame {
   id: number;
   state: GameState;
-  start: Date;
-  sport: string;
+  startTime: Date;
+  sportName: string;
   mainBet: IBetType;
 }
 
 export interface CollectiveGame extends IGame {
-  home: string;
-  away: string;
+  homeTeam: string;
+  awayTeam: string;
 }
 
 export interface IndividualGame extends IGame {
@@ -25,10 +25,9 @@ export interface IndividualGame extends IGame {
 
 export interface IStatistics {
   betCount: number;
-  statitics: Map<number, number>;
+  statistics: {[key: number] : number};
 }
 
-export interface IActiveGame {
-  game: CollectiveGame;
-  statistic: IStatistics;
+export interface IActiveGame extends CollectiveGame{
+  statistics: IStatistics;
 }

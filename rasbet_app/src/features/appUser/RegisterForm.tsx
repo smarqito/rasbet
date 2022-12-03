@@ -35,7 +35,7 @@ import LoadingComponent from "../../app/layout/LoadingComponent";
 registerLocale("pt", pt);
 
 interface IErrors {
-  repetePass?: string;
+  passwordRepeated?: string;
   dob?: string;
 }
 
@@ -62,22 +62,22 @@ const RegisterForm: React.FC = () => {
   return (
     <Grid textAlign="center" style={{ height: "100vh" }} verticalAlign="middle">
       <Grid.Row columns={2}>
-        <Grid.Column style={{ maxWidth: 450 }} width={11}>
+        <Grid.Column style={{ maxWidth: 450 }} width={13}>
           <Header as="h1" color="black" textAlign="center">
             Registo
           </Header>
           <FinalForm
             onSubmit={(values: IAppUserRegister) => {
               values.notif = checkbox;
-              values.DOB = DateValue;
+              values.DOB = DateValue.toISOString();
               registerAppUser(values).catch((error) => ({
                 [FORM_ERROR]: error,
               }));
             }}
             validate={(values) => {
               const errors: IErrors = {};
-              if (values.password !== values.repetePass)
-                errors.repetePass = "Não coincidem!";
+              if (values.password !== values.passwordRepeated)
+                errors.passwordRepeated = "Não coincidem!";
 
               if (getAge(DateValue) < 18) errors.dob = "Idade não é válida";
 
@@ -121,7 +121,7 @@ const RegisterForm: React.FC = () => {
                     validate={composeValidators(required, minLength(6))}
                   />
                   <Field
-                    name="repetePass"
+                    name="passwordRepeated"
                     component={TextInput}
                     fluid
                     icon="lock"
@@ -185,8 +185,8 @@ const RegisterForm: React.FC = () => {
             )}
           />
         </Grid.Column>
-        <Grid.Column width={5} >
-          <Image src="/assets/fundo_login.png" size="big"/>
+        <Grid.Column width={3}>
+          <Image src="/assets/fundo_login.png" size="big" />
         </Grid.Column>
       </Grid.Row>
     </Grid>

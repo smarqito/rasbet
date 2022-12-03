@@ -5,6 +5,7 @@ import BetCart from "../BetCart/BetCart";
 import { useContext, useEffect, useState } from "react";
 import { RootStoreContext } from "../../../app/stores/rootStore";
 import { RouteComponentProps } from "react-router-dom";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
 
 interface DetailsParams {
   id: string;
@@ -16,28 +17,24 @@ const AppUserDashboard: React.FC<RouteComponentProps<DetailsParams>> = ({
 }) => {
   const rootStore = useContext(RootStoreContext);
   const {
-    getActiveGames,
-    gamesFiltered,
     getAllSports,
     allSports,
-    getActiveGamesBySport,
     clearActive,
-    clearFiltered,
     clearSports,
-    loading,
+    setSelectedSport,
+    loading
   } = rootStore.gameStore;
-
-  const [sport, setSport] = useState({ name: "Football" });
 
   useEffect(() => {
     clearActive();
-    clearFiltered();
     clearSports();
 
-    getActiveGames();
     getAllSports();
-    getActiveGamesBySport(sport);
-  }, [setSport, sport, match.params.id]);
+  }, [match.params.id]);
+
+  if(loading){
+    <LoadingComponent content="A carregarpágina do utilizador!" />
+  }
 
   return (
     <Grid padded divided stackable>
@@ -53,7 +50,7 @@ const AppUserDashboard: React.FC<RouteComponentProps<DetailsParams>> = ({
                       content={x.name}
                       fluid
                       type="button"
-                      onClick={() => setSport(x)}
+                      onClick={() => setSelectedSport(x)}
                     />
                   </Grid.Row>
                 );
@@ -64,7 +61,7 @@ const AppUserDashboard: React.FC<RouteComponentProps<DetailsParams>> = ({
         <Grid.Column width={8} key={"gameList"}>
           <Container>
             <Header as="h3">Todos os jogos</Header>
-            <GameList games={gamesFiltered} loading={loading} />
+            <GameList />
           </Container>
         </Grid.Column>
         <Grid.Column width={5} key={"BetCart"}>

@@ -34,7 +34,7 @@ const LoginForm: React.FC<IProps> = ({ loginFunc, loading, isAppUser }) => {
   return (
     <Grid textAlign="center" style={{ height: "100vh" }} verticalAlign="middle">
       <Grid.Row columns={2}>
-        <Grid.Column style={{ maxWidth: 450 }} width={11}>
+        <Grid.Column style={{ maxWidth: 450 }} width={13}>
           <Header as="h1" color="black" textAlign="center">
             Bem Vindo
           </Header>
@@ -105,7 +105,7 @@ const LoginForm: React.FC<IProps> = ({ loginFunc, loading, isAppUser }) => {
             </Message>
           )}
         </Grid.Column>
-        <Grid.Column width={5}>
+        <Grid.Column width={3}>
           <Image src="/assets/fundo_login.png" size="big" />
         </Grid.Column>
       </Grid.Row>

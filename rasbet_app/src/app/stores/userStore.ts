@@ -88,6 +88,7 @@ export default class UserStore {
     this.loading = true;
     try {
       const user = await Agent.User.login(values);
+      this.rootStore.betStore.loadCart()
       runInAction(() => {
         if (user) {
           if (user.role == "AppUser") {
@@ -130,17 +131,17 @@ export default class UserStore {
 
   @action registerAppUser = async (values: IAppUserRegister) => {
     this.loading = true;
+    console.log(values);
     try {
-      if (values.password !== values.repetePass) {
+      if (values.password !== values.passwordRepeated) {
         toast.error("Palavras-pass não coincidem!");
         throw new Error();
       }
 
-      var a = await Agent.User.registerAppUser(values);
+      await Agent.User.registerAppUser(values);
       toast.info("Utilizador criado com sucesso!");
       history.push("/");
     } catch (error) {
-      this.loading = false;
       toast.error("Erro ao registar utilizador!");
       throw error;
     } finally {
@@ -189,7 +190,6 @@ export default class UserStore {
   @action changePassByEmail = async (email: string) => {
     this.loading = true;
     try {
-      var password = "";
       await Agent.User.changePass(email);
       toast.info("Email enviado com nova Palavra-Passe!", {
         onClose: history.goBack,
@@ -409,7 +409,7 @@ export default class UserStore {
   @action getUserBetsOpen = async (id: string, start: Date, end: Date) => {
     this.loading = true;
     try {
-      var bets: IBet[] = await Agent.Bet.getUserBetsOpen(id, start, end);
+      let bets: IBet[] = await Agent.Bet.getUserBetsOpen(id, start, end);
 
       if (bets) {
         this.clearBets();
@@ -426,7 +426,7 @@ export default class UserStore {
   @action getUserBetsWon = async (id: string, start: Date, end: Date) => {
     this.loading = true;
     try {
-      var bets: IBet[] = await Agent.Bet.getUserBetsWon(id, start, end);
+      let bets: IBet[] = await Agent.Bet.getUserBetsWon(id, start, end);
 
       if (bets) {
         this.clearBets();
@@ -443,7 +443,7 @@ export default class UserStore {
   @action getUserBetsClosed = async (id: string, start: Date, end: Date) => {
     this.loading = true;
     try {
-      var bets: IBet[] = await Agent.Bet.getUserBetsClose(id, start, end);
+      let bets: IBet[] = await Agent.Bet.getUserBetsClose(id, start, end);
 
       if (bets) {
         this.clearBets();

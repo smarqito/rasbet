@@ -6,6 +6,7 @@ import {
   runInAction,
 } from "mobx";
 import { toast } from "react-toastify";
+import { history } from "../..";
 import Agent from "../api/agent";
 import {
   ICreateBetMultiple,
@@ -36,6 +37,18 @@ export default class BetStore {
   };
   @observable loading = false;
 
+  getLocalStorageItem = (key: string) => {
+    return JSON.parse(window.localStorage.getItem(key) ?? "{}");
+  };
+
+  setLocalStorageItem = (key: string, item: any) => {
+    window.localStorage.setItem(key, JSON.stringify(item));
+  };
+
+  removeStorageItem = (key: string) => {
+    window.localStorage.removeItem(key);
+  };
+
   @action clearSimple = () => {
     this.simpleBets = [];
   };
@@ -48,13 +61,19 @@ export default class BetStore {
     };
   };
 
+  @action loadCart() {
+    let loaded = JSON.parse(window.localStorage.getItem("betSimple") ?? "{}");
+    this.simpleBets = Object.values(loaded);
+  }
+
   @action removeSimpleSelection = (oddId: number) => {
     try {
-      var newSimples: ISimpleDetails[] = [];
+      let newSimples: ISimpleDetails[] = [];
 
       for (let index = 0; index < this.simpleBets.length; index++) {
         const element = this.simpleBets[index];
         if (element.selection.odd.id != oddId) newSimples.push(element);
+        this.removeStorageItem("betSimple");
       }
 
       this.simpleBets = newSimples;
@@ -66,11 +85,12 @@ export default class BetStore {
 
   @action removeMultipleSelection = (oddId: number) => {
     try {
-      var newMultiple: ISelection[] = [];
+      let newMultiple: ISelection[] = [];
 
       for (let index = 0; index < this.betMultiple.selections.length; index++) {
         const element = this.betMultiple.selections[index];
         if (element.odd.id != oddId) newMultiple.push(element);
+        this.removeStorageItem("betMultiple");
       }
 
       this.betMultiple.selections = newMultiple;
@@ -90,20 +110,20 @@ export default class BetStore {
   ) => {
     try {
       if (amount > 0.01) {
-        var selection: ISelection = {
+        let selection: ISelection = {
           betType: betType,
           oddValue: oddValue,
           odd: odd,
           game: game,
         };
 
-        var betSimple: ISimpleDetails = {
+        let betSimple: ISimpleDetails = {
           selection: selection,
           amount: amount,
           userId: userId,
         };
 
-        var exists = 0;
+        let exists = 0;
 
         for (let index = 0; index < this.simpleBets.length; index++) {
           const element = this.simpleBets[index];
@@ -111,9 +131,11 @@ export default class BetStore {
             exists = 1;
           }
         }
-        console.log(betSimple);
 
         if (!exists) {
+          let stored = this.getLocalStorageItem("betSimple");
+          stored[betType.id] = betSimple;
+          this.setLocalStorageItem("betSimple", stored);
           this.simpleBets.push(betSimple);
         } else {
           toast.info("A seleção já foi inserida!");
@@ -132,7 +154,7 @@ export default class BetStore {
     game: CollectiveGame
   ) => {
     try {
-      var selection: ISelection = {
+      let selection: ISelection = {
         betType: betType,
         oddValue: oddValue,
         odd: odd,
@@ -143,6 +165,9 @@ export default class BetStore {
         (x) => x.odd.id == odd.id
       );
       if (exists.length === 0) {
+        let stored = this.getLocalStorageItem("betMultiple");
+        stored[betType.id] = selection;
+        this.setLocalStorageItem("betMultiple", stored);
         this.betMultiple.selections.push(selection);
       } else {
         toast.info("A seleção já foi inserida!");
@@ -162,13 +187,13 @@ export default class BetStore {
   };
 
   @action getGanhosSimple = () => {
-    var res = 0;
+    let res = 0;
     this.simpleBets.map((x) => (res += x.amount * x.selection.oddValue));
     return res;
   };
 
   @action getGanhosMultiple = () => {
-    var oddMultiple = 1;
+    let oddMultiple = 1;
     this.betMultiple.selections.map((x) => (oddMultiple *= x.oddValue));
 
     return oddMultiple * this.betMultiple.amount;
@@ -187,72 +212,82 @@ export default class BetStore {
   @action createBetSimple = async () => {
     this.loading = true;
     try {
-      for (let index = 0; index < this.simpleBets.length; index++) {
-        const element = this.simpleBets[index];
+      if (this.getSimpleAmount <= this.rootStore.walletStore.wallet!.balance) {
+        for (let index = 0; index < this.simpleBets.length; index++) {
+          const element = this.simpleBets[index];
 
-        var selection: ICreateSelection = {
-          bettypeId: element.selection.betType.id,
-          oddValue: element.selection.oddValue,
-          oddId: element.selection.odd.id,
-          gameId: element.selection.game.id,
-        };
+          let selection: ICreateSelection = {
+            bettypeId: element.selection.betType.id,
+            oddValue: element.selection.oddValue,
+            oddId: element.selection.odd.id,
+            gameId: element.selection.game.id,
+          };
 
-        var createBet: ICreateBetSimple = {
-          selection: selection,
-          amount: element.amount,
-          userId: element.userId,
-        };
+          let createBet: ICreateBetSimple = {
+            selection: selection,
+            amount: element.amount,
+            userId: element.userId,
+          };
 
-        await Agent.Bet.createBetSimple(createBet);
+          await Agent.Bet.createBetSimple(createBet);
+        }
+
+        runInAction(() => {
+          this.clearSimple();
+        });
+      } else {
+        history.push(`/user/profile`);
+        toast.info("Não possui o valor necessário na carteira!");
       }
-
-      runInAction(() => {
-        this.clearSimple();
-      });
     } catch (error) {
-      this.loading = false;
       toast.error("Erro ao enviar a aposta. Tente mais tarde!");
       throw error;
     } finally {
       this.loading = false;
-      toast.info("Aposta(s) simple(s) criada(s) com sucesso!");
     }
   };
 
   @action createBetMultiple = async () => {
     this.loading = true;
     try {
-      if (this.betMultiple.selections.length > 1) {
-        var createBet: ICreateBetMultiple = {
-          selections: [],
-          amount: this.betMultiple.amount,
-          userId: this.betMultiple.userId,
-        };
-
-        for (
-          let index = 0;
-          index < this.betMultiple.selections.length;
-          index++
-        ) {
-          const element = this.betMultiple.selections[index];
-
-          var selection: ICreateSelection = {
-            bettypeId: element.betType.id,
-            oddValue: element.oddValue,
-            oddId: element.odd.id,
-            gameId: element.game.id,
+      if (
+        (this.betMultiple.amount = this.rootStore.walletStore.wallet!.balance)
+      ) {
+        if (this.betMultiple.selections.length > 1) {
+          let createBet: ICreateBetMultiple = {
+            selections: [],
+            amount: this.betMultiple.amount,
+            userId: this.betMultiple.userId,
           };
 
-          createBet.selections.push(selection);
-        }
+          for (
+            let index = 0;
+            index < this.betMultiple.selections.length;
+            index++
+          ) {
+            const element = this.betMultiple.selections[index];
 
-        await Agent.Bet.createBetMultiple(createBet);
+            let selection: ICreateSelection = {
+              bettypeId: element.betType.id,
+              oddValue: element.oddValue,
+              oddId: element.odd.id,
+              gameId: element.game.id,
+            };
 
-        runInAction(() => {
-          this.clearMultiple();
-        });
-        toast.info("Aposta criadas com sucesso!");
-      } else toast.error("Tem de ter, no mínimo, 2 seleções!");
+            createBet.selections.push(selection);
+          }
+
+          await Agent.Bet.createBetMultiple(createBet);
+
+          runInAction(() => {
+            this.clearMultiple();
+          });
+          toast.info("Aposta criadas com sucesso!");
+        } else toast.error("Tem de ter, no mínimo, 2 seleções!");
+      } else {
+        history.push(`/user/profile`);
+        toast.info("Não possui o valor necessário na carteira!");
+      }
     } catch (error) {
       toast.error("Erro ao enviar a aposta. Tente mais tarde!");
       throw error;

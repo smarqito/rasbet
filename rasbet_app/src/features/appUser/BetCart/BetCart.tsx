@@ -17,6 +17,7 @@ const BetCart: React.FC = () => {
     createBetMultiple,
     createBetSimple,
     getOddMultiple,
+    loadCart,
   } = rootStore.betStore;
 
   const [betType, setBetType] = useState("simple");
@@ -27,22 +28,22 @@ const BetCart: React.FC = () => {
     if (getOddMultiple < 1.2) disabled = true;
 
     if (!disabled && betMultiple.selections.length < 2) disabled = true;
-
+    
     if (!disabled) {
       for (let index1 = 0; index1 < betMultiple.selections.length; index1++) {
         const element1 = betMultiple.selections[index1];
-
+        
         for (let index2 = 0; index2 < betMultiple.selections.length; index2++) {
           const element2 = betMultiple.selections[index2];
-
+          
           if (
             element1.odd.id !== element2.odd.id &&
             element1.game.id == element2.game.id
-          )
+            )
             disabled = true;
+          }
         }
       }
-    }
 
     return disabled;
   }
@@ -52,16 +53,21 @@ const BetCart: React.FC = () => {
 
     for (let index = 0; index < simpleBets.length; index++) {
       const element = simpleBets[index];
-      if (element.selection.oddValue < 1.2 || element.selection.oddValue < 0.01)
+      if (
+        element.selection.oddValue < 1.2 ||
+        element.selection.oddValue < 0.01
+      ) {
         res = true;
+      }
     }
-
     if (!res && simpleBets.length < 1) res = true;
 
     return res;
   }
 
-  useEffect(() => {}, [betType, createBetMultiple, createBetSimple]);
+  useEffect(() => {
+    // loadCart()
+  }, [betType, createBetMultiple, createBetSimple]);
 
   return (
     <div>
@@ -128,7 +134,7 @@ const BetCart: React.FC = () => {
                 <b>Montate total</b>: {getSimpleAmount}€
               </div>
               <div style={{ fontSize: "16px" }}>
-                <b>Ganhos Possiveis</b>: {getGanhosSimple()}{" "}
+                <b>Ganhos Possiveis</b>: {getGanhosSimple().toFixed(2)}{" "}
               </div>
             </Fragment>
           ) : (

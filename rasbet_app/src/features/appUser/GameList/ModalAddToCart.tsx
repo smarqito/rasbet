@@ -62,7 +62,7 @@ const ModalAddToCart: React.FC<IProps> = ({ game, odd }) => {
                 montante.montante,
                 user!.id,
                 game.mainBet,
-                odd.value,
+                odd.oddValue,
                 odd,
                 game
               );
@@ -90,7 +90,7 @@ const ModalAddToCart: React.FC<IProps> = ({ game, odd }) => {
             type="submit"
             positive
             onClick={() => {
-              addMultipleSelection(game.mainBet, odd.value, odd, game);
+              addMultipleSelection(game.mainBet, odd.oddValue, odd, game);
               closeModal();
             }}
           >

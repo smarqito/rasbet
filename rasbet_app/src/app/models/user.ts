@@ -31,9 +31,9 @@ export interface IUserRegister {
 }
 
 export interface IAppUserRegister extends IUserRegister {
-  repetePass: string;
+  passwordRepeated: string;
   NIF: string;
-  DOB: Date;
+  DOB: string;
   notif: boolean;
 }
 
@@ -110,11 +110,10 @@ export class AppUserRegisterFormValues implements IAppUserRegister {
   name: string = "";
   email: string = "";
   password: string = "";
-  repetePass: string = "";
+  passwordRepeated: string = "";
   language: string = "Pt";
-  role: Role = "AppUser";
   NIF: string = "";
-  DOB: Date = new Date();
+  DOB: string = new Date().toISOString();
   notif: boolean = false;
   constructor(init?: IAppUserRegister) {
     Object.assign(this, init);

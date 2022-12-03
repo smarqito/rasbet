@@ -1,7 +1,7 @@
 export interface IOdd {
   id: number;
   name: string;
-  value: number;
+  oddValue: number;
 }
 
 export interface IChangeOdd {

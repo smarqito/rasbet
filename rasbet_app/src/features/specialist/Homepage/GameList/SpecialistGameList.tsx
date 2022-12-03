@@ -2,25 +2,28 @@ import { Card } from "semantic-ui-react";
 import { observer } from "mobx-react-lite";
 import { IActiveGame } from "../../../../app/models/game";
 import ListItemNotFound from "../../../../app/common/ListItemNotFound";
-import { Fragment } from "react";
+import { Fragment, useContext, useEffect } from "react";
 import SpecialistGameItem from "./SpecialistGameItem";
+import { RootStoreContext } from "../../../../app/stores/rootStore";
 
-interface IProps {
-  games: IActiveGame[];
-  loading: boolean;
-}
+const GameList: React.FC = () => {
+  const rootStore = useContext(RootStoreContext);
+  const { getActiveAndSuspended, getAllGamesBySport, clearAllGames } =
+    rootStore.gameStore;
 
-const GameList: React.FC<IProps> = ({ games, loading }) => {
-  function hasElements() {
-    return games.length != 0;
-  }
+  useEffect(() => {
+    getActiveAndSuspended();
+    return () => {
+      clearAllGames();
+    };
+  }, [getActiveAndSuspended]);
 
   return (
     <Fragment>
-      {hasElements() ? (
+      {getAllGamesBySport.length > 0 ? (
         <Card.Group>
-          {games.map((x) => (
-            <SpecialistGameItem key={x.game.id} id={x.game.id} game={x} />
+          {getAllGamesBySport.map((x) => (
+            <SpecialistGameItem key={x.id} game={x} />
           ))}
         </Card.Group>
       ) : (

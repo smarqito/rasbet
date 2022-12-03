@@ -43,46 +43,46 @@ const requests = {
 
 const User = {
   login: (user: IUserLogin): Promise<IUser> =>
-    requests.post(`/user/login`, user),
+    requests.post(`/User/login`, user),
   registerAppUser: (user: IAppUserRegister) => requests.post(`/User/user`, user),
-  registerAdmin: (user: IUserRegister) => requests.post(`/user/admin`, user),
+  registerAdmin: (user: IUserRegister) => requests.post(`/User/admin`, user),
   registerSpecialist: (user: IUserRegister) =>
-    requests.post(`/user/specialist`, user),
+    requests.post(`/User/specialist`, user),
   getAppUser: (id: string): Promise<IAppUser> =>
-    requests.get(`/user/appuser?id=${id}`),
+    requests.get(`/User/appuser?id=${id}`),
   getSpecialist: (id: string): Promise<IUser> =>
-    requests.get(`/user/specialist?id=${id}`),
+    requests.get(`/User/specialist?id=${id}`),
   getAdmin: (id: string): Promise<IUser> =>
-    requests.get(`/user/admin?id=${id}`),
+    requests.get(`/User/admin?id=${id}`),
   updateAppUser: (
     name: string,
     email: string,
     lang: string,
     coin: string,
     notif: boolean
-  ) => requests.put(`/user/update/user`, { email, name, lang, coin, notif }),
+  ) => requests.put(`/User/update/user`, { email, name, lang, coin, notif }),
   updateSpecialist: (email: string, name: string, lang: string) =>
-    requests.put(`/user/update/specialist`, { email, name, lang }),
+    requests.put(`/User/update/specialist`, { email, name, lang }),
   updateAdmin: (email: string, name: string, lang: string) =>
-    requests.put(`/user/update/admin`, { email, name, lang }),
+    requests.put(`/User/update/admin`, { email, name, lang }),
   updateAppUserSensitive: (
     email: string,
     pass: string,
     iban: string,
     phone: string
-  ) => requests.put(`/user/sensitive/user`, { email, pass, iban, phone }),
+  ) => requests.put(`/User/sensitive/user`, { email, pass, iban, phone }),
   updateAdminSensitive: (email: string, pass: string) =>
-    requests.put(`/user/sensitive/admin`, { email, pass }),
+    requests.put(`/User/sensitive/admin`, { email, pass }),
   updateSpecialSensitive: (email: string, pass: string) =>
-    requests.put(`/user/sensitive/specialist`, { email, pass }),
+    requests.put(`/User/sensitive/specialist`, { email, pass }),
   updateAppUserSensitiveConfirm: (email: string, code: string) =>
-    requests.put(`/user/sensitive/confirm`, { email, code }),
+    requests.put(`/User/sensitive/confirm`, { email, code }),
   updateAdminSensitiveConfirm: (email: string, code: string) =>
-    requests.put(`/user/sensitive/admin/confirm`, { email, code }),
+    requests.put(`/User/sensitive/admin/confirm`, { email, code }),
   updateSpecialistSensitiveConfirm: (email: string, code: string) =>
-    requests.put(`/user/sensitive/specialist/confirm`, { email, code }),
-  changePass: (email: string) => requests.put(`/user/forgotPWD`, { email }),
-  logout: (id: string) => requests.post(`/user/logout`, id),
+    requests.put(`/User/sensitive/specialist/confirm`, { email, code }),
+  changePass: (email: string) => requests.put(`/User/forgotPWD`, { email }),
+  logout: (id: string) => requests.post(`/User/logout`, id),
 };
 
 const Bet = {
@@ -121,16 +121,16 @@ const Wallet = {
   get: (userId: string): Promise<IWallet> =>
     requests.get(`/Wallet?userId=${userId}`),
   depositFunds: (createTran: ICreateTransaction) =>
-    requests.put(`/wallet/deposit`, createTran),
+    requests.put(`/Wallet/deposit`, createTran),
   withdrawFunds: (createTran: ICreateTransaction) =>
-    requests.put(`/wallet/withdraw`, createTran),
+    requests.put(`/Wallet/withdraw`, createTran),
   getTransactions: (
     userId: string,
     start: Date,
     end: Date
   ): Promise<ITransaction[]> =>
     requests.get(
-      `/wallet/transactions?userId=${userId}&start=${start}&end=${end}`
+      `/Wallet/transactions?userId=${userId}&start=${start}&end=${end}`
     ),
 };
 

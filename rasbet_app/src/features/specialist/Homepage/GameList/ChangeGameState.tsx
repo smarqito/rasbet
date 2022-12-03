@@ -26,6 +26,7 @@ const ChangeGameState: React.FC = () => {
   const resultValues = [
     { key: 1, text: "home", value: "home" },
     { key: 2, text: "away", value: "away" },
+    { key: 2, text: "Draw", value: "draw" },
   ];
 
   return (
@@ -74,7 +75,7 @@ const ChangeGameState: React.FC = () => {
             onChange={(_, data) => {
               setResult(data.value);
             }}
-            />
+          />
         </Grid.Row>
       )}
       <Grid.Row>
@@ -83,13 +84,9 @@ const ChangeGameState: React.FC = () => {
           fluid
           color="green"
           onClick={() => {
-              if (state === "activate") activateGame(game!.id, user!.id);
-              if (state === "suspend") suspendGame(game!.id, user!.id);
-              if(state ==="close") {
-                if(result === "home")
-                    finishGame(game!.id, game!.home, user!.id);
-              }
-              
+            if (state === "activate") activateGame(game!.id, user!.id);
+            if (state === "suspend") suspendGame(game!.id, user!.id);
+            // if (state === "close") finishGame(game!.id, resultValues['text' == result].value, user!.id);
 
             closeModal();
           }}

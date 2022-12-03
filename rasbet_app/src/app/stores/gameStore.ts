@@ -32,11 +32,15 @@ export default class GameStore {
   @observable allGames: IActiveGame[] = [];
   @observable allSports: ISport[] = [];
   @observable loading = false;
+  @observable selectedSport: ISport = { name: "Football" };
 
   @action clearGame = () => {
     this.game = null;
   };
 
+  @action setSelectedSport = (sport: ISport) => {
+    this.selectedSport = sport;
+  };
   @action clearActive = () => {
     this.activeGames = [];
   };
@@ -44,6 +48,10 @@ export default class GameStore {
   @action clearFiltered = () => {
     this.gamesFiltered = [];
   };
+
+  @action clearAllGames = () => {
+    this.allGames = [];
+  }
 
   @action clearSports = () => {
     this.allSports = [];
@@ -53,7 +61,7 @@ export default class GameStore {
     let game = null;
     for (let index = 0; index < this.activeGames.length; index++) {
       const element = this.activeGames[index];
-      if (element.game.id == id) {
+      if (element.id == id) {
         game = element;
         break;
       }
@@ -82,10 +90,8 @@ export default class GameStore {
 
   @action getActiveGames = async () => {
     this.loading = true;
-
     try {
-      var games = await Agent.Game.getActiveGames();
-
+      let games = await Agent.Game.getActiveGames();
       runInAction(() => {
         if (games) {
           this.activeGames = games;
@@ -102,7 +108,7 @@ export default class GameStore {
   @action getActiveAndSuspended = async () => {
     this.loading = true;
     try {
-      var games = await Agent.Game.getActiveAndSuspended();
+      let games = await Agent.Game.getActiveAndSuspended();
 
       runInAction(() => {
         if (games) {
@@ -117,23 +123,38 @@ export default class GameStore {
     }
   };
 
-  @action getActiveGamesBySport = (sport: ISport) => {
+  @computed get getActiveGamesBySport() {
     try {
-      var gamesBySport = this.activeGames.filter(
-        (x) => x.game.sport == sport.name
+      // if(this.activeGames.length === 0) this.getActiveGames();
+      let gamesBySport = this.activeGames.filter(
+        (x) =>
+          x.sportName.toLowerCase() === this.selectedSport.name.toLowerCase()
       );
-      this.gamesFiltered = gamesBySport;
+      return gamesBySport;
     } catch (error) {
       toast.error("Ocorreu um erro interno!");
       throw error;
     }
-  };
+  }
+
+  @computed get getAllGamesBySport() {
+    try {
+      // if(this.activeGames.length === 0) this.getActiveGames();
+      let gamesBySport = this.allGames.filter(
+        (x) =>
+          x.sportName.toLowerCase() === this.selectedSport.name.toLowerCase()
+      );
+      return gamesBySport;
+    } catch (error) {
+      toast.error("Ocorreu um erro interno!");
+      throw error;
+    }
+  }
 
   @action getAllSports = async () => {
     this.loading = true;
     try {
       var sports = await Agent.Game.getAllSports();
-
       runInAction(() => {
         if (sports) {
           this.allSports = sports;

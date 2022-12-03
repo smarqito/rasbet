@@ -21,7 +21,7 @@ const ChangeOdd: React.FC<IProps> = ({ odd, bet }) => {
   };
 
   const [initialValues] = useState(new ChangeOddValues());
-  const [oddValue, setOddValue] = useState(odd.value);
+  const [oddValue, setOddValue] = useState(odd.oddValue);
 
   return (
     <Grid padded centered>
@@ -45,7 +45,7 @@ const ChangeOdd: React.FC<IProps> = ({ odd, bet }) => {
           onClick={() => {
             initialValues.specialistId = user!.id;
             initialValues.betTypeId = bet.id;
-            initialValues.newOdds.set(odd.id, odd.value);
+            initialValues.newOdds.set(odd.id, odd.oddValue);
             changeOdds(initialValues);
             closeModal();
           }}

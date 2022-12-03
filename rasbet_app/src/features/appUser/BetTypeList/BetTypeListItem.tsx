@@ -29,7 +29,7 @@ const BetTypeListItem: React.FC<IProps> = ({ id, betType }) => {
                 </Grid.Column>
                 <Grid.Column>
                   <Button size="large" color="orange">
-                    {odd.value}€
+                    {odd.oddValue}€
                   </Button>
                 </Grid.Column>
               </Grid.Row>

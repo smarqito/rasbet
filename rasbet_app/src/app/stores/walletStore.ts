@@ -32,7 +32,7 @@ export default class WalletStore {
 
       runInAction(() => {
         this.clearWallet();
-        if (this.wallet) this.wallet = newWallet;
+        if (newWallet) this.wallet = newWallet;
         else toast.error("Erro ao obter a carteira do utilizador!");
       });
     } catch (error) {
@@ -96,7 +96,7 @@ export default class WalletStore {
         });
       } else toast.error("Ocorreu um erro interno!");
     } catch (error) {
-      toast.error("Erro ao depositar!");
+      toast.error("Ocorreu um erro interno!");
       throw error;
     } finally {
       this.loading = false;

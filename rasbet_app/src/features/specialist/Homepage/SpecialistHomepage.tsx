@@ -16,28 +16,25 @@ const SpecialistHomepage: React.FC<RouteComponentProps<DetailsParams>> = ({
 }) => {
   const rootStore = useContext(RootStoreContext);
   const {
-    getActiveAndSuspended,
-    gamesFiltered,
     getAllSports,
     allSports,
-    getActiveGamesBySport,
+    setSelectedSport,
     clearActive,
-    clearFiltered,
     clearSports,
     loading,
   } = rootStore.gameStore;
-  const [sport, setSport] = useState({ name: "Futebol" });
 
   useEffect(() => {
     clearActive();
-    clearFiltered();
     clearSports();
 
-    getActiveAndSuspended();
     getAllSports();
-    getActiveGamesBySport(sport);
-  }, [setSport, sport, match.params.id]);
+  }, [match.params.id]);
 
+  if (loading) {
+    <LoadingComponent content="A carregarpágina do utilizador!" />;
+  }
+  
   return (
     <Grid padded divided stackable>
       <Grid.Row columns={2} key={"AppUserPage"}>
@@ -52,7 +49,7 @@ const SpecialistHomepage: React.FC<RouteComponentProps<DetailsParams>> = ({
                       content={x.name}
                       fluid
                       type="button"
-                      onClick={() => setSport(x)}
+                      onClick={() => setSelectedSport(x)}
                     />
                   </Grid.Row>
                 );
@@ -63,7 +60,7 @@ const SpecialistHomepage: React.FC<RouteComponentProps<DetailsParams>> = ({
         <Grid.Column width={12} key={"gameList"}>
           <Container>
             <Header as="h3">Todos os jogos</Header>
-            <SpecialistGameList games={gamesFiltered} loading={loading} />
+            <SpecialistGameList />
           </Container>
         </Grid.Column>
       </Grid.Row>

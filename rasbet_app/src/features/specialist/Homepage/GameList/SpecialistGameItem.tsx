@@ -19,10 +19,9 @@ import { RootStoreContext } from "../../../../app/stores/rootStore";
 import ChangeOdd from "./ChangeOdd";
 import ChangeGameState from "./ChangeGameState";
 interface IProps {
-  id: number;
   game: IActiveGame;
 }
-const GameListItem: React.FC<IProps> = ({ id, game }) => {
+const GameListItem: React.FC<IProps> = ({ game }) => {
   const rootStore = useContext(RootStoreContext);
   const { openModal } = rootStore.modalStore;
 
@@ -34,17 +33,30 @@ const GameListItem: React.FC<IProps> = ({ id, game }) => {
     var highest = { id: -1, value: 0 };
     var lowest = { id: -1, value: 100 };
 
-    game.statistic.statitics.forEach((value, key) => {
-      if (value > highest.value) {
-        highest.value = value;
-        highest.id = key;
+    for (let x in game.statistics.statistics) {
+      let value = game.statistics.statistics[parseInt(x)];
+      if (value! > highest.value) {
+        highest.value = value!;
+        highest.id = parseInt(x);
       }
 
-      if (value < lowest.value) {
-        lowest.value = value;
-        lowest.id = key;
+      if (value! < lowest.value) {
+        lowest.value = value!;
+        lowest.id = parseInt(x);
       }
-    });
+    }
+
+    let allEqual = true;
+    for (let x in game.statistics.statistics) {
+      let value = game.statistics.statistics[parseInt(x)];
+      for (let y in game.statistics.statistics) {
+        let valueY = game.statistics.statistics[parseInt(y)];
+
+        if (value !== valueY) allEqual = false;
+      }
+    }
+
+    if (allEqual) return grey;
 
     if (odd == highest.id) return green;
 
@@ -62,16 +74,16 @@ const GameListItem: React.FC<IProps> = ({ id, game }) => {
   }
 
   return (
-    <Card fluid key={id} color={handleColor(game.game.state)}>
+    <Card fluid key={game.id} color={handleColor(game.state)}>
       <Grid padded>
         <Grid.Row columns={5} verticalAlign="middle" key={"gameItem"}>
           <Grid.Column stretched width={7} key={"gameName"}>
             <Header as={"h3"}>
-              {game.game.home} - {game.game.away}
+              {game.homeTeam} - {game.awayTeam}
             </Header>
-            {formatRelative(game.game.start, new Date(), { locale: pt })}
+            <div>{game.startTime.toLocaleString()}</div>
           </Grid.Column>
-          {game.game.mainBet.odds.map((odd) => {
+          {game.mainBet.odds.map((odd) => {
             return (
               <Grid.Column key={odd.id} width={3} textAlign="center">
                 <Grid key={"stats&odds"}>
@@ -81,13 +93,11 @@ const GameListItem: React.FC<IProps> = ({ id, game }) => {
                         color={buttonColor(odd.id)}
                         type="submit"
                         onClick={() =>
-                          openModal(
-                            <ChangeOdd odd={odd} bet={game.game.mainBet} />
-                          )
+                          openModal(<ChangeOdd odd={odd} bet={game.mainBet} />)
                         }
                       >
                         <div style={{ fontSize: "12px" }}>{odd.name}</div>
-                        <div style={{ fontSize: "12px" }}>{odd.value}</div>
+                        <div style={{ fontSize: "12px" }}>{odd.oddValue}</div>
                       </Button>
                       <Label
                         as="a"
@@ -96,7 +106,7 @@ const GameListItem: React.FC<IProps> = ({ id, game }) => {
                         pointing="left"
                         color={buttonColor(odd.id)}
                       >
-                        {game.statistic.statitics.get(odd.id)}%
+                        {game.statistics.statistics[odd.id]}%
                       </Label>
                     </Button>
                   </Grid.Row>
@@ -117,8 +127,8 @@ const GameListItem: React.FC<IProps> = ({ id, game }) => {
             />
           </Grid.Column>
           <Grid.Column width={3}>
-            <Segment inverted color={handleColor(game.game.state)}>
-              {game.game.state}
+            <Segment inverted color={handleColor(game.state)}>
+              {game.state}
             </Segment>
           </Grid.Column>
         </Grid.Row>

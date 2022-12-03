@@ -39,12 +39,12 @@ const GameDetails: React.FC<RouteComponentProps<DetailsParams>> = ({
               <Grid.Row color="green" columns={2}>
                 <Grid.Column textAlign="right">
                   <Header as={"h3"}>
-                    {game.home} - {game.away}
+                    {game.homeTeam} - {game.awayTeam}
                   </Header>
                 </Grid.Column>
                 <Divider vertical />
                 <Grid.Column>
-                  {formatRelative(game!.start, new Date(), { locale: pt })}
+                  {formatRelative(game!.startTime, new Date(), { locale: pt })}
                 </Grid.Column>
               </Grid.Row>
             </Grid>
@@ -68,7 +68,7 @@ const GameDetails: React.FC<RouteComponentProps<DetailsParams>> = ({
                           openModal(<ModalAddToCart game={game} odd={odd} />)
                         }
                       >
-                        {odd.name} <p /> {odd.value}€
+                        {odd.name} <p /> {odd.oddValue}€
                       </Button>
                     </Grid.Column>
                   );
