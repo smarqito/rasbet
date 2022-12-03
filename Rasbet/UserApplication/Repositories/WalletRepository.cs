@@ -98,7 +98,8 @@ public class WalletRepository : IWalletRepository
 
     public async Task<ICollection<TransactionDTO>> GetTransactions(string userId, DateTime start, DateTime end)
     {
-        ICollection<Transaction> transactions = await context.Wallet.Where(u => u.Id.Equals(userId))
+        ICollection<Transaction> transactions = await context.Wallet.Where(u => u.UserId.Equals(userId))
+                                                                    .Include(u => u.Transactions)
                                                                     .SelectMany(x => x.Transactions)
                                                                     .Where(x => x.Date > start && x.Date < end) 
                                                                     .ToListAsync();
@@ -106,7 +107,7 @@ public class WalletRepository : IWalletRepository
         ICollection<TransactionDTO> transactionsDTO = new Collection<TransactionDTO>();
         foreach (Transaction transaction in transactions)
         {
-            TransactionDTO dto = new TransactionDTO(transaction.Balance, transaction.Date, transaction.GetType().BaseType.Name);
+            TransactionDTO dto = new TransactionDTO(transaction.Balance, transaction.Date, transaction.GetType().UnderlyingSystemType.Name);
             transactionsDTO.Add(dto);
         }
 
@@ -117,6 +118,9 @@ public class WalletRepository : IWalletRepository
     {
         AppUserBetHistory bet = new AppUserBetHistory(userId, betId);
         await context.UserBetHistory.AddAsync(bet);
+        AppUser? u = await context.Users.OfType<AppUser>().Where(x => x.Id.Equals(userId)).FirstOrDefaultAsync();
+        if(u != null)
+            u.BetHistory.Add(bet);
         await context.SaveChangesAsync();
     }
 }

@@ -29,7 +29,7 @@ public class WalletController : BaseController
     /// <param name="userId">Id of the user whose wallet we want to retrieve.</param>
     /// <returns></returns>
     [HttpGet]
-    [Authorize(Roles ="AppUser")]
+    //[Authorize(Roles ="AppUser")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(WalletDTO))]
     public async Task<IActionResult> Get([FromQuery]string userId)
     {
@@ -43,7 +43,7 @@ public class WalletController : BaseController
     /// </summary>
     /// <param name="value"></param>
     [HttpPut("deposit")]
-    [Authorize(Roles = "AppUser")]
+    //[Authorize(Roles = "AppUser")]
     public async Task<IActionResult> DepositFunds([FromBody] TransactionDTO transaction)
     {
         try
@@ -63,7 +63,7 @@ public class WalletController : BaseController
     /// </summary>
     /// <param name="value"> Value to withdraw. </param>
     [HttpPut("withdraw")]
-    [Authorize(Roles = "AppUser")]
+    //[Authorize(Roles = "AppUser")]
     public async Task<IActionResult> WithdrawFunds([FromBody] TransactionDTO transaction)
     {
         try
@@ -88,7 +88,7 @@ public class WalletController : BaseController
     /// <returns>The transactions made on that period of  time by the given user.</returns>
     [HttpGet("transactions")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<TransactionDTO>))]
-    public async Task<IActionResult> GetTransactions(string userId, DateTime start, DateTime end)
+    public async Task<IActionResult> GetTransactions([FromQuery] string userId, DateTime start, DateTime end)
     {
         try
         {

@@ -217,8 +217,8 @@ export default class BetStore {
           const element = this.simpleBets[index];
 
           let selection: ICreateSelection = {
-            bettypeId: element.selection.betType.id,
-            oddValue: element.selection.oddValue,
+            betTypeId: element.selection.betType.id,
+            odd: element.selection.oddValue,
             oddId: element.selection.odd.id,
             gameId: element.selection.game.id,
           };
@@ -269,8 +269,8 @@ export default class BetStore {
             const element = this.betMultiple.selections[index];
 
             let selection: ICreateSelection = {
-              bettypeId: element.betType.id,
-              oddValue: element.oddValue,
+              betTypeId: element.betType.id,
+              odd: element.oddValue,
               oddId: element.odd.id,
               gameId: element.game.id,
             };

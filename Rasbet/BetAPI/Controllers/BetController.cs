@@ -17,15 +17,15 @@ public class BetController : BaseController
     }
 
     [HttpPost("simple")]
-    [Authorize(Roles ="AppUser")]
+    //[Authorize(Roles ="AppUser")]
     public async Task<IActionResult> CreateBetSimple([FromBody] CreateSimpleBetDTO create)
     {
         try
         {
-            BetSimple bet = await BetFacade.CreateBetSimple(create.Amount,
+            await BetFacade.CreateBetSimple(create.Amount,
                                                             create.UserId,
-                                                            create.selectionDTO);
-            return Ok(bet);
+                                                            create.Selection);
+            return Ok();
         }
         catch(Exception e)
         {
@@ -69,7 +69,7 @@ public class BetController : BaseController
     }
 
     [HttpGet("won")]
-    [Authorize(Roles = "AppUser")]
+    //[Authorize(Roles = "AppUser")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<BetDTO>))]
     public async Task<IActionResult> GetUserBetsWon([FromQuery] string userId, DateTime start, DateTime end)
     {
@@ -87,7 +87,7 @@ public class BetController : BaseController
     }
 
     [HttpGet("closed")]
-    [Authorize(Roles = "AppUser")]
+    //[Authorize(Roles = "AppUser")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<BetDTO>))]
     public async Task<IActionResult> GetUserBetsClosed([FromQuery] string userId, DateTime start, DateTime end) 
     {

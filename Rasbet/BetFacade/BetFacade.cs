@@ -29,7 +29,7 @@ public class BetFacade : IBetFacade
 
     public bool GameAvailable(DateTime start, string state)
     {
-        if (start < DateTime.Now && state.Equals(GameState.Open))
+        if (start > DateTime.Now && state.Equals("Open"))
             return true;
         else
             return false;
@@ -115,6 +115,7 @@ public class BetFacade : IBetFacade
         }
         catch (Exception e)
         {
+            await SelectionRepository.RemoveSelections(selections);
             throw new Exception(e.Message);
         }
         try
@@ -124,6 +125,7 @@ public class BetFacade : IBetFacade
         }
         catch (Exception e)
         {
+            await SelectionRepository.RemoveSelections(selections);
             await BetRepository.DeleteBet(bet.Id);
             throw new Exception(e.Message);
         }

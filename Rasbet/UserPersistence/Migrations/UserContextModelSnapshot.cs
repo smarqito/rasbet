@@ -161,13 +161,7 @@ namespace UserPersistence.Migrations
                     b.Property<int>("BetId")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserId1")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("UserId", "BetId");
-
-                    b.HasIndex("UserId1");
 
                     b.ToTable("UserBetHistory");
                 });
@@ -395,12 +389,6 @@ namespace UserPersistence.Migrations
                     b.HasOne("Domain.AppUser", null)
                         .WithMany("BetHistory")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.AppUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId1")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

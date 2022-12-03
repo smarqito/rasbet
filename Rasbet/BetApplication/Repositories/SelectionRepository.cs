@@ -110,11 +110,11 @@ public class SelectionRepository : ISelectionRepository
             total += n;
         }
 
-        Dictionary<int, int> statistics = new Dictionary<int, int>();
+        Dictionary<int, double> statistics = new Dictionary<int, double>();
         int div = Math.Max(1, total);
         foreach (int oddId in oddIds)
         {
-            statistics[oddId] = (int)Math.Round((Double)(count[oddId] / div) * 100);
+            statistics[oddId] = Math.Round(((double)count[oddId] / (double)div) * 100);
         }
 
         return new StatisticsDTO(total, statistics);

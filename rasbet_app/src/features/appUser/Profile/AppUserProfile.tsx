@@ -24,7 +24,6 @@ const AppUserProfile: React.FC<RouteComponentProps<DetailsParams>> = ({
     getAppUser(match.params.id);
     return () => {
       clearAppUserDetails();
-      clearWallet();
       clearBets();
       clearTransaction();
     };

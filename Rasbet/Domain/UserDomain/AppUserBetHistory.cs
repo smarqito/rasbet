@@ -3,7 +3,6 @@
 public class AppUserBetHistory
 {
     public string UserId { get; set; }
-    public virtual AppUser User { get; set; }
     public int BetId { get; set; }
     public AppUserBetHistory()
     {

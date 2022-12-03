@@ -42,9 +42,9 @@ export interface IMultipleDetails extends IBetDetails {
 }
 
 export interface ICreateSelection {
-  bettypeId: number;
+  betTypeId: number;
   oddId: number;
-  oddValue: number;
+  odd: number;
   gameId: number;
 }
 

@@ -45,11 +45,11 @@ export default class WalletStore {
 
   @action depositFunds = async (tran: ICreateTransaction) => {
     this.loading = true;
-    try {
-      if (
-        this.wallet!.userId == tran.userId
-      )
-        await Agent.Wallet.depositFunds(tran);
+      try {
+        if (
+            this.wallet!.userId == tran.userId
+        )
+            await Agent.Wallet.depositFunds(tran);
       else toast.error("Erro ao depositar!");
     } catch (error) {
       toast.error("Ocorreu um eror interno!");
@@ -78,7 +78,11 @@ export default class WalletStore {
 
   @action getTransactions = async (userId: string, start: Date, end: Date) => {
     this.loading = true;
-    try {
+      try {
+          console.log(this.wallet!.userId);
+          console.log(userId);
+          console.log(start);
+          console.log(end);
       if (this.wallet!.userId == userId) {
         let transactions = await Agent.Wallet.getTransactions(
           userId,
