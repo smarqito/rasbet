@@ -234,6 +234,7 @@ export default class BetStore {
 
         runInAction(() => {
           this.clearSimple();
+          toast.info("Aposta múltipla criada com sucesso!");
         });
       } else {
         history.push(`/user/profile`);
@@ -251,7 +252,7 @@ export default class BetStore {
     this.loading = true;
     try {
       if (
-        (this.betMultiple.amount = this.rootStore.walletStore.wallet!.balance)
+        this.betMultiple.amount <= this.rootStore.walletStore.wallet!.balance
       ) {
         if (this.betMultiple.selections.length > 1) {
           let createBet: ICreateBetMultiple = {
@@ -281,6 +282,7 @@ export default class BetStore {
 
           runInAction(() => {
             this.clearMultiple();
+            toast.info("Aposta múltipla criada com sucesso!");
           });
           toast.info("Aposta criadas com sucesso!");
         } else toast.error("Tem de ter, no mínimo, 2 seleções!");

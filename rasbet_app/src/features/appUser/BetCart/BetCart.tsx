@@ -1,4 +1,12 @@
-import { Button, Card, Grid, Header, Label, Segment } from "semantic-ui-react";
+import {
+  Button,
+  Card,
+  Grid,
+  Header,
+  Input,
+  Label,
+  Segment,
+} from "semantic-ui-react";
 import { Fragment, useContext, useEffect, useState } from "react";
 import { RootStoreContext } from "../../../app/stores/rootStore";
 import { observer } from "mobx-react-lite";
@@ -17,7 +25,6 @@ const BetCart: React.FC = () => {
     createBetMultiple,
     createBetSimple,
     getOddMultiple,
-    loadCart,
   } = rootStore.betStore;
 
   const [betType, setBetType] = useState("simple");
@@ -25,25 +32,25 @@ const BetCart: React.FC = () => {
   function isMultipleValid() {
     var disabled = false;
 
-    if (getOddMultiple < 1.2) disabled = true;
+    if (getOddMultiple < 1.2 && betMultiple.amount < 0.01) disabled = true;
 
     if (!disabled && betMultiple.selections.length < 2) disabled = true;
-    
+
     if (!disabled) {
       for (let index1 = 0; index1 < betMultiple.selections.length; index1++) {
         const element1 = betMultiple.selections[index1];
-        
+
         for (let index2 = 0; index2 < betMultiple.selections.length; index2++) {
           const element2 = betMultiple.selections[index2];
-          
+
           if (
             element1.odd.id !== element2.odd.id &&
             element1.game.id == element2.game.id
-            )
+          )
             disabled = true;
-          }
         }
       }
+    }
 
     return disabled;
   }
@@ -65,9 +72,12 @@ const BetCart: React.FC = () => {
     return res;
   }
 
-  useEffect(() => {
-    // loadCart()
-  }, [betType, createBetMultiple, createBetSimple]);
+  const [amountV, setAmountV] = useState(0);
+
+  const handleChange = (amount: number) => {
+    setAmountV(amount);
+    betMultiple.amount = amount.valueOf();
+  };
 
   return (
     <div>
@@ -155,15 +165,25 @@ const BetCart: React.FC = () => {
               Aposta já
             </Button>
           ) : (
-            <Button
-              attached="bottom"
-              positive
-              type="submit"
-              disabled={isMultipleValid()}
-              onClick={createBetMultiple}
-            >
-              Aposta já
-            </Button>
+            <Fragment>
+              <Input
+                onChange={(_, data) =>
+                  handleChange(
+                    parseInt(data.value.length > 0 ? data.value : "0")
+                  )
+                }
+                value={amountV}
+              />
+              <Button
+                attached="bottom"
+                positive
+                type="submit"
+                disabled={isMultipleValid()}
+                onClick={createBetMultiple}
+              >
+                Aposta já
+              </Button>
+            </Fragment>
           )}
         </Segment>
       </Segment.Group>

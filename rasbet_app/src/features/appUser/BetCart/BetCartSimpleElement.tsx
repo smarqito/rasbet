@@ -10,7 +10,7 @@ interface IProps {
 
 const BetCartSimpleElement: React.FC<IProps> = ({ selection }) => {
   const rootStore = useContext(RootStoreContext);
-  const { getGanhosSimple, removeSimpleSelection } = rootStore.betStore;
+  const { removeSimpleSelection } = rootStore.betStore;
   const [amountV, setAmountV] = useState(selection.amount);
 
   const handleChange = (amount: number) => {
@@ -21,7 +21,8 @@ const BetCartSimpleElement: React.FC<IProps> = ({ selection }) => {
     <Card>
       <Card.Content>
         <Card.Header>
-          {selection.selection.game.homeTeam} - {selection.selection.game.awayTeam}
+          {selection.selection.game.homeTeam} -{" "}
+          {selection.selection.game.awayTeam}
         </Card.Header>
         <Card.Meta>{selection.selection.odd.name}</Card.Meta>
         <Card.Description>
@@ -35,7 +36,8 @@ const BetCartSimpleElement: React.FC<IProps> = ({ selection }) => {
             value={amountV}
           />
           <p />
-          <b>Ganhos</b>: {selection.amount} x {selection.selection.oddValue.toFixed(2)} ={" "}
+          <b>Ganhos</b>: {selection.amount} x{" "}
+          {selection.selection.oddValue.toFixed(2)} ={" "}
           {(selection.amount * selection.selection.oddValue).toFixed(2)}
         </Card.Description>
       </Card.Content>
