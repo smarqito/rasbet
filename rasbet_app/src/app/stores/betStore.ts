@@ -148,6 +148,7 @@ export default class BetStore {
   };
 
   @action addMultipleSelection = (
+    userId: string,
     betType: IBetType,
     oddValue: number,
     odd: IOdd,
@@ -169,6 +170,7 @@ export default class BetStore {
         stored[betType.id] = selection;
         this.setLocalStorageItem("betMultiple", stored);
         this.betMultiple.selections.push(selection);
+        this.betMultiple.userId = userId;
       } else {
         toast.info("A seleção já foi inserida!");
       }
@@ -282,7 +284,6 @@ export default class BetStore {
 
           runInAction(() => {
             this.clearMultiple();
-            toast.info("Aposta múltipla criada com sucesso!");
           });
           toast.info("Aposta criadas com sucesso!");
         } else toast.error("Tem de ter, no mínimo, 2 seleções!");

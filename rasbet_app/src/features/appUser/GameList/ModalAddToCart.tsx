@@ -57,7 +57,7 @@ const ModalAddToCart: React.FC<IProps> = ({ game, odd }) => {
       {checkbox === true ? (
         <Grid.Row>
           <FinalForm
-            onSubmit={(montante: {montante: number}) => {
+            onSubmit={(montante: { montante: number }) => {
               addBetSimple(
                 montante.montante,
                 user!.id,
@@ -90,7 +90,13 @@ const ModalAddToCart: React.FC<IProps> = ({ game, odd }) => {
             type="submit"
             positive
             onClick={() => {
-              addMultipleSelection(game.mainBet, odd.oddValue, odd, game);
+              addMultipleSelection(
+                user!.id,
+                game.mainBet,
+                odd.oddValue,
+                odd,
+                game
+              );
               closeModal();
             }}
           >

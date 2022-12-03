@@ -22,6 +22,7 @@ const BetCart: React.FC = () => {
     getNumSimple,
     getSimpleAmount,
     getGanhosSimple,
+    getGanhosMultiple,
     createBetMultiple,
     createBetSimple,
     getOddMultiple,
@@ -174,6 +175,9 @@ const BetCart: React.FC = () => {
                 }
                 value={amountV}
               />
+              <b> Ganhos</b>: {amountV} x {getOddMultiple.toFixed(2)} ={" "}
+              {getGanhosMultiple().toFixed(2)}
+              <p />
               <Button
                 attached="bottom"
                 positive
