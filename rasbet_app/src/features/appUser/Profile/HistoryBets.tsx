@@ -37,7 +37,7 @@ const HistoryBets: React.FC = () => {
     if (betFilter == "won")
       getUserBetsWon(appUserDetails!.id, new Date(2001, 1, 1), DateValueEnd);
 
-    if (betFilter == "closed")
+    if (betFilter == "close")
       getUserBetsClosed(appUserDetails!.id, new Date(2001, 1, 1), DateValueEnd);
   }, [DateValueEnd, betFilter, appUserDetails!.id]);
 
