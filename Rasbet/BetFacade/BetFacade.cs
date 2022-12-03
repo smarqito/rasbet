@@ -120,7 +120,7 @@ public class BetFacade : IBetFacade
         }
         try
         {
-            await APIService.WithdrawUserBalance(new DTO.UserDTO.TransactionDTO(userId, amount, nameof(Withdraw)), bet.Id);
+            await APIService.WithdrawUserBalance(new TransactionDTO(userId, amount, nameof(Withdraw)), bet.Id);
             return bet;
         }
         catch (Exception e)

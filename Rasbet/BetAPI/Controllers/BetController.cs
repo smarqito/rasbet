@@ -34,15 +34,15 @@ public class BetController : BaseController
     }
 
     [HttpPost("multiple")]
-    [Authorize(Roles = "AppUser")]
+    //[Authorize(Roles = "AppUser")]
     public async Task<IActionResult> CreateBetMultiple([FromBody] CreateMultipleBetDTO create) 
     {
         try
         {
-            BetMultiple bet = await BetFacade.CreateBetMultiple(create.Amount,
-                                                        create.UserId,
-                                                        create.Selections);
-            return Ok(bet);
+            await BetFacade.CreateBetMultiple(create.Amount,
+                                              create.UserId,
+                                              create.Selections);
+            return Ok();
         }
         catch (Exception e)
         {
