@@ -47,13 +47,12 @@ export default class WalletStore {
     this.loading = true;
     try {
       if (
-        this.wallet!.userId == tran.userId &&
-        this.wallet!.balance > tran.value
+        this.wallet!.userId == tran.userId
       )
         await Agent.Wallet.depositFunds(tran);
-      else toast.error("Erro ao depositar (sem crédito)!");
+      else toast.error("Erro ao depositar!");
     } catch (error) {
-      toast.error("Erro ao depositar!");
+      toast.error("Ocorreu um eror interno!");
       throw error;
     } finally {
       this.loading = false;
@@ -68,9 +67,9 @@ export default class WalletStore {
         this.wallet!.balance > tran.value
       )
         await Agent.Wallet.withdrawFunds(tran);
-      else toast.error("Erro ao depositar (sem crédito)!");
+      else toast.error("Erro ao levantar (sem crédito)!");
     } catch (error) {
-      toast.error("Erro ao levantar!");
+      toast.error("Ocorreu um erro interno!");
       throw error;
     } finally {
       this.loading = false;
