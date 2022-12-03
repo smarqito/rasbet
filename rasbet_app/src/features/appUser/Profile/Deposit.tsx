@@ -33,10 +33,10 @@ const Deposit: React.FC = () => {
       <Grid.Row>
         <Grid.Column>
           <FinalForm
-            onSubmit={(balance: number) => {
+            onSubmit={(value: { value: number }) => {
               let tran: ICreateTransaction = {
                 userId: user!.id,
-                value: balance,
+                value: value.value,
               };
               depositFunds(tran);
               closeModal();
@@ -45,7 +45,7 @@ const Deposit: React.FC = () => {
               <Form size="large" onSubmit={handleSubmit}>
                 <Segment>
                   <Field
-                    name="balance"
+                    name="value"
                     component={TextInput}
                     placeholder="Valor a depositar"
                     validate={composeValidators(required, isNumber)}
