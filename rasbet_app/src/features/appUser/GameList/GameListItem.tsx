@@ -83,6 +83,7 @@ const GameListItem: React.FC<IProps> = ({ game }) => {
                       <Button
                         color={buttonColor(odd.id)}
                         type="submit"
+                        fluid
                         onClick={() =>
                           openModal(<ModalAddToCart game={game} odd={odd} />)
                         }

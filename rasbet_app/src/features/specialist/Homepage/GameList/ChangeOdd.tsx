@@ -16,12 +16,12 @@ const ChangeOdd: React.FC<IProps> = ({ odd, bet }) => {
   const { changeOdds } = rootStore.gameStore;
   const { user } = rootStore.userStore;
 
-  const handleChange = (oddValue: number) => {
+  const handleChange = (oddValue: string) => {
     setOddValue(oddValue);
   };
 
   const [initialValues] = useState(new ChangeOddValues());
-  const [oddValue, setOddValue] = useState(odd.oddValue);
+  const [oddValue, setOddValue] = useState(odd.oddValue.toString());
 
   return (
     <Grid padded centered>
@@ -30,9 +30,7 @@ const ChangeOdd: React.FC<IProps> = ({ odd, bet }) => {
       </Grid.Row>
       <Grid.Row columns={1}>
         <Input
-          onChange={(_, data) =>
-            handleChange(parseFloat(data.value.length > 0 ? data.value : "0"))
-          }
+          onChange={(_, data) => handleChange(data.value)}
           value={oddValue}
         />
       </Grid.Row>
@@ -45,7 +43,7 @@ const ChangeOdd: React.FC<IProps> = ({ odd, bet }) => {
           onClick={() => {
             initialValues.specialistId = user!.id;
             initialValues.betTypeId = bet.id;
-            initialValues.newOdds.set(odd.id, odd.oddValue);
+            initialValues.newOdds.set(odd.id, parseFloat(oddValue));
             changeOdds(initialValues);
             closeModal();
           }}

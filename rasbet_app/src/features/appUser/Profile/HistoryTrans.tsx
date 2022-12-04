@@ -44,17 +44,27 @@ const HistoryTrans: React.FC = () => {
           <ListItemNotFound content="Não existem transações até a data colocada!" />
         </Fragment>
       ) : (
-        <Card.Group>
+        <Grid padded celled style={{ overflow: "scroll", maxHeight: "90vh" }}>
           {allTransactions.map((x) => {
             return (
-              <Card>
-                <Card.Header>{x.type}</Card.Header>
-                <Card.Meta>{x.date.toString()}</Card.Meta>
-                <Card.Description>{x.value}</Card.Description>
-              </Card>
+              <Grid.Row columns={1} textAlign="center">
+                <Grid.Column>
+                  <Card fluid>
+                    <Card.Content>
+                      <Card.Header>
+                        {x.type == "Deposit" ? "Depósito" : "Levantamento"}
+                      </Card.Header>
+                      <Card.Meta>{x.date.toString()}</Card.Meta>
+                      <Card.Description>
+                        <b>No valor</b>: {x.value}
+                      </Card.Description>
+                    </Card.Content>
+                  </Card>
+                </Grid.Column>
+              </Grid.Row>
             );
           })}
-        </Card.Group>
+        </Grid>
       )}
     </Fragment>
   );

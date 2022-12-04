@@ -15,11 +15,12 @@ const ASProfile: React.FC<RouteComponentProps<DetailsParams>> = ({
   history,
 }) => {
   const rootStore = useContext(RootStoreContext);
-  const { user, getAdmin } = rootStore.userStore;
+  const { user, getAdmin, getSpecialist } = rootStore.userStore;
   const { openModal } = rootStore.modalStore;
 
   useEffect(() => {
-    getAdmin(match.params.id);
+    if (user?.role == "Admin") getAdmin(match.params.id);
+    else getSpecialist(match.params.id);
   }, [match.params.id]);
 
   const panes = [
@@ -32,18 +33,16 @@ const ASProfile: React.FC<RouteComponentProps<DetailsParams>> = ({
               <Grid.Column>
                 <Header as="h4">Nome: </Header>
                 <Segment tertiary>
-                  {/* {user.name} */}
-                  Marco António
+                  {user!.name}
                 </Segment>
               </Grid.Column>
               <Grid.Column>
                 <Grid>
                   <Grid.Row columns={1} textAlign="center">
                     <Grid.Column>
-                      <Header as="h4"> Language:</Header>
+                      <Header as="h4"> Idioma:</Header>
                       <Segment tertiary>
-                        {/* {user.language} */}
-                        Português
+                        {user!.language}
                       </Segment>
                     </Grid.Column>
                   </Grid.Row>

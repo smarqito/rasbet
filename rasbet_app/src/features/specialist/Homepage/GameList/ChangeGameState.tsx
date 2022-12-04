@@ -1,19 +1,22 @@
 import { observer } from "mobx-react-lite";
-import React, { Fragment, useContext, useState } from "react";
-import {
-  Button,
-  Checkbox,
-  Dropdown,
-  Grid,
-  GridColumn,
-  Header,
-  Input,
-} from "semantic-ui-react";
+import React, { useContext, useEffect, useState } from "react";
+import { Button, Checkbox, Dropdown, Grid, Header } from "semantic-ui-react";
 import { RootStoreContext } from "../../../../app/stores/rootStore";
 
-const ChangeGameState: React.FC = () => {
+interface IProps {
+  id: number;
+}
+
+const ChangeGameState: React.FC<IProps> = ({ id }) => {
   const rootStore = useContext(RootStoreContext);
-  const { finishGame, suspendGame, activateGame, game } = rootStore.gameStore;
+  const {
+    finishGame,
+    suspendGame,
+    activateGame,
+    game,
+    loadAnyGame,
+    clearGame,
+  } = rootStore.gameStore;
   const { user } = rootStore.userStore;
   const { closeModal } = rootStore.modalStore;
 
@@ -26,8 +29,15 @@ const ChangeGameState: React.FC = () => {
   const resultValues = [
     { key: 1, text: "home", value: "home" },
     { key: 2, text: "away", value: "away" },
-    { key: 2, text: "Draw", value: "draw" },
+    { key: 2, text: "draw", value: "draw" },
   ];
+
+  useEffect(() => {
+    loadAnyGame(id);
+    return () => {
+      clearGame();
+    };
+  }, [state]);
 
   return (
     <Grid padded>
@@ -84,10 +94,14 @@ const ChangeGameState: React.FC = () => {
           fluid
           color="green"
           onClick={() => {
+            console.log(game, user);
             if (state === "activate") activateGame(game!.id, user!.id);
             if (state === "suspend") suspendGame(game!.id, user!.id);
-            // if (state === "close") finishGame(game!.id, resultValues['text' == result].value, user!.id);
-
+            if (state === "close") {
+              if (result === "home") finishGame(game!.id, "V1", user!.id);
+              else if (result === "draw") finishGame(game!.id, "X", user!.id);
+              else finishGame(game!.id, "V2", user!.id);
+            }
             closeModal();
           }}
         />

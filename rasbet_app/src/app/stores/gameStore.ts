@@ -29,7 +29,7 @@ export default class GameStore {
   @observable game: CollectiveGame | null = null;
   @observable activeGames: IActiveGame[] = [];
   @observable gamesFiltered: IActiveGame[] = [];
-  @observable allGames: IActiveGame[] = [];
+  @observable allGames: CollectiveGame[] = [];
   @observable allSports: ISport[] = [];
   @observable loading = false;
   @observable selectedSport: ISport = { name: "Football" };
@@ -51,7 +51,7 @@ export default class GameStore {
 
   @action clearAllGames = () => {
     this.allGames = [];
-  }
+  };
 
   @action clearSports = () => {
     this.allSports = [];
@@ -72,13 +72,42 @@ export default class GameStore {
     return game;
   };
 
+  getAnyGame = (id: number) => {
+    let game = null;
+    for (let index = 0; index < this.allGames.length; index++) {
+      const element = this.allGames[index];
+      if (element.id == id) {
+        game = element;
+        break;
+      }
+    }
+
+    if (!game) throw "Não existe o jogo na lista!";
+
+    return game;
+  };
+
+  @action loadAnyGame = async (id: number) => {
+    this.loading = true;
+    let game = this.getAnyGame(id);
+    try {
+      runInAction(() => {
+        this.game = game;
+      });
+    } catch (error) {
+      toast.error("Não é possível apresentar o jogo!");
+      throw error;
+    } finally {
+      this.loading = false;
+    }
+  };
+
   @action loadGame = async (id: number) => {
     this.loading = true;
     let game = this.getGame(id);
     try {
-      let gameInfo = await Agent.Game.getGame(id);
       runInAction(() => {
-        this.game = gameInfo;
+        this.game = game;
       });
     } catch (error) {
       toast.error("Não é possível apresentar o jogo!");

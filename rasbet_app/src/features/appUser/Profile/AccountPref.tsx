@@ -1,6 +1,13 @@
 import { observer } from "mobx-react-lite";
 import React, { Fragment, useContext, useEffect } from "react";
-import { Button, Divider, Grid, Header, Segment } from "semantic-ui-react";
+import {
+  Button,
+  Divider,
+  Grid,
+  GridColumn,
+  Header,
+  Segment,
+} from "semantic-ui-react";
 import { RootStoreContext } from "../../../app/stores/rootStore";
 import ChangeProfile from "./ChangeProfile";
 import ChangeSensitive from "./ChangeSensitive";
@@ -14,14 +21,40 @@ const AccountPref: React.FC = () => {
     <Grid padded>
       <Grid.Row columns={2} textAlign="center">
         <Grid.Column>
-          <Header as="h4">Nome: </Header>
-          <Segment tertiary>{appUserDetails?.name}</Segment>
+          <Grid>
+            <Grid.Row columns={1}>
+              <Grid.Column>
+                <Header as="h4">Nome: </Header>
+                <Segment tertiary>{appUserDetails?.name}</Segment>
+              </Grid.Column>
+            </Grid.Row>
+            <Grid.Row columns={1}>
+              <Grid.Column>
+                <Header as="h4">IBAN: </Header>
+                <Segment tertiary>
+                  {appUserDetails?.IBAN
+                    ? appUserDetails.IBAN
+                    : "Sem IBAN definido!"}
+                </Segment>
+              </Grid.Column>
+            </Grid.Row>
+            <Grid.Row columns={1}>
+              <Grid.Column>
+                <Header as="h4">Número de Telemóvel: </Header>
+                <Segment tertiary>
+                  {appUserDetails?.phoneNum
+                    ? appUserDetails.phoneNum
+                    : "Sem número de telemóvel!"}
+                </Segment>
+              </Grid.Column>
+            </Grid.Row>
+          </Grid>
         </Grid.Column>
         <Grid.Column>
           <Grid>
             <Grid.Row columns={1} textAlign="center">
               <Grid.Column>
-                <Header as="h4"> Language:</Header>
+                <Header as="h4"> Idioma:</Header>
                 <Segment tertiary>{appUserDetails?.language}</Segment>
               </Grid.Column>
             </Grid.Row>

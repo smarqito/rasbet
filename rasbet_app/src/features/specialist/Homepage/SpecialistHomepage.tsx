@@ -19,13 +19,13 @@ const SpecialistHomepage: React.FC<RouteComponentProps<DetailsParams>> = ({
     getAllSports,
     allSports,
     setSelectedSport,
-    clearActive,
+    clearAllGames,
     clearSports,
     loading,
   } = rootStore.gameStore;
 
   useEffect(() => {
-    clearActive();
+    clearAllGames();
     clearSports();
 
     getAllSports();
@@ -34,7 +34,7 @@ const SpecialistHomepage: React.FC<RouteComponentProps<DetailsParams>> = ({
   if (loading) {
     <LoadingComponent content="A carregarpágina do utilizador!" />;
   }
-  
+
   return (
     <Grid padded divided stackable>
       <Grid.Row columns={2} key={"AppUserPage"}>
@@ -58,7 +58,7 @@ const SpecialistHomepage: React.FC<RouteComponentProps<DetailsParams>> = ({
           </Segment>
         </Grid.Column>
         <Grid.Column width={12} key={"gameList"}>
-          <Container>
+          <Container style={{ overflow: "scroll", maxHeight: "90vh" }}>
             <Header as="h3">Todos os jogos</Header>
             <SpecialistGameList />
           </Container>

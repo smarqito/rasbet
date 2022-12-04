@@ -8,11 +8,8 @@ import { RootStoreContext } from "../../../app/stores/rootStore";
 
 const GameList: React.FC = () => {
   const rootStore = useContext(RootStoreContext);
-  const {
-    getActiveGames,
-    getActiveGamesBySport,
-    clearActive,
-  } = rootStore.gameStore;
+  const { getActiveGames, getActiveGamesBySport, clearActive } =
+    rootStore.gameStore;
 
   useEffect(() => {
     getActiveGames();

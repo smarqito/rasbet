@@ -1,20 +1,10 @@
 import { observer } from "mobx-react-lite";
 import React, { useContext, useState } from "react";
-import {
-  Button,
-  Checkbox,
-  Form,
-  Grid,
-  Header,
-  Segment,
-} from "semantic-ui-react";
+import { Button, Form, Grid, Header, Segment } from "semantic-ui-react";
 import { Field, Form as FinalForm } from "react-final-form";
 import { FORM_ERROR } from "final-form";
 import { RootStoreContext } from "../../../app/stores/rootStore";
 import TextInput from "../../../app/common/TextInput";
-import SelectInput from "../../../app/common/SelectInput";
-import { Languages } from "../../../app/common/Languages";
-import { Coin } from "../../../app/common/Coin";
 import {
   AppUserChangeSensitive,
   IAppUserChangeSensitive,
@@ -58,20 +48,17 @@ const ChangeProfile: React.FC = () => {
                     name="password"
                     component={TextInput}
                     placeholder="Nova Palavra-Passe"
-                    validate={required}
                     type="password"
                   />
                   <Field
                     name="IBAN"
                     component={TextInput}
                     placeholder="Novo IBAN"
-                    validate={required}
                   />
                   <Field
                     name="phoneNumber"
                     component={TextInput}
                     placeholder="Novo número de telemóvel"
-                    validate={required}
                   />
                 </Segment>
                 <Button color="twitter" fluid size="large" content="Concluir" />

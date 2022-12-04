@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Button, Form, Grid, Header, Segment } from "semantic-ui-react";
 import { RootStoreContext } from "../../../app/stores/rootStore";
 import { Field, Form as FinalForm } from "react-final-form";
@@ -22,7 +22,7 @@ registerLocale("pt", pt);
 const Deposit: React.FC = () => {
   const rootStore = useContext(RootStoreContext);
   const { user } = rootStore.userStore;
-  const { depositFunds } = rootStore.walletStore;
+  const { depositFunds, getWallet } = rootStore.walletStore;
   const { closeModal } = rootStore.modalStore;
 
   return (

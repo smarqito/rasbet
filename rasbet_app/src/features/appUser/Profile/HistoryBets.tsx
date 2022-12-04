@@ -37,7 +37,7 @@ const HistoryBets: React.FC = () => {
     if (betFilter == "won")
       getUserBetsWon(appUserDetails!.id, new Date(2001, 1, 1), DateValueEnd);
 
-    if (betFilter == "closed")
+    if (betFilter == "close")
       getUserBetsClosed(appUserDetails!.id, new Date(2001, 1, 1), DateValueEnd);
   }, [DateValueEnd, betFilter, appUserDetails!.id]);
 
@@ -79,19 +79,36 @@ const HistoryBets: React.FC = () => {
       {userBetsFiltered.length == 0 ? (
         <ListItemNotFound content="Não existem apostas realizadas!" />
       ) : (
-        <Card.Group>
+        <Grid celled style={{ overflow: "scroll", maxHeight: "90vh" }}>
           {userBetsFiltered.map((x) => {
             return (
-              <Card>
-                <Card.Header>
-                  {x.start.toString()} - {x.end?.toString()}
-                </Card.Header>
-                <Card.Meta>Montante apostado: {x.amount}</Card.Meta>
-                <Card.Description>Ganhos: {x.wonValue}</Card.Description>
-              </Card>
+              <Grid.Row columns={1} textAlign="center">
+                <Grid.Column>
+                  <Card fluid>
+                    <Card.Content>
+                      <Card.Header>
+                        Aposta{" "}
+                        {x.selections.entries.length == 1
+                          ? "Simples"
+                          : "Múltipla"}
+                      </Card.Header>
+                      <Card.Meta>
+                        {x.start.toString()} - {x.end?.toString()}
+                      </Card.Meta>
+                      <Card.Description>
+                        <b>Montante apostado</b> : {x.amount}
+                      </Card.Description>
+                      <Card.Description>
+                        <b>Cota escolhida </b>: {x.odd.toFixed(2)}
+                      </Card.Description>
+                      <Card.Description>Ganhos: {x.wonValue}</Card.Description>
+                    </Card.Content>
+                  </Card>
+                </Grid.Column>
+              </Grid.Row>
             );
           })}
-        </Card.Group>
+        </Grid>
       )}
     </Fragment>
   );

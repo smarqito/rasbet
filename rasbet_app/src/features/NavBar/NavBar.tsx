@@ -4,7 +4,6 @@ import {
   Container,
   Dropdown,
   Grid,
-  Icon,
   Image,
   Menu,
 } from "semantic-ui-react";
@@ -15,13 +14,14 @@ import { observer } from "mobx-react-lite";
 const NavBar: React.FC = () => {
   const rootStore = useContext(RootStoreContext);
   const { user, logout } = rootStore.userStore;
-  const { wallet, getWallet } = rootStore.walletStore;
+  const { wallet, getWallet, depositFunds, withdrawFunds } =
+    rootStore.walletStore;
 
   useEffect(() => {
     if (user?.role === "AppUser") {
       getWallet(user.id);
     }
-  }, [user]);
+  }, [depositFunds, withdrawFunds]);
 
   return (
     <div>
@@ -76,7 +76,7 @@ const NavBar: React.FC = () => {
             <Menu.Item position="right">
               {user.role === "AppUser" ? (
                 <Fragment>
-                  ({wallet?.balance}€)
+                  <b>({wallet?.balance} €)</b>
                   <Dropdown
                     pointing="top left"
                     text={`Bem Vindo, ${user.name}`}

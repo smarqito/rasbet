@@ -135,8 +135,6 @@ const Game = {
   getAllSports: (): Promise<ISport[]> => requests.get(`/GameOdd/sports`),
   getActiveAndSuspended: (): Promise<IActiveGame[]> =>
     requests.get(`/GameOdd/ActiveAndSuspended`),
-  getGame: (gameId: number): Promise<CollectiveGame> =>
-    requests.get(`/GameOdd?gameId=${gameId}`),
 };
 
 const Wallet = {

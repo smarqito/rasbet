@@ -29,7 +29,7 @@ const CreationMenu: React.FC<RouteComponentProps<DetailsParams>> = ({
           <Segment padded secondary>
             <Button
               primary
-              content="Criar um novo especialist"
+              content="Criar um novo especialista"
               onClick={() => openModal(<CreateUser userType="specialist" />)}
             />
           </Segment>

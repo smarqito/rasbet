@@ -211,20 +211,6 @@ export default class UserStore {
     }
   };
 
-  @action getUser = (userType: string, id: string) => {
-    switch (userType) {
-      case "Admin":
-        this.getAdmin(id);
-        break;
-      case "Appuser":
-        this.getAppUser(id);
-        break;
-      case "Specialist":
-        this.getSpecialist(id);
-        break;
-    }
-  };
-
   @action getAppUser = async (id: string) => {
     this.loading = true;
     try {
@@ -268,8 +254,10 @@ export default class UserStore {
       newUser = await Agent.User.getSpecialist(id);
 
       runInAction(() => {
-        if (newUser) this.user = newUser;
-        else toast.error("Falha no load do utilizador!");
+        if (newUser) {
+          this.user = newUser;
+          console.log(newUser);
+        } else toast.error("Falha no load do utilizador!");
       });
     } catch (error) {
       toast.error("Falha ao ir buscar o utilizador!");
