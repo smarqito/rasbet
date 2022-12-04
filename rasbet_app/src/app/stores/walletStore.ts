@@ -64,7 +64,8 @@ export default class WalletStore {
     try {
       if (
         this.wallet!.userId == tran.userId &&
-        this.wallet!.balance > tran.value
+        this.wallet!.balance > tran.value &&
+        this.rootStore.userStore.appUserDetails?.IBAN
       )
         await Agent.Wallet.withdrawFunds(tran);
       else toast.error("Erro ao levantar (sem crédito)!");

@@ -22,7 +22,7 @@ registerLocale("pt", pt);
 const Deposit: React.FC = () => {
   const rootStore = useContext(RootStoreContext);
   const { user } = rootStore.userStore;
-  const { depositFunds, getWallet } = rootStore.walletStore;
+  const { depositFunds } = rootStore.walletStore;
   const { closeModal } = rootStore.modalStore;
 
   return (
