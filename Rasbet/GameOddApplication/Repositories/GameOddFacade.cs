@@ -144,14 +144,14 @@ public class GameOddFacade : IGameOddFacade
     }
 
 
-    public async Task<Unit> ChangeOdds(string specialistId, int betTypeId, Dictionary<int, double> newOdds)
+    public async Task<Unit> ChangeOdds(string specialistId, int betTypeId, ICollection<NewODD> newOdds)
     {
         BetType bet = await betTypeRepository.GetBetType(betTypeId);
         bet.SpecialistId = specialistId;
         foreach(var item in newOdds)
         {
-            Odd d = bet.Odds.FirstOrDefault(o => o.Id == item.Key);
-            d.OddValue = item.Value;
+            Odd d = bet.Odds.FirstOrDefault(o => o.Id == item.OddId);
+            d.OddValue = item.OddValue;
         }
         await gameOddContext.SaveChangesAsync();
         return Unit.Value;

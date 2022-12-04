@@ -61,13 +61,13 @@ export default class GameStore {
     let game = null;
     for (let index = 0; index < this.activeGames.length; index++) {
       const element = this.activeGames[index];
-      if (element.id == id) {
+      if (element.id === id) {
         game = element;
         break;
       }
     }
 
-    if (!game) throw "Não existe o jogo na lista!";
+    if (!game) throw Error("Não existe o jogo na lista!");
 
     return game;
   };
@@ -76,13 +76,13 @@ export default class GameStore {
     let game = null;
     for (let index = 0; index < this.allGames.length; index++) {
       const element = this.allGames[index];
-      if (element.id == id) {
+      if (element.id === id) {
         game = element;
         break;
       }
     }
 
-    if (!game) throw "Não existe o jogo na lista!";
+    if (!game) throw Error("Não existe o jogo na lista!");
 
     return game;
   };
@@ -243,6 +243,7 @@ export default class GameStore {
   @action changeOdds = async (change: IChangeOdd) => {
     this.loading = true;
     try {
+      console.log(JSON.stringify(change));
       await Agent.Game.changeOdds(change);
       toast.info("Odd alterada!");
     } catch (error) {

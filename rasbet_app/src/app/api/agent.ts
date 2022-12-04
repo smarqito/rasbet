@@ -95,7 +95,7 @@ const User = {
     requests.put(`/User/sensitive/admin/confirm`, { email, code }),
   updateSpecialistSensitiveConfirm: (email: string, code: string) =>
     requests.put(`/User/sensitive/specialist/confirm`, { email, code }),
-  changePass: (email: string) => requests.put(`/User/forgotPWD`, { email }),
+  changePass: (email: string) => requests.put(`/User/forgotPWD?email=${email}`, { }),
   logout: (id: string) => requests.post(`/User/logout`, id),
 };
 
@@ -125,17 +125,17 @@ const Bet = {
 const Game = {
   suspendGame: (gameId: number, specialistId: string) =>
     requests.patch(
-      `/GameOdd/suspend?gameId${gameId}&specialistId=${specialistId}`,
+      `/GameOdd/suspend?gameId=${gameId}&specialistId=${specialistId}`,
       {}
     ),
   finishGame: (gameId: number, result: string, specialistId: string) =>
     requests.patch(
-      `/GameOdd/finish?gameId${gameId}&result=${result}&specialistId=${specialistId}`,
+      `/GameOdd/finish?gameId=${gameId}&result=${result}&specialistId=${specialistId}`,
       {}
     ),
   activateGame: (gameId: number, specialistId: string) =>
     requests.patch(
-      `/GameOdd/activate?gameId${gameId}&specialistId=${specialistId}`,
+      `/GameOdd/activate?gameId=${gameId}&specialistId=${specialistId}`,
       {}
     ),
   changeOdds: (change: IChangeOdd) => requests.patch(`/GameOdd/odds`, change),

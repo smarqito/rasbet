@@ -6,9 +6,14 @@ using System.Threading.Tasks;
 
 namespace DTO.GameOddDTO;
 
+public class NewODD
+{
+    public int OddId { get; set; }
+    public double OddValue { get; set; }
+}
 public class ChangeOddsDTO
 {
     public string SpecialistId { get; set; }
     public int BetTypeId { get; set; }
-    public Dictionary<int, double> NewOdds { get; set; }
+    public ICollection<NewODD> NewOdds { get; set; }
 }
