@@ -10,10 +10,10 @@ export interface IUser {
 }
 
 export interface IAppUser extends IUser {
-  IBAN?: string;
-  NIF: string;
-  DOB: Date;
-  phoneNum?: string;
+  iban: string;
+  nif: string;
+  dob: Date;
+  phoneNumber: string;
   coin: string;
   notif: boolean;
 }
@@ -32,8 +32,8 @@ export interface IUserRegister {
 
 export interface IAppUserRegister extends IUserRegister {
   passwordRepeated: string;
-  NIF: string;
-  DOB: string;
+  nif: string;
+  dob: string;
   notif: boolean;
 }
 
@@ -111,8 +111,8 @@ export class AppUserRegisterFormValues implements IAppUserRegister {
   password: string = "";
   passwordRepeated: string = "";
   language: string = "Pt";
-  NIF: string = "";
-  DOB: string = new Date().toISOString();
+  nif: string = "";
+  dob: string = new Date().toISOString();
   notif: boolean = false;
   constructor(init?: IAppUserRegister) {
     Object.assign(this, init);

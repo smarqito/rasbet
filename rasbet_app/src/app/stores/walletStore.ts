@@ -45,11 +45,11 @@ export default class WalletStore {
 
   @action depositFunds = async (tran: ICreateTransaction) => {
     this.loading = true;
-      try {
-        if (
-            this.wallet!.userId == tran.userId
-        )
-            await Agent.Wallet.depositFunds(tran);
+    try {
+      if (
+        this.wallet!.userId == tran.userId
+      )
+        await Agent.Wallet.depositFunds(tran);
       else toast.error("Erro ao depositar!");
     } catch (error) {
       toast.error("Ocorreu um eror interno!");
@@ -62,13 +62,15 @@ export default class WalletStore {
   @action withdrawFunds = async (tran: ICreateTransaction) => {
     this.loading = true;
     try {
-      if (
-        this.wallet!.userId == tran.userId &&
-        this.wallet!.balance > tran.value &&
-        this.rootStore.userStore.appUserDetails?.IBAN
-      )
-        await Agent.Wallet.withdrawFunds(tran);
-      else toast.error("Erro ao levantar (sem crédito)!");
+      console.log(this.rootStore.userStore.appUserDetails?.iban);
+      if (this.rootStore.userStore.appUserDetails?.iban !== undefined) {
+        if (
+          this.wallet!.userId == tran.userId &&
+          this.wallet!.balance >= tran.value
+        )
+          await Agent.Wallet.withdrawFunds(tran);
+        else toast.error("Erro ao levantar (sem crédito)!");
+      } else toast.error("Erro ao levantar (sem IBAN)!");
     } catch (error) {
       toast.error("Ocorreu um erro interno!");
       throw error;
@@ -79,11 +81,11 @@ export default class WalletStore {
 
   @action getTransactions = async (userId: string, start: Date, end: Date) => {
     this.loading = true;
-      try {
-          console.log(this.wallet!.userId);
-          console.log(userId);
-          console.log(start);
-          console.log(end);
+    try {
+      console.log(this.wallet!.userId);
+      console.log(userId);
+      console.log(start);
+      console.log(end);
       if (this.wallet!.userId == userId) {
         let transactions = await Agent.Wallet.getTransactions(
           userId,

@@ -17,11 +17,12 @@ const AppUserProfile: React.FC<RouteComponentProps<DetailsParams>> = ({
   history,
 }) => {
   const rootStore = useContext(RootStoreContext);
-  const { getAppUser, clearAppUserDetails, clearBets } = rootStore.userStore;
+  const { getAppUser, clearAppUserDetails, clearBets, appUserDetails } = rootStore.userStore;
   const { clearTransaction } = rootStore.walletStore;
 
   useEffect(() => {
     getAppUser(match.params.id);
+    console.log(appUserDetails);
     return () => {
       clearAppUserDetails();
       clearBets();

@@ -285,11 +285,11 @@ public class UserRepository : IUserRepository
         AppUser? user = await context.AppUsers.Where(u => u.Email.Equals(email)).FirstOrDefaultAsync();
 
         if (user == null) throw new Exception("E-mail inexistente.");
-        if(name != null)
+        if(!name.Equals(""))
             user.Name = name;
-        if (language != null)
+        if (!language.Equals(""))
             user.Language = language;
-        if (coin != null)
+        if (!coin.Equals(""))
             user.Coin = coin;
         user.Notifications = notifications;
 
@@ -338,7 +338,10 @@ public class UserRepository : IUserRepository
         string code = userManager.GenerateNewAuthenticatorKey();
 
         UpdateInfo update = new UpdateInfo(email, password, iban, phoneno, code);
-        await context.Updates.AddAsync(update);
+        if (await context.Updates.AnyAsync(x => x.Email.Equals(email)))
+            context.Updates.Update(update);
+        else
+            await context.Updates.AddAsync(update);
 
         await context.SaveChangesAsync();
         string subject = "Confirmação de alterações no perfil";
@@ -364,7 +367,10 @@ public class UserRepository : IUserRepository
         string code = userManager.GenerateNewAuthenticatorKey();
 
         UpdateInfo update = new UpdateInfo(email, password, code);
-        await context.Updates.AddAsync(update);
+        if (await context.Updates.AnyAsync(x => x.Email.Equals(email)))
+            context.Updates.Update(update);
+        else
+            await context.Updates.AddAsync(update);
 
         await context.SaveChangesAsync();
         string subject = "Confirmação de alterações no perfil";
@@ -390,7 +396,10 @@ public class UserRepository : IUserRepository
         string code = userManager.GenerateNewAuthenticatorKey();
 
         UpdateInfo update = new UpdateInfo(email, password, code);
-        await context.Updates.AddAsync(update);
+        if (await context.Updates.AnyAsync(x => x.Email.Equals(email)))
+            context.Updates.Update(update);
+        else
+            await context.Updates.AddAsync(update);
 
         await context.SaveChangesAsync();
         string subject = "Confirmação de alterações no perfil";
@@ -418,16 +427,16 @@ public class UserRepository : IUserRepository
 
         if (code.Equals(info.ConfirmationCode))
         {
-            if (info.IBAN != null)
+            if (!info.IBAN.Equals(""))
                 user.IBAN = info.IBAN;
 
-            if (info.Password != null)
+            if (!info.Password.Equals(""))
             {
                 await userManager.RemovePasswordAsync(user);
                 await userManager.AddPasswordAsync(user, info.Password);
             }
 
-            if (info.PhoneNumber != null)
+            if (!info.PhoneNumber.Equals(""))
                 await userManager.SetPhoneNumberAsync(user, info.PhoneNumber);
 
             context.Updates.Remove(info);

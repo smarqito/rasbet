@@ -69,7 +69,7 @@ const RegisterForm: React.FC = () => {
           <FinalForm
             onSubmit={(values: IAppUserRegister) => {
               values.notif = checkbox;
-              values.DOB = DateValue.toISOString();
+              values.dob = DateValue.toISOString();
               registerAppUser(values).catch((error) => ({
                 [FORM_ERROR]: error,
               }));

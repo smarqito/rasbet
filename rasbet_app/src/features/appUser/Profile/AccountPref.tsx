@@ -32,9 +32,7 @@ const AccountPref: React.FC = () => {
               <Grid.Column>
                 <Header as="h4">IBAN: </Header>
                 <Segment tertiary>
-                  {appUserDetails!.IBAN!.length > 0
-                    ? appUserDetails!.IBAN
-                    : "Sem IBAN definido!"}
+                  {appUserDetails?.iban ? appUserDetails?.iban : "Não definido"}
                 </Segment>
               </Grid.Column>
             </Grid.Row>
@@ -42,9 +40,7 @@ const AccountPref: React.FC = () => {
               <Grid.Column>
                 <Header as="h4">Número de Telemóvel: </Header>
                 <Segment tertiary>
-                  {appUserDetails!.phoneNum!.length > 0
-                    ? appUserDetails!.phoneNum
-                    : "Sem número de telemóvel!"}
+                  {appUserDetails?.phoneNumber ? appUserDetails!.phoneNumber : "Não definido"}
                 </Segment>
               </Grid.Column>
             </Grid.Row>
