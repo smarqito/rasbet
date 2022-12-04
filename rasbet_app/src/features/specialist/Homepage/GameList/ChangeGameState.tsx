@@ -1,6 +1,13 @@
 import { observer } from "mobx-react-lite";
 import React, { useContext, useEffect, useState } from "react";
-import { Button, Checkbox, Dropdown, Grid, Header } from "semantic-ui-react";
+import {
+  Button,
+  Checkbox,
+  Dropdown,
+  Grid,
+  Header,
+  Input,
+} from "semantic-ui-react";
 import { RootStoreContext } from "../../../../app/stores/rootStore";
 
 interface IProps {
@@ -31,6 +38,12 @@ const ChangeGameState: React.FC<IProps> = ({ id }) => {
     { key: 2, text: "away", value: "away" },
     { key: 2, text: "draw", value: "draw" },
   ];
+
+  const [gameResult, setGameResult] = useState("");
+
+  const handleChange = (result: string) => {
+    setGameResult(result);
+  };
 
   useEffect(() => {
     loadAnyGame(id);
@@ -78,13 +91,9 @@ const ChangeGameState: React.FC<IProps> = ({ id }) => {
       </Grid.Row>
       {state === "close" && (
         <Grid.Row>
-          <Dropdown
-            options={resultValues}
-            selection
-            value={result}
-            onChange={(_, data) => {
-              setResult(data.value);
-            }}
+          <Input
+            onChange={(_, data) => handleChange(data.value)}
+            value={gameResult}
           />
         </Grid.Row>
       )}
@@ -97,11 +106,8 @@ const ChangeGameState: React.FC<IProps> = ({ id }) => {
             console.log(game, user);
             if (state === "activate") activateGame(game!.id, user!.id);
             if (state === "suspend") suspendGame(game!.id, user!.id);
-            if (state === "close") {
-              if (result === "home") finishGame(game!.id, "V1", user!.id);
-              else if (result === "draw") finishGame(game!.id, "X", user!.id);
-              else finishGame(game!.id, "V2", user!.id);
-            }
+            if (state === "close") finishGame(game!.id, gameResult, user!.id);
+
             closeModal();
           }}
         />

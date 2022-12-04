@@ -25,8 +25,8 @@ const ChangePass: React.FC = () => {
           Alterar Palavra-Passe
         </Header>
         <FinalForm
-          onSubmit={(email: string) =>
-            changePassByEmail(email).catch((error: any) => {
+          onSubmit={(email: { email: string }) =>
+            changePassByEmail(email.email).catch((error: any) => {
               console.log(error);
               return {
                 [FORM_ERROR]: error,
