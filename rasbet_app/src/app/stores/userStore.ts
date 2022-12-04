@@ -187,6 +187,7 @@ export default class UserStore {
       this.rootStore.commonStore.setToken(null);
       this.clearUser();
       history.push("/");
+      window.localStorage.clear();
     } catch (error) {
       toast.error("Ocorreu um erro interno!");
       throw error;
