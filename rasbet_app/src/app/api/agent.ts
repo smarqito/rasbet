@@ -19,8 +19,8 @@ const responseBody = (response: AxiosResponse) => response.data;
 
 axios.interceptors.request.use(
   (config) => {
-        const token = window.localStorage.getItem("jwt");
-        if (token) config.headers!.Authorization = `Bearer ${token}`;
+    const token = window.localStorage.getItem("jwt");
+    if (token) config.headers!.Authorization = `Bearer ${token}`;
     return config;
   },
   (error) => {
@@ -124,11 +124,20 @@ const Bet = {
 
 const Game = {
   suspendGame: (gameId: number, specialistId: string) =>
-    requests.patch(`/GameOdd/suspend`, { gameId, specialistId }),
+    requests.patch(
+      `/GameOdd/suspend?gameId${gameId}&specialistId=${specialistId}`,
+      {}
+    ),
   finishGame: (gameId: number, result: string, specialistId: string) =>
-    requests.patch(`/GameOdd/finish`, { gameId, result, specialistId }),
+    requests.patch(
+      `/GameOdd/finish?gameId${gameId}&result=${result}&specialistId=${specialistId}`,
+      {}
+    ),
   activateGame: (gameId: number, specialistId: string) =>
-    requests.patch(`/GameOdd/activate`, { gameId, specialistId }),
+    requests.patch(
+      `/GameOdd/activate?gameId${gameId}&specialistId=${specialistId}`,
+      {}
+    ),
   changeOdds: (change: IChangeOdd) => requests.patch(`/GameOdd/odds`, change),
   getActiveGames: (): Promise<IActiveGame[]> =>
     requests.get(`/GameOdd/activeGames`),
