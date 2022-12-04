@@ -325,7 +325,7 @@ export default class UserStore {
   ) => {
     this.loading = true;
     try {
-      await Agent.User.updateAppUserSensitive(email, pass, iban, phone);
+      await Agent.User.updateAppUserSensitive(email, iban, phone, pass);
     } catch (error) {
       toast.error("Falha ao atualizar os dados sensíveis do utilizador!");
       throw error;

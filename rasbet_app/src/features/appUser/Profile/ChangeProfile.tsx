@@ -23,9 +23,9 @@ import { required } from "../../../app/common/Validators";
 
 const ChangeProfile: React.FC = () => {
   const rootStore = useContext(RootStoreContext);
-  const { user, updateAppUser } = rootStore.userStore;
+  const { user, appUserDetails, updateAppUser } = rootStore.userStore;
   const { closeModal } = rootStore.modalStore;
-  const [notif, setNotif] = useState(false);
+  const [notif, setNotif] = useState(appUserDetails!.notif);
 
   const [initialValues] = useState(new AppUserChangeProfile());
 
@@ -58,21 +58,18 @@ const ChangeProfile: React.FC = () => {
                     name="name"
                     component={TextInput}
                     placeholder="Novo nome de utilizador"
-                    validate={required}
                   />
                   <Field
                     name="lang"
                     component={SelectInput}
                     options={Languages}
                     placeholder={Languages[0].text}
-                    validate={required}
                   />
                   <Field
                     name="coin"
                     component={SelectInput}
                     options={Coin}
                     placeholder={Coin[0].text}
-                    validate={required}
                   />
                 </Segment>
                 <Segment>

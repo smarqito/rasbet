@@ -46,6 +46,9 @@ export interface IAppUserChangeProfile extends IUserChangeProfile {
   coin: string;
   notif: boolean;
 }
+export interface IUserChangeSensitive {
+  password: string;
+}
 
 export interface IAppUserChangeSensitive extends IUserChangeSensitive {
   IBAN: string;
@@ -55,10 +58,6 @@ export interface IAppUserChangeSensitive extends IUserChangeSensitive {
 export interface IUserChangeProfile {
   name: string;
   lang: string;
-}
-
-export interface IUserChangeSensitive {
-  password: string;
 }
 
 export class UserChangeProfile implements IUserChangeProfile {
