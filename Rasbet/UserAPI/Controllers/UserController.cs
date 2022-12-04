@@ -253,7 +253,7 @@ namespace UserAPI.Controllers
         /// <param name="updateInfo"> </param>
         /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
         [HttpPut("sensitive/user")]
-        [Authorize(Roles ="AppUser")]
+        //[Authorize(Roles ="AppUser")]
         public async Task<IActionResult> UpdateAppUserSensitive([FromBody] SensitiveAppUserDTO updateInfo){
             try {   
                 await userRepository.UpdateAppUserSensitive(updateInfo.Email, updateInfo.Password, updateInfo.IBAN, updateInfo.PhoneNumber);
