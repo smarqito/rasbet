@@ -302,17 +302,8 @@ public class UserRepository : IUserRepository
     {
         try
         {
-            string from = "rasbet.apostasdesportivas@outlook.com";
-            MailMessage message = new MailMessage(from, to, subject, body);
-            SmtpClient client = new SmtpClient("smtp-mail.outlook.com");
-
-            client.EnableSsl = true;
-            client.Port = 587;
-            client.UseDefaultCredentials = false;
-            client.DeliveryMethod = SmtpDeliveryMethod.Network;
-            client.Credentials = new System.Net.NetworkCredential(from, "Ra$bet2022");
-            client.Send(message);
-            client.Dispose();
+            SendEmail s = new SendEmail();
+            s.Send(to, subject, body);
         }
         catch (Exception e)
         {
