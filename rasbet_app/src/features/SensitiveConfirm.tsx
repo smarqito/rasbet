@@ -24,26 +24,25 @@ const SensitiveConfirm: React.FC = () => {
       <Grid.Row>
         <Grid.Column>
           <FinalForm
-            onSubmit={(values: { email: string; code: string }) => {
+            onSubmit={(code: { code: string }) => {
               if (user?.role == "AppUser") {
-                updateAppUserSensitiveConfirm(values.email, values.code).catch(
+                updateAppUserSensitiveConfirm(user.email, code.code).catch(
                   (error) => ({
                     [FORM_ERROR]: error,
                   })
                 );
               } else if (user?.role == "Admin") {
-                updateAdminSensitiveConfirm(values.email, values.code).catch(
+                updateAdminSensitiveConfirm(user.email, code.code).catch(
                   (error) => ({
                     [FORM_ERROR]: error,
                   })
                 );
               } else {
-                updateSpecialistSensitiveConfirm(
-                  values.email,
-                  values.code
-                ).catch((error) => ({
-                  [FORM_ERROR]: error,
-                }));
+                updateSpecialistSensitiveConfirm(user!.email, code.code).catch(
+                  (error) => ({
+                    [FORM_ERROR]: error,
+                  })
+                );
               }
 
               closeModal();
@@ -53,7 +52,7 @@ const SensitiveConfirm: React.FC = () => {
                 <Segment stacked>
                   <Field
                     fluid
-                    name="pass"
+                    name="code"
                     component={TextInput}
                     placeholder="Código"
                     validate={required}
