@@ -90,7 +90,7 @@ const User = {
   updateSpecialSensitive: (email: string, password: string) =>
     requests.put(`/User/sensitive/specialist`, { email, password }),
   updateAppUserSensitiveConfirm: (email: string, code: string) =>
-    requests.put(`/User/sensitive/confirm`, { email, code }),
+    requests.put(`/User/sensitive/user/confirm`, { email, code }),
   updateAdminSensitiveConfirm: (email: string, code: string) =>
     requests.put(`/User/sensitive/admin/confirm`, { email, code }),
   updateSpecialistSensitiveConfirm: (email: string, code: string) =>

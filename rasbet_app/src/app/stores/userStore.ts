@@ -363,6 +363,7 @@ export default class UserStore {
   ) => {
     this.loading = true;
     try {
+      console.log(email, code);
       await Agent.User.updateAppUserSensitiveConfirm(email, code);
       toast.info("Alteração efetuado com sucesso!");
     } catch (error) {
