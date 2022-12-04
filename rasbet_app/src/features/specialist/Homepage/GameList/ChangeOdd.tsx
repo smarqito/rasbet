@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 import React, { useContext, useState } from "react";
 import { Button, Grid, Header, Input } from "semantic-ui-react";
 import { IBetType } from "../../../../app/models/betType";
-import { ChangeOddValues, IOdd } from "../../../../app/models/odd";
+import { ChangeOddValues, IOdd, IOdds } from "../../../../app/models/odd";
 import { RootStoreContext } from "../../../../app/stores/rootStore";
 
 interface IProps {
@@ -43,7 +43,11 @@ const ChangeOdd: React.FC<IProps> = ({ odd, bet }) => {
           onClick={() => {
             initialValues.specialistId = user!.id;
             initialValues.betTypeId = bet.id;
-            initialValues.newOdds.set(odd.id, parseFloat(oddValue));
+            let newOdds: IOdds = {
+              oddId: odd.id,
+              oddValue: parseFloat(oddValue),
+            };
+            initialValues.newOdds.push(newOdds);
             changeOdds(initialValues);
             closeModal();
           }}

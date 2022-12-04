@@ -7,13 +7,18 @@ export interface IOdd {
 export interface IChangeOdd {
   specialistId: string;
   betTypeId: number;
-  newOdds: Map<number, number>;
+  newOdds: IOdds[];
+}
+
+export interface IOdds {
+  oddId: number;
+  oddValue: number; 
 }
 
 export class ChangeOddValues implements IChangeOdd {
   specialistId: string = "";
   betTypeId: number = -1;
-  newOdds: Map<number, number> = new Map();
+  newOdds: IOdds[] = [];
 
   constructor(init?: IChangeOdd) {
     Object.assign(this, init);
