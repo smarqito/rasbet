@@ -1,25 +1,29 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Button,
   Card,
   Grid,
   Header,
+  Icon,
   Label,
   SemanticCOLORS,
 } from "semantic-ui-react";
 import { IActiveGame } from "../../../app/models/game";
-import { formatRelative } from "date-fns";
-import { pt } from "date-fns/locale";
 import { observer } from "mobx-react-lite";
 import { RootStoreContext } from "../../../app/stores/rootStore";
 import ModalAddToCart from "./ModalAddToCart";
 import { NavLink } from "react-router-dom";
 interface IProps {
   game: IActiveGame;
+  bell: boolean;
 }
-const GameListItem: React.FC<IProps> = ({ game }) => {
+const GameListItem: React.FC<IProps> = ({ game, bell }) => {
   const rootStore = useContext(RootStoreContext);
   const { openModal } = rootStore.modalStore;
+  const { addFollowerToGame, removeFollowerFromGame } = rootStore.gameStore;
+  const { user } = rootStore.userStore;
+
+  const [bellState, setBellState] = useState(bell);
 
   function buttonColor(odd: number): SemanticCOLORS {
     let grey: SemanticCOLORS = "grey";
@@ -57,6 +61,14 @@ const GameListItem: React.FC<IProps> = ({ game }) => {
 
     return grey;
   }
+
+  useEffect(() => {
+    if (bellState) {
+      addFollowerToGame(game.id, user!.id);
+    } else {
+      removeFollowerFromGame(game.id, user!.id);
+    }
+  }, [bellState]);
 
   return (
     <Card fluid key={game.id}>
@@ -110,6 +122,12 @@ const GameListItem: React.FC<IProps> = ({ game }) => {
           })}
         </Grid.Row>
       </Grid>
+      <Card.Content extra>
+        <Icon
+          name={bellState ? "bell" : "bell slash outline"}
+          onClick={() => setBellState(!bellState)}
+        />
+      </Card.Content>
     </Card>
   );
 };

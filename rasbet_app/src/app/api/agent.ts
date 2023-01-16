@@ -144,6 +144,12 @@ const Game = {
   getAllSports: (): Promise<ISport[]> => requests.get(`/GameOdd/sports`),
   getActiveAndSuspended: (): Promise<IActiveGame[]> =>
     requests.get(`/GameOdd/ActiveAndSuspended`),
+  getSubbedGames: (userId: string): Promise<number[]> =>
+     requests.get(`/GameOdd/GamesFollowed?userId=${userId}`),
+  addFollower: (userId: string, gameId: number) =>
+    requests.put(`/GameOdd/AddFollower`, {userId, gameId}),
+  removeFollower: (userId: string, gameId: number) =>
+    requests.put(`/GameOdd/RemoveFollower`, {userId, gameId}),
 };
 
 const Wallet = {

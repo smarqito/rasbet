@@ -7,13 +7,10 @@ import {
 } from "mobx";
 import { toast } from "react-toastify";
 import Agent from "../api/agent";
-import { IBetType } from "../models/betType";
 import {
   CollectiveGame,
   IActiveGame,
-  IGame,
   ISport,
-  IStatistics,
 } from "../models/game";
 import { IChangeOdd } from "../models/odd";
 import { RootStore } from "./rootStore";
@@ -33,6 +30,7 @@ export default class GameStore {
   @observable allSports: ISport[] = [];
   @observable loading = false;
   @observable selectedSport: ISport = { name: "Football" };
+  @observable subbedGames: number[] = [];
 
   @action clearGame = () => {
     this.game = null;
@@ -49,6 +47,10 @@ export default class GameStore {
     this.gamesFiltered = [];
   };
 
+  @action clearSubbed = () => {
+    this.subbedGames = [];
+  };
+
   @action clearAllGames = () => {
     this.allGames = [];
   };
@@ -56,6 +58,10 @@ export default class GameStore {
   @action clearSports = () => {
     this.allSports = [];
   };
+
+  @action isGameSubbed (gameId: number) {
+    return this.subbedGames.includes(this.game!.id);
+  }
 
   getGame = (id: number) => {
     let game = null;
@@ -253,4 +259,48 @@ export default class GameStore {
       this.loading = false;
     }
   };
+
+  @action getSubbedGames = async (userId: string) => {
+    this.loading = true;
+    try {
+      let games = await Agent.Game.getSubbedGames(userId);
+      runInAction(() => {
+        if (games) {
+          this.subbedGames = games;
+        } 
+      });
+    } catch (error) {
+      toast.error("Ocorreu um erro interno!");
+      throw error;
+    } finally {
+      this.loading = false;
+    }
+  };
+
+  @action addFollowerToGame = async (gameId: number, userId: string) => {
+    this.loading = true;
+    try {
+      await Agent.Game.addFollower(userId, gameId);
+      toast.info("Seguindo jogo!");
+    } catch (error) {
+      toast.error("Erro ao seguir jogo!");
+      throw error;
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  @action removeFollowerFromGame = async (gameId: number, userId: string) => {
+    this.loading = true;
+    try {
+      await Agent.Game.removeFollower(userId, gameId);
+      toast.info("Deixou de seguir jogo!");
+    } catch (error) {
+      toast.error("Erro ao deixar de seguir jogo!");
+      throw error;
+    } finally {
+      this.loading = false;
+    }
+  }
+
 }
