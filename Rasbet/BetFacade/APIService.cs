@@ -89,4 +89,14 @@ public class APIService
         HttpResponseMessage resp = await _httpClientUser.PutAsync($"Wallet/deposit", content);
         resp.EnsureSuccessStatusCode();
     }
+
+    public async Task FollowGame(string userId, int gameId)
+    {
+        FollowerDTO addFollower = new FollowerDTO(userId, gameId);
+        StringContent content = new(JsonSerializer.Serialize(addFollower),
+                                    Encoding.UTF8,
+                                    "application/json");
+        HttpResponseMessage resp = await _httpClientGameOdd.PutAsync($"GameOdd/AddFollowerToGame", content);
+        resp.EnsureSuccessStatusCode();
+    }
 }

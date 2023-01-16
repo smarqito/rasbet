@@ -353,6 +353,42 @@
       "UpstreamPathTemplate": "/GameOdd/activate?gameId={gameId}&specialistId={specialistId}",
       "UpstreamHttpMethod": [ "PATCH" ]
     },
+    {
+      "DownstreamPathTemplate": "/GameOdd/AddFollowerToGame",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5002"
+        }
+      ],
+      "UpstreamPathTemplate": "/GameOdd/AddFollowerToGame",
+      "UpstreamHttpMethod": [ "PUT" ]
+    },
+    {
+      "DownstreamPathTemplate": "/GameOdd/RemoveFollower",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5002"
+        }
+      ],
+      "UpstreamPathTemplate": "/GameOdd/RemoveFollower",
+      "UpstreamHttpMethod": [ "DELETE" ]
+    },
+    {
+      "DownstreamPathTemplate": "/GameOdd/GamesFollowed?userId={userId}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5002"
+        }
+      ],
+      "UpstreamPathTemplate": "/GameOdd/GamesFollowed?userId={userId}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
     //BetGamesAggregator
     {
       "DownstreamPathTemplate": "/BetGames/activeGames",
@@ -365,7 +401,7 @@
       ],
       "UpstreamPathTemplate": "/GameOdd/activeGames",
       "UpstreamHttpMethod": [ "GET" ],
-      "FileCacheOptions": { "TtlSeconds": 20}
+      "FileCacheOptions": { "TtlSeconds": 20 }
     },
     //-------------------
     {

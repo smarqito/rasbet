@@ -58,9 +58,10 @@ public class BetTypeRepository : IBetTypeRepository
     }
 
 
-    public async Task<Unit> UpdateBets(ICollection<BookmakerDTO> bookmakers, string awayTeam, int gameId)
+    public async Task<ICollection<Odd>> UpdateBets(ICollection<BookmakerDTO> bookmakers, string awayTeam, int gameId)
     {
         List<BetType> betTypes = new();
+        ICollection<Odd> oddsChanged = new List<Odd>();
         DateTime lastUpdate = bookmakers.Select(x => x.LastUpdate).Max();
         IEnumerable<IGrouping<string, MarketDTO>> markets = bookmakers.SelectMany(x => x.Markets)
                                                                       .Where(x => !x.Key.Equals("h2h_lay"))
@@ -72,6 +73,7 @@ public class BetTypeRepository : IBetTypeRepository
             betTypes.Add(h2h);
             BetType bet = await gameOddContext.BetType.FromSqlRaw($"SELECT * FROM dbo.BetType WHERE LOWER(Discriminator) LIKE LOWER('{market_g.Key}') AND GameId = {gameId}")
                                                       .FirstOrDefaultAsync();
+            ICollection<Odd> oldOdds = new List<Odd>();
             if (lastUpdate > bet.LastUpdate && bet.SpecialistId != null)
             {
 
@@ -89,11 +91,12 @@ public class BetTypeRepository : IBetTypeRepository
                         odd.UpdateOdd(outcome.Price);
                     }
                 }
+                oddsChanged.Concat(ods.Values).ToList();
                 bet.LastUpdate = lastUpdate;
             }
         }
         await gameOddContext.SaveChangesAsync();
-        return Unit.Value;
+        return oddsChanged;
     }
 
     public List<BetType> CalculateBets(ICollection<BookmakerDTO> bookmakers, string awayTeam, int gameId)

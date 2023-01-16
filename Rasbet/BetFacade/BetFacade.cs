@@ -64,6 +64,7 @@ public class BetFacade : IBetFacade
         try
         {
             await APIService.WithdrawUserBalance(new TransactionDTO(userId, amount, nameof(Withdraw)), bet.Id);
+            await APIService.FollowGame(userId, selectionDTO.GameId);
             return bet;
         }
         catch (Exception e)
@@ -79,7 +80,7 @@ public class BetFacade : IBetFacade
     {
         ICollection<Selection> selections = new List<Selection>();
         double oddMultiple = 1.0;
-        foreach (var selectionDTO in selectionDTOs)
+        foreach (CreateSelectionDTO selectionDTO in selectionDTOs)
         {
             try
             {
@@ -98,6 +99,7 @@ public class BetFacade : IBetFacade
                                                        server_odd);
                 selections.Add(newS);
                 oddMultiple *= newS.Odd;
+                await APIService.FollowGame(userId, selectionDTO.GameId);
             }
             catch (Exception e)
             {

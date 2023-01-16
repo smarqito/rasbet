@@ -15,7 +15,7 @@ public interface IGameOddFacade
     public Task<Unit> UpdateGameOdd(ICollection<DTO.GetGamesRespDTO.GameDTO> games, string sportName);
     public Task<Unit> FinishGame(int gameId, string result, string specialistId);
     public Task<Unit> FinishGame(string gameId, string result);
-    public Task<Unit> FinishGame(string gameId, string result, string? specialistId);
+    public Task<Unit> FinishGame(string gameId, string result, string specialistId);
     public Task<Unit> ActivateGame(int gameId, string specialistId);
     public Task<Unit> SuspendGame(int gameId, string specialistId);
     public Task<ICollection<CollectiveGameDTO>> GetActiveGames();
@@ -25,4 +25,7 @@ public interface IGameOddFacade
     public Task<DTO.GameOddDTO.GameDTO> GetGame(int gameId);
     public Task<ICollection<SportDTO>> GetSports();
     public Task<ICollection<CollectiveGameDTO>> GetActiveAndSuspendedGames();
+    public Task FollowGame(string userId, int gameId);
+    public Task UnfollowGame(string userId, int gameId);
+    public Task<ICollection<int>> GetGamesFollowed(string userId);
 }

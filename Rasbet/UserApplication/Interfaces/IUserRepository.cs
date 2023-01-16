@@ -1,4 +1,5 @@
 using Domain.UserDomain;
+using DTO.GameOddDTO;
 using DTO.UserDTO;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,4 +31,6 @@ public interface IUserRepository
 	Task<Specialist> UpdateSpecialistSensitiveConfirm(string email, string code);
 
 	Task ForgotPassword(string email);
+
+	Task NotifyChangeGame (ICollection<string> users, string gameState, string homeTeam, string awayTeam, DateTime startTime, ICollection<OddDTO> newOdds);
 }

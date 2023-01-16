@@ -4,6 +4,7 @@ using GameOddPersistance;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GameOddPersistance.Migrations
 {
     [DbContext(typeof(GameOddContext))]
-    partial class GameOddContextModelSnapshot : ModelSnapshot
+    [Migration("20230116183245_followers")]
+    partial class followers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,7 +32,7 @@ namespace GameOddPersistance.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("GameId")
+                    b.Property<int?>("GameId")
                         .HasColumnType("int");
 
                     b.Property<string>("UserId")
@@ -203,13 +205,9 @@ namespace GameOddPersistance.Migrations
 
             modelBuilder.Entity("Domain.Follower", b =>
                 {
-                    b.HasOne("Domain.Game", "Game")
+                    b.HasOne("Domain.Game", null)
                         .WithMany("FollowersIds")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Game");
+                        .HasForeignKey("GameId");
                 });
 
             modelBuilder.Entity("Domain.Game", b =>

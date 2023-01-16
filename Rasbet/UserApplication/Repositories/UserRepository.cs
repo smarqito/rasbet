@@ -1,4 +1,5 @@
 using Domain.UserDomain;
+using DTO.GameOddDTO;
 using DTO.UserDTO;
 using Infrastructure;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -253,6 +254,8 @@ public class UserRepository : IUserRepository
         throw new Exception("Utilizador não encontrado.");
 
     }
+
+
     public async Task<Admin> GetAdmin(string id)
     {
         var user = await userManager.FindByIdAsync(id);
@@ -575,5 +578,40 @@ public class UserRepository : IUserRepository
         string body = $"Olá!\nA sua nova palavra passe é {new_pw}. Pode alterá-la, se assim desejar, através do nosso site.\nBoas apostas.";
 
         SendEmail(email, subject, body);
+    }
+
+    
+    /// <summary>
+    /// Notify the users of changes in the state or in the odds of a game they're following
+    /// </summary>
+    /// <param name=""> </param>
+    /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
+    public async Task NotifyChangeGame (ICollection<string> users, string gameState, string homeTeam, string awayTeam, DateTime startTime, ICollection<OddDTO> newOdds )
+    {
+        string subject = "Alteração num Jogo";
+        string body;
+        StringBuilder sb = new StringBuilder();
+
+        if (gameState == null) {
+            sb.Append("Olá!\nAs odds de um jogo seguido por si foram alteradas:\n\n");
+            sb.Append($"Jogo {homeTeam} vs. {awayTeam}, {startTime}\n");
+            foreach (OddDTO newodd in newOdds) {
+                sb.Append($"    {newodd.Name}: {newodd.OddValue}\n");
+            }
+            sb.Append("Boas Apostas.");
+        }
+        else {
+            sb.Append($"Olá! O estado de um jogo seguido por si foi alterado:\n\t{homeTeam} vs. {awayTeam} - {gameState}.\nBoas apostas.");
+        }
+
+        body = sb.ToString();
+        
+        foreach (string user in users) {
+            User? u = await context.Users.Where(u => u.Id.Equals(user)).FirstOrDefaultAsync();
+            
+            if (u == null) throw new Exception("E-mail inexistente.");
+
+            SendEmail(u.Email,subject,body);
+        }
     }
 }
