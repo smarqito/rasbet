@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 import React, { Fragment, useContext, useEffect, useState } from "react";
-import { Card, Dropdown, Grid, Header } from "semantic-ui-react";
+import { Button, Card, Dropdown, Grid, Header } from "semantic-ui-react";
 import { RootStoreContext } from "../../../app/stores/rootStore";
 import ListItemNotFound from "../../../app/common/ListItemNotFound";
 import DatePicker, { registerLocale } from "react-datepicker";
@@ -18,17 +18,19 @@ const HistoryBets: React.FC = () => {
     appUserDetails,
   } = rootStore.userStore;
 
-  const betFilterTypes = [
-    { key: 1, text: "open", value: "open" },
-    { key: 2, text: "won", value: "won" },
-    { key: 3, text: "close", value: "close" },
-  ];
-
-  const [betFilter, setBetFilter] = useState<
-    string | number | boolean | (string | number | boolean)[] | undefined
-  >("open");
+  const [betFilter, setBetFilter] = useState("open");
 
   const [DateValueEnd, setDateValueEnd] = useState(new Date());
+
+  useEffect(() => {
+    if (betFilter == "open") {
+      getUserBetsOpen(appUserDetails!.id, new Date(2001, 1, 1), DateValueEnd);
+    } else if (betFilter == "won") {
+      getUserBetsWon(appUserDetails!.id, new Date(2001, 1, 1), DateValueEnd);
+    } else if (betFilter == "close") {
+      getUserBetsClosed(appUserDetails!.id, new Date(2001, 1, 1), DateValueEnd);
+    }
+  }, [DateValueEnd, betFilter, appUserDetails!.id, setBetFilter]);
 
   return (
     <Fragment>
@@ -38,49 +40,29 @@ const HistoryBets: React.FC = () => {
             <Header>Histórico de Apostas</Header>
           </Grid.Column>
         </Grid.Row>
-        <Grid.Row columns={1} textAlign="center">
+        <Grid.Row columns={2} textAlign="center">
           <Grid.Column>
             <Grid centered>
-              <Grid.Row columns={2} textAlign="left">
+              <Grid.Row columns={3} textAlign="left">
                 <Grid.Column>
-                  <Dropdown
-                    options={betFilterTypes}
-                    selection
-                    value={betFilter}
-                    onChange={(_, data) => {
-                      setBetFilter(data.value);
-                      if (betFilter == "open") {
-                        getUserBetsOpen(
-                          appUserDetails!.id,
-                          new Date(2001, 1, 1),
-                          DateValueEnd
-                        );
-                      } else if (betFilter == "won") {
-                        getUserBetsWon(
-                          appUserDetails!.id,
-                          new Date(2001, 1, 1),
-                          DateValueEnd
-                        );
-                      } else if (betFilter == "close") {
-                        getUserBetsClosed(
-                          appUserDetails!.id,
-                          new Date(2001, 1, 1),
-                          DateValueEnd
-                        );
-                      }
-                    }}
-                  />
+                  <Button onClick={() => setBetFilter("open")}>Open</Button>
                 </Grid.Column>
-                <Grid.Row>
-                  <DatePicker
-                    selected={DateValueEnd}
-                    onChange={(date) => date && setDateValueEnd(date)}
-                    locale="pt"
-                    dateFormat={"P"}
-                  />
-                </Grid.Row>
+                <Grid.Column>
+                  <Button onClick={() => setBetFilter("won")}>Won</Button>
+                </Grid.Column>
+                <Grid.Column>
+                  <Button onClick={() => setBetFilter("close")}>Close</Button>
+                </Grid.Column>
               </Grid.Row>
             </Grid>
+          </Grid.Column>
+          <Grid.Column>
+            <DatePicker
+              selected={DateValueEnd}
+              onChange={(date) => date && setDateValueEnd(date)}
+              locale="pt"
+              dateFormat={"P"}
+            />
           </Grid.Column>
         </Grid.Row>
       </Grid>
