@@ -30,20 +30,6 @@ const HistoryBets: React.FC = () => {
 
   const [DateValueEnd, setDateValueEnd] = useState(new Date());
 
-  useEffect(() => {
-    if (betFilter == "open") {
-      getUserBetsOpen(appUserDetails!.id, new Date(2001, 1, 1), DateValueEnd);
-    }
-
-    if (betFilter == "won") {
-      getUserBetsWon(appUserDetails!.id, new Date(2001, 1, 1), DateValueEnd);
-    }
-
-    if (betFilter == "close") {
-      getUserBetsClosed(appUserDetails!.id, new Date(2001, 1, 1), DateValueEnd);
-    }
-  }, [DateValueEnd, betFilter, appUserDetails!.id, setBetFilter]);
-
   return (
     <Fragment>
       <Grid padded celled>
@@ -63,6 +49,25 @@ const HistoryBets: React.FC = () => {
                     value={betFilter}
                     onChange={(_, data) => {
                       setBetFilter(data.value);
+                      if (betFilter == "open") {
+                        getUserBetsOpen(
+                          appUserDetails!.id,
+                          new Date(2001, 1, 1),
+                          DateValueEnd
+                        );
+                      } else if (betFilter == "won") {
+                        getUserBetsWon(
+                          appUserDetails!.id,
+                          new Date(2001, 1, 1),
+                          DateValueEnd
+                        );
+                      } else if (betFilter == "close") {
+                        getUserBetsClosed(
+                          appUserDetails!.id,
+                          new Date(2001, 1, 1),
+                          DateValueEnd
+                        );
+                      }
                     }}
                   />
                 </Grid.Column>
@@ -102,7 +107,7 @@ const HistoryBets: React.FC = () => {
                         {x.start.toString()} - {x.end?.toString()}
                       </Card.Meta>
                       <Card.Description>
-                        <b>Montante apostado</b> : {x.amount}
+                        <b>Montante apostado</b> : {x.amount.toFixed(2)}
                       </Card.Description>
                       <Card.Description>
                         <b>Cota escolhida </b>: {x.odd.toFixed(2)}
