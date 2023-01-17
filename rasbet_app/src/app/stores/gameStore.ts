@@ -59,7 +59,7 @@ export default class GameStore {
     this.allSports = [];
   };
 
-  @action isGameSubbed (gameId: number) {
+  @action isGameSubbed = (gameId: number) => {
     return this.subbedGames.includes(gameId);
   }
 

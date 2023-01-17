@@ -37,8 +37,8 @@ const requests = {
   get: (url: string) => axios.get(url).then(responseBody),
   post: (url: string, body: {}) => axios.post(url, body).then(responseBody),
   put: (url: string, body: {}) => axios.put(url, body).then(responseBody),
-  del: (url: string) => axios.delete(url).then(responseBody),
   patch: (url: string, body: {}) => axios.patch(url, body).then(responseBody),
+  delete: (url: string) => axios.delete(url).then(responseBody),
 };
 
 const User = {
@@ -95,7 +95,8 @@ const User = {
     requests.put(`/User/sensitive/admin/confirm`, { email, code }),
   updateSpecialistSensitiveConfirm: (email: string, code: string) =>
     requests.put(`/User/sensitive/specialist/confirm`, { email, code }),
-  changePass: (email: string) => requests.put(`/User/forgotPWD?email=${email}`, { }),
+  changePass: (email: string) =>
+    requests.put(`/User/forgotPWD?email=${email}`, {}),
   logout: (id: string) => requests.post(`/User/logout`, id),
 };
 
@@ -145,11 +146,11 @@ const Game = {
   getActiveAndSuspended: (): Promise<IActiveGame[]> =>
     requests.get(`/GameOdd/ActiveAndSuspended`),
   getSubbedGames: (userId: string): Promise<number[]> =>
-     requests.get(`/GameOdd/GamesFollowed?userId=${userId}`),
+    requests.get(`/GameOdd/GamesFollowed?userId=${userId}`),
   addFollower: (userId: string, gameId: number) =>
-    requests.put(`/GameOdd/AddFollower`, {userId, gameId}),
+    requests.put(`/GameOdd/AddFollowerToGame`, { userId, gameId }),
   removeFollower: (userId: string, gameId: number) =>
-    requests.put(`/GameOdd/RemoveFollower`, {userId, gameId}),
+    requests.delete(`/GameOdd/RemoveFollower?userId=${userId}&gameId=${gameId}`),
 };
 
 const Wallet = {
