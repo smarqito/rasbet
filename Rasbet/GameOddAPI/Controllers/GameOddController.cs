@@ -195,11 +195,11 @@ namespace GameOddAPI.Controllers
         }
 
         [HttpDelete("RemoveFollower")]
-        public async Task<IActionResult> RemoveFollower([FromBody] FollowerDTO dto)
+        public async Task<IActionResult> RemoveFollower([FromQuery] string userId, int gameId)
         {
             try
             {
-                await gameOddFacade.UnfollowGame(dto.UserId, dto.GameId);
+                await gameOddFacade.UnfollowGame(userId, gameId);
                 return Ok();
             }
             catch (Exception e)

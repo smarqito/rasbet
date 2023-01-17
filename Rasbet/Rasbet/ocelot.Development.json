@@ -330,7 +330,7 @@
       "UpstreamHttpMethod": [ "PATCH" ]
     },
     {
-      "DownstreamPathTemplate": "/GameOdd/finish?gameId={gameId}&specialistId={specialistId}",
+      "DownstreamPathTemplate": "/GameOdd/finish?gameId={gameId}&result={result}&specialistId={specialistId}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -338,7 +338,7 @@
           "Port": "5002"
         }
       ],
-      "UpstreamPathTemplate": "/GameOdd/finish?gameId={gameId}&specialistId={specialistId}",
+      "UpstreamPathTemplate": "/GameOdd/finish?gameId={gameId}&result={result}&specialistId={specialistId}",
       "UpstreamHttpMethod": [ "PATCH" ]
     },
     {
@@ -366,7 +366,7 @@
       "UpstreamHttpMethod": [ "PUT" ]
     },
     {
-      "DownstreamPathTemplate": "/GameOdd/RemoveFollower",
+      "DownstreamPathTemplate": "/GameOdd/RemoveFollower?userId={userId}&gameId={gameId}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -374,7 +374,7 @@
           "Port": "5002"
         }
       ],
-      "UpstreamPathTemplate": "/GameOdd/RemoveFollower",
+      "UpstreamPathTemplate": "/GameOdd/RemoveFollower?userId={userId}&gameId={gameId}",
       "UpstreamHttpMethod": [ "DELETE" ]
     },
     {

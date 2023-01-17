@@ -206,7 +206,7 @@ public class BetFacade : IBetFacade
 
                             if (bet.State == BetState.Won)
                             {
-                                body = $"Olá!\nGanhou {bet.WonValue} {dto.Coin} na aposta que realizou no dia {bet.Start}.\nBoas apostas.";
+                                body = $"Olá!\nGanhou {bet.WonValue.ToString("F")} {dto.Coin} na aposta que realizou no dia {bet.Start}.\nBoas apostas.";
                                 await APIService.DepositUserBalance(new TransactionDTO(bet.UserId, bet.WonValue, nameof(Deposit)));
                             }
 
