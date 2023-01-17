@@ -409,10 +409,11 @@ export default class UserStore {
     try {
       let bets: IBet[] = await Agent.Bet.getUserBetsOpen(id, start, end);
 
-      if (bets) {
-        this.clearBets();
-        this.userBetsFiltered = bets;
-      } else toast.info("Sem apostas realizadas!");
+      runInAction(() => {
+        if (bets) {
+          this.userBetsFiltered = bets;
+        } else toast.info("Sem apostas realizadas!");
+      });
     } catch (error) {
       toast.error("Ocorreu um erro interno!");
       throw error;
@@ -426,10 +427,11 @@ export default class UserStore {
     try {
       let bets: IBet[] = await Agent.Bet.getUserBetsWon(id, start, end);
 
-      if (bets) {
-        this.clearBets();
-        this.userBetsFiltered = bets;
-      } else toast.info("Sem apostas realizadas!");
+      runInAction(() => {
+        if (bets) {
+          this.userBetsFiltered = bets;
+        } else toast.info("Sem apostas realizadas!");
+      });
     } catch (error) {
       toast.error("Ocorreu um erro interno!");
       throw error;
@@ -443,10 +445,11 @@ export default class UserStore {
     try {
       let bets: IBet[] = await Agent.Bet.getUserBetsClose(id, start, end);
 
-      if (bets) {
-        this.clearBets();
-        this.userBetsFiltered = bets;
-      } else toast.info("Sem apostas realizadas!");
+      runInAction(() => {
+        if (bets) {
+          this.userBetsFiltered = bets;
+        } else toast.info("Sem apostas realizadas!");
+      });
     } catch (error) {
       toast.error("Ocorreu um erro interno!");
       throw error;
