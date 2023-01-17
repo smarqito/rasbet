@@ -101,7 +101,7 @@ const HistoryBets: React.FC = () => {
                       <Card.Description>
                         <b>Cota escolhida </b>: {x.odd.toFixed(2)}
                       </Card.Description>
-                      <Card.Description>Ganhos: {x.wonValue}</Card.Description>
+                      <Card.Description>Ganhos: {x.wonValue.toFixed(2)}</Card.Description>
                     </Card.Content>
                   </Card>
                 </Grid.Column>
