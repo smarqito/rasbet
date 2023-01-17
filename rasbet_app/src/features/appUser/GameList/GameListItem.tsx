@@ -62,14 +62,6 @@ const GameListItem: React.FC<IProps> = ({ game, bell }) => {
     return grey;
   }
 
-  useEffect(() => {
-    if (bellState) {
-      addFollowerToGame(game.id, user!.id);
-    } else {
-      removeFollowerFromGame(game.id, user!.id);
-    }
-  }, [bellState]);
-
   return (
     <Card fluid key={game.id}>
       <Grid padded>
@@ -125,7 +117,15 @@ const GameListItem: React.FC<IProps> = ({ game, bell }) => {
       <Card.Content extra>
         <Icon
           name={bellState ? "bell" : "bell slash outline"}
-          onClick={() => setBellState(!bellState)}
+          onClick={() => {
+            setBellState(!bellState);
+
+            if (bellState) {
+              addFollowerToGame(game.id, user!.id);
+            } else {
+              removeFollowerFromGame(game.id, user!.id);
+            }
+          }}
         />
       </Card.Content>
     </Card>
