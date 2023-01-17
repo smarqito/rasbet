@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Domain;
 using Domain.ResultDomain;
+using Domain.UserDomain;
 using DTO;
 using DTO.GameOddDTO;
 using DTO.GetGamesRespDTO;
@@ -11,7 +12,10 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Runtime.Intrinsics.X86;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -41,8 +45,21 @@ public class GameOddFacade : IGameOddFacade
         if(game.State != GameState.Finished)
         {
             await FinishGame(id, result, null);
+            await NotifyUsers((CollectiveGame)game);
         }
         return Unit.Value;
+    }
+
+    public async Task NotifyUsers(CollectiveGame g, ICollection<Odd> newOdds)
+    {
+        ChangeGameDTO changeGameDTO = new ChangeGameDTO(g.GetFolowersId(), g.HomeTeam, g.AwayTeam, g.StartTime, mapper.Map<ICollection<OddDTO>>(newOdds));
+        await API.NotifyFollowers(changeGameDTO);
+    }
+
+    public async Task NotifyUsers(CollectiveGame g)
+    {
+        ChangeGameDTO changeGameDTO = new ChangeGameDTO(g.GetFolowersId(), g.State.ToString(), g.HomeTeam, g.AwayTeam, g.StartTime);
+        await API.NotifyFollowers(changeGameDTO);
     }
 
 
@@ -60,7 +77,10 @@ public class GameOddFacade : IGameOddFacade
                 {
                     CollectiveGame g = await gameRepository.GetCollectiveGame(game.Id);
                     if(g.SpecialistId != null)
-                        await betTypeRepository.UpdateBets(game.Bookmakers, g.AwayTeam, g.Id);
+                    {
+                        ICollection<Odd> newOdds = await betTypeRepository.UpdateBets(game.Bookmakers, g.AwayTeam, g.Id);
+                        await NotifyUsers(g, newOdds);
+                    }
                 }
             }
             else if (game.Completed == false)
@@ -76,36 +96,29 @@ public class GameOddFacade : IGameOddFacade
     public async Task<Unit> SuspendGame(int gameId, string specialistId)
     {
         Game game = await gameRepository.GetGame(gameId);
-        return await gameRepository.ChangeGameState(game, specialistId, GameState.Suspended);
+        await gameRepository.ChangeGameState(game, specialistId, GameState.Suspended);
+        await NotifyUsers((CollectiveGame)game);
+        return Unit.Value;
     }
 
     public async Task<Unit> ActivateGame(int gameId, string specialistId)
     {
         Game game = await gameRepository.GetGame(gameId);
-        return await gameRepository.ChangeGameState(game, specialistId, GameState.Open);
-    }
-
-    public async Task<Unit> FinishGame(int id, string result, string specialistId)
-    {
-        ICollection<BetsOddsWonDTO> res = new List<BetsOddsWonDTO>();
-        Game g = await gameRepository.GetGame(id);
-        await gameRepository.ChangeGameState(g, specialistId, GameState.Finished);
-        foreach (BetType betType in g.Bets)
-        {
-            if (specialistId != null)
-                betType.SpecialistId = specialistId;
-            betType.State = BetTypeState.FINISHED;
-            res.Add(new BetsOddsWonDTO(betType.Id, betType.SetWinningOdd(result).Select(x => x.Id).ToList()));
-            await gameOddContext.SaveChangesAsync();
-        }
-        await API.UpdateBets(res);
+        await gameRepository.ChangeGameState(game, specialistId, GameState.Open);
+        await NotifyUsers((CollectiveGame)game);
         return Unit.Value;
     }
 
-    public async Task<Unit> FinishGame(string id, string result, string? specialistId)
+    public async Task<Unit> FinishGame(int gameId, string result, string specialistId)
+    {
+        string id = (await gameRepository.GetGame(gameId)).IdSync;
+        return await FinishGame(id, result, specialistId);
+    }
+
+    public async Task<Unit> FinishGame(string gameId, string result, string specialistId)
     {
         ICollection<BetsOddsWonDTO> res = new List<BetsOddsWonDTO>();
-        Game g = await gameRepository.GetGame(id);
+        Game g = await gameRepository.GetGame(gameId);
         await gameRepository.ChangeGameState(g, specialistId, GameState.Finished);
         foreach (BetType betType in g.Bets)
         {
@@ -116,6 +129,7 @@ public class GameOddFacade : IGameOddFacade
             await gameOddContext.SaveChangesAsync();
         }
         await API.UpdateBets(res);
+        await NotifyUsers((CollectiveGame)g);
         return Unit.Value;
     }
 
@@ -147,13 +161,21 @@ public class GameOddFacade : IGameOddFacade
     public async Task<Unit> ChangeOdds(string specialistId, int betTypeId, ICollection<NewODD> newOdds)
     {
         BetType bet = await betTypeRepository.GetBetType(betTypeId);
+        ICollection<Odd> odds = new List<Odd>();
         bet.SpecialistId = specialistId;
         foreach(var item in newOdds)
         {
             Odd d = bet.Odds.FirstOrDefault(o => o.Id == item.OddId);
             d.OddValue = item.OddValue;
+            odds.Add(d);
         }
         await gameOddContext.SaveChangesAsync();
+        CollectiveGame? g = await gameOddContext.Game.OfType<CollectiveGame>().Where(g => g.Bets.Any(b => b.Id == betTypeId)).FirstOrDefaultAsync();
+        if (g != null)
+        {
+            await NotifyUsers(g, odds);
+        }
+
         return Unit.Value;
     }
 
@@ -187,4 +209,33 @@ public class GameOddFacade : IGameOddFacade
         ICollection<Game> games = await gameRepository.GetActiveAndSuspendedGames();
         return mapper.Map<ICollection<CollectiveGameDTO>>(games);
     }
+
+    public async Task FollowGame(string userId, int gameId)
+    {
+        Follower f = new Follower(userId);
+        if (gameOddContext.Follower.Where(f => f.UserId.Equals(userId) && f.Game.Id == gameId).Count() == 0)
+        {
+            (await gameRepository.GetGame(gameId)).FollowersIds.Add(f);
+            await gameOddContext.SaveChangesAsync();
+        }
+    }
+
+    public async Task UnfollowGame(string userId, int gameId)
+    {
+        Game g = await gameRepository.GetGame(gameId);
+        Follower? f = g.FollowersIds.Where(f => f.UserId.Equals(userId)).FirstOrDefault();
+        if (f != null)
+        {
+            g.FollowersIds.Remove(f);
+            await gameOddContext.SaveChangesAsync();
+        }
+    }
+
+    public async Task<ICollection<int>> GetGamesFollowed(string userId)
+    {
+        ICollection<Game> games = await gameOddContext.Game.Where(g => g.State.Equals(GameState.Open) && g.FollowersIds.Any(f => f.UserId.Equals(userId)))
+                                        .ToListAsync();
+        return games.Select(g => g.Id).ToList();
+    }
+
 }

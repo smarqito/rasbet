@@ -30,7 +30,7 @@ namespace UserAPI.Controllers
         {
             try
             {
-                UserDTO u = await userRepository.Login(user.Email, 
+                UserDTO u = await userRepository.Login(user.Email,
                                                     user.Password);
                 return Ok(u);
             }
@@ -86,7 +86,7 @@ namespace UserAPI.Controllers
             {
                 return BadRequest(e.Message);
             }
-            
+
         }
 
 
@@ -128,7 +128,7 @@ namespace UserAPI.Controllers
                                                         registerApp.Language);
                 return Ok();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return BadRequest(e.Message);
             }
@@ -140,21 +140,22 @@ namespace UserAPI.Controllers
         /// <param name="id"> Id of the user to be retrieved.</param>
         /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
         [HttpGet("appuser")]
-        public async Task<AppUserDTO> GetAppUser([FromQuery]string id)
+        public async Task<AppUserDTO> GetAppUser([FromQuery] string id)
         {
-            try { 
-               AppUser user = await userRepository.GetAppUser(id);
-               AppUserDTO dto = new AppUserDTO(user.Id,
-                                               user.Name, 
-                                               user.Language, 
-                                               user.Email, 
-                                               user.IBAN, 
-                                               user.NIF, 
-                                               user.DOB,
-                                               user.PhoneNumber,
-                                               user.Notifications,
-                                               user.Coin);
-               return dto;
+            try
+            {
+                AppUser user = await userRepository.GetAppUser(id);
+                AppUserDTO dto = new AppUserDTO(user.Id,
+                                                user.Name,
+                                                user.Language,
+                                                user.Email,
+                                                user.IBAN,
+                                                user.NIF,
+                                                user.DOB,
+                                                user.PhoneNumber,
+                                                user.Notifications,
+                                                user.Coin);
+                return dto;
             }
             catch (Exception e)
             {
@@ -237,7 +238,8 @@ namespace UserAPI.Controllers
         [HttpPut("update/user")]
         public async Task<IActionResult> UpdateAppUser([FromBody] UpdateAppUserDTO userDTO)
         {
-            try { 
+            try
+            {
                 await userRepository.UpdateAppUser(userDTO.Email, userDTO.Name, userDTO.Language, userDTO.Coin, userDTO.Notifications);
                 return Ok();
             }
@@ -254,8 +256,10 @@ namespace UserAPI.Controllers
         /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
         [HttpPut("sensitive/user")]
         //[Authorize(Roles ="AppUser")]
-        public async Task<IActionResult> UpdateAppUserSensitive([FromBody] SensitiveAppUserDTO updateInfo){
-            try {   
+        public async Task<IActionResult> UpdateAppUserSensitive([FromBody] SensitiveAppUserDTO updateInfo)
+        {
+            try
+            {
                 await userRepository.UpdateAppUserSensitive(updateInfo.Email, updateInfo.Password, updateInfo.IBAN, updateInfo.PhoneNumber);
                 return Ok();
             }
@@ -273,7 +277,8 @@ namespace UserAPI.Controllers
         [HttpPut("sensitive/admin")]
         public async Task<IActionResult> UpdateAdminSensitive([FromBody] UpdatePasswordDTO updateInfo)
         {
-            try {   
+            try
+            {
                 await userRepository.UpdateAdminSensitive(updateInfo.Email, updateInfo.Password);
                 return Ok();
             }
@@ -291,7 +296,8 @@ namespace UserAPI.Controllers
         [HttpPut("sensitive/specialist")]
         public async Task<IActionResult> UpdateSpecialistSensitive([FromBody] UpdatePasswordDTO updateInfo)
         {
-            try {   
+            try
+            {
                 await userRepository.UpdateSpecialistSensitive(updateInfo.Email, updateInfo.Password);
                 return Ok();
             }
@@ -308,10 +314,13 @@ namespace UserAPI.Controllers
         [HttpPut("sensitive/user/confirm")]
         public async Task<IActionResult> UpdateAppUserSensitiveConfirm([FromBody] ConfirmationDTO c)
         {
-            try{
+            try
+            {
                 await userRepository.UpdateAppUserSensitiveConfirm(c.Email, c.Code);
                 return Ok();
-            } catch(Exception e) {
+            }
+            catch (Exception e)
+            {
                 return BadRequest(e.Message);
             }
         }
@@ -323,10 +332,13 @@ namespace UserAPI.Controllers
         [HttpPut("sensitive/admin/confirm")]
         public async Task<IActionResult> UpdateAdminSensitiveConfirm([FromBody] ConfirmationDTO c)
         {
-            try{
+            try
+            {
                 await userRepository.UpdateAdminSensitiveConfirm(c.Email, c.Code);
                 return Ok();
-            } catch(Exception e) {
+            }
+            catch (Exception e)
+            {
                 return BadRequest(e.Message);
             }
         }
@@ -338,10 +350,13 @@ namespace UserAPI.Controllers
         [HttpPut("sensitive/specialist/confirm")]
         public async Task<IActionResult> UpdateSpecialistSensitiveConfirm([FromBody] ConfirmationDTO c)
         {
-            try{
+            try
+            {
                 await userRepository.UpdateSpecialistSensitiveConfirm(c.Email, c.Code);
                 return Ok();
-            } catch(Exception e) {
+            }
+            catch (Exception e)
+            {
                 return BadRequest(e.Message);
             }
         }
@@ -403,5 +418,26 @@ namespace UserAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Notify the users of changes in the state or in the odds of a game they're following
+        /// </summary>
+        /// <param name="gameInfo"> Changes in the game and the list of users that are following
+        /// that game.</param>
+        /// <returns>Ok(), if everything worked as planned. BadRequest(), otherwise.</returns>
+        [HttpPatch("notifyChangeGame")]
+        public async Task<IActionResult> NotifyChangeGame([FromBody] ChangeGameDTO gameInfo)
+        {
+            try
+            {
+                await userRepository.NotifyChangeGame(gameInfo.UsersToNotify, gameInfo.GameState, gameInfo.HomeTeam,
+                                                     gameInfo.AwayTeam, gameInfo.StartTime, gameInfo.NewOdds);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
     }
+
 }

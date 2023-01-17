@@ -174,11 +174,55 @@ namespace GameOddAPI.Controllers
                 ICollection<CollectiveGameDTO> res = await gameOddFacade.GetActiveAndSuspendedGames();
                 return Ok(res);
             }
-            catch(Exception e) 
+            catch (Exception e)
             {
                 return BadRequest(e.Message);
             }
         }
+
+        [HttpPut("AddFollowerToGame")]
+        public async Task<IActionResult> AddFollowerToGame([FromBody] FollowerDTO dto)
+        {
+            try
+            {
+                await gameOddFacade.FollowGame(dto.UserId, dto.GameId);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpDelete("RemoveFollower")]
+        public async Task<IActionResult> RemoveFollower([FromBody] FollowerDTO dto)
+        {
+            try
+            {
+                await gameOddFacade.UnfollowGame(dto.UserId, dto.GameId);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet("GamesFollowed")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<int>))]
+        public async Task<IActionResult> GamesFollowed([FromQuery]string userId)
+        {
+            try
+            {
+                ICollection<int> res = await gameOddFacade.GetGamesFollowed(userId);
+                return Ok(res);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
 
     }
 }
