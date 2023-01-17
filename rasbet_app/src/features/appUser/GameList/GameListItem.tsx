@@ -121,9 +121,9 @@ const GameListItem: React.FC<IProps> = ({ game, bell }) => {
             setBellState(!bellState);
 
             if (bellState) {
-              addFollowerToGame(game.id, user!.id);
-            } else {
               removeFollowerFromGame(game.id, user!.id);
+            } else {
+              addFollowerToGame(game.id, user!.id);
             }
           }}
         />
