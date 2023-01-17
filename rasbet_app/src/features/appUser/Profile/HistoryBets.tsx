@@ -22,16 +22,6 @@ const HistoryBets: React.FC = () => {
 
   const [DateValueEnd, setDateValueEnd] = useState(new Date());
 
-  useEffect(() => {
-    if (betFilter == "open") {
-      getUserBetsOpen(appUserDetails!.id, new Date(2001, 1, 1), DateValueEnd);
-    } else if (betFilter == "won") {
-      getUserBetsWon(appUserDetails!.id, new Date(2001, 1, 1), DateValueEnd);
-    } else if (betFilter == "close") {
-      getUserBetsClosed(appUserDetails!.id, new Date(2001, 1, 1), DateValueEnd);
-    }
-  }, [DateValueEnd, betFilter, appUserDetails!.id, setBetFilter]);
-
   return (
     <Fragment>
       <Grid padded celled>
@@ -45,13 +35,43 @@ const HistoryBets: React.FC = () => {
             <Grid centered>
               <Grid.Row columns={3} textAlign="left">
                 <Grid.Column>
-                  <Button onClick={() => setBetFilter("open")}>Open</Button>
+                  <Button
+                    onClick={() => {
+                      getUserBetsOpen(
+                        appUserDetails!.id,
+                        new Date(2001, 1, 1),
+                        DateValueEnd
+                      );
+                    }}
+                  >
+                    Open
+                  </Button>
                 </Grid.Column>
                 <Grid.Column>
-                  <Button onClick={() => setBetFilter("won")}>Won</Button>
+                  <Button
+                    onClick={() => {
+                      getUserBetsWon(
+                        appUserDetails!.id,
+                        new Date(2001, 1, 1),
+                        DateValueEnd
+                      );
+                    }}
+                  >
+                    Won
+                  </Button>
                 </Grid.Column>
                 <Grid.Column>
-                  <Button onClick={() => setBetFilter("close")}>Close</Button>
+                  <Button
+                    onClick={() => {
+                      getUserBetsClosed(
+                        appUserDetails!.id,
+                        new Date(2001, 1, 1),
+                        DateValueEnd
+                      );
+                    }}
+                  >
+                    Close
+                  </Button>
                 </Grid.Column>
               </Grid.Row>
             </Grid>

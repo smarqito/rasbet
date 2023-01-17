@@ -113,10 +113,6 @@ const Bet = {
     requests.get(
       `/Bet/won?userId=${userId}&start=${start.toISOString()}&end=${end.toISOString()}`
     ),
-  getUserBetsLost: (userId: string, start: Date, end: Date): Promise<IBet[]> =>
-    requests.get(
-      `/Bet/lost?userId=${userId}&start=${start.toISOString()}&end=${end.toISOString()}`
-    ),
   getUserBetsClose: (userId: string, start: Date, end: Date): Promise<IBet[]> =>
     requests.get(
       `/Bet/closed?userId=${userId}&start=${start.toISOString()}&end=${end.toISOString()}`
