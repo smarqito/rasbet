@@ -60,7 +60,7 @@ export default class GameStore {
   };
 
   @action isGameSubbed (gameId: number) {
-    return this.subbedGames.includes(this.game!.id);
+    return this.subbedGames.includes(gameId);
   }
 
   getGame = (id: number) => {
