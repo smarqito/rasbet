@@ -76,7 +76,7 @@ const NavBar: React.FC = () => {
             <Menu.Item position="right">
               {user.role === "AppUser" ? (
                 <Fragment>
-                  <b>({wallet?.balance} €)</b>
+                  <b>({wallet?.balance.toPrecision(2)} €)</b>
                   <Dropdown
                     pointing="top left"
                     text={`Bem Vindo, ${user.name}`}

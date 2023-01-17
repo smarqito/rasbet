@@ -76,9 +76,9 @@ const HistoryBets: React.FC = () => {
           </Grid.Column>
         </Grid.Row>
       </Grid>
-      {userBetsFiltered.length == 0 ? (
+      {/* {userBetsFiltered.length == 0 ? (
         <ListItemNotFound content="Não existem apostas realizadas!" />
-      ) : (
+      ) : ( */}
         <Grid celled style={{ overflow: "scroll", maxHeight: "90vh" }}>
           {userBetsFiltered.map((x) => {
             return (
@@ -109,7 +109,7 @@ const HistoryBets: React.FC = () => {
             );
           })}
         </Grid>
-      )}
+      {/* )} */}
     </Fragment>
   );
 };
