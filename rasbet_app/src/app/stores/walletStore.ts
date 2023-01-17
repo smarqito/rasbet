@@ -1,4 +1,4 @@
-import { action, makeObservable, observable, runInAction } from "mobx";
+import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { toast } from "react-toastify";
 import Agent from "../api/agent";
 import { ICreateTransaction, ITransaction } from "../models/transaction";
@@ -24,6 +24,10 @@ export default class WalletStore {
   @action clearTransaction = () => {
     this.allTransactions = [];
   };
+
+  @computed get getBalance() {
+    return this.wallet?.balance.toFixed(2);
+  }
 
   @action getWallet = async (userId: string) => {
     this.loading = true;

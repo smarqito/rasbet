@@ -1,12 +1,6 @@
 import React, { Fragment, useContext, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import {
-  Container,
-  Dropdown,
-  Grid,
-  Image,
-  Menu,
-} from "semantic-ui-react";
+import { Container, Dropdown, Grid, Image, Menu } from "semantic-ui-react";
 import { RootStoreContext } from "../../app/stores/rootStore";
 import IsAuthorized from "../../app/common/IsAuthorized";
 import { observer } from "mobx-react-lite";
@@ -14,7 +8,7 @@ import { observer } from "mobx-react-lite";
 const NavBar: React.FC = () => {
   const rootStore = useContext(RootStoreContext);
   const { user, logout } = rootStore.userStore;
-  const { wallet, getWallet, depositFunds, withdrawFunds } =
+  const { wallet, getWallet, depositFunds, withdrawFunds, getBalance } =
     rootStore.walletStore;
 
   useEffect(() => {
@@ -76,7 +70,7 @@ const NavBar: React.FC = () => {
             <Menu.Item position="right">
               {user.role === "AppUser" ? (
                 <Fragment>
-                  <b>({wallet?.balance.toPrecision(2)} €)</b>
+                  <b>({getBalance} €)</b>
                   <Dropdown
                     pointing="top left"
                     text={`Bem Vindo, ${user.name}`}
