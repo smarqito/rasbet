@@ -35,6 +35,8 @@ export default class WalletStore {
         if (newWallet) this.wallet = newWallet;
         else toast.error("Erro ao obter a carteira do utilizador!");
       });
+
+      this.wallet?.balance.toPrecision(2);
     } catch (error) {
       toast.error("Erro ao obter a carteira do utilizador!");
       throw error;
