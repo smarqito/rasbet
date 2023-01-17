@@ -31,15 +31,18 @@ const HistoryBets: React.FC = () => {
   const [DateValueEnd, setDateValueEnd] = useState(new Date());
 
   useEffect(() => {
-    if (betFilter == "open")
+    if (betFilter == "open") {
       getUserBetsOpen(appUserDetails!.id, new Date(2001, 1, 1), DateValueEnd);
+    }
 
-    if (betFilter == "won")
+    if (betFilter == "won") {
       getUserBetsWon(appUserDetails!.id, new Date(2001, 1, 1), DateValueEnd);
+    }
 
-    if (betFilter == "close")
+    if (betFilter == "close") {
       getUserBetsClosed(appUserDetails!.id, new Date(2001, 1, 1), DateValueEnd);
-  }, [DateValueEnd, betFilter, appUserDetails!.id]);
+    }
+  }, [DateValueEnd, betFilter, appUserDetails!.id, setBetFilter]);
 
   return (
     <Fragment>
@@ -81,16 +84,19 @@ const HistoryBets: React.FC = () => {
       ) : (
         <Grid celled style={{ overflow: "scroll", maxHeight: "90vh" }}>
           {userBetsFiltered.map((x) => {
+            console.log(x.selections.length);
             return (
-              <Grid.Row columns={1} textAlign="center">
+              <Grid.Row
+                columns={1}
+                textAlign="center"
+                key={x.start + "" + x.odd}
+              >
                 <Grid.Column>
                   <Card fluid>
                     <Card.Content>
                       <Card.Header>
                         Aposta{" "}
-                        {x.selections.entries.length == 1
-                          ? "Simples"
-                          : "Múltipla"}
+                        {x.selections.length == 1 ? "Simples" : "Múltipla"}
                       </Card.Header>
                       <Card.Meta>
                         {x.start.toString()} - {x.end?.toString()}
@@ -101,7 +107,9 @@ const HistoryBets: React.FC = () => {
                       <Card.Description>
                         <b>Cota escolhida </b>: {x.odd.toFixed(2)}
                       </Card.Description>
-                      <Card.Description>Ganhos: {x.wonValue.toFixed(2)}</Card.Description>
+                      <Card.Description>
+                        Ganhos: {x.wonValue.toFixed(2)}
+                      </Card.Description>
                     </Card.Content>
                   </Card>
                 </Grid.Column>

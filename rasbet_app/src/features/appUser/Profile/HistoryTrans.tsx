@@ -47,7 +47,7 @@ const HistoryTrans: React.FC = () => {
         <Grid padded celled style={{ overflow: "scroll", maxHeight: "90vh" }}>
           {allTransactions.map((x) => {
             return (
-              <Grid.Row columns={1} textAlign="center">
+              <Grid.Row columns={1} textAlign="center" key={x.userId+""+x.date}>
                 <Grid.Column>
                   <Card fluid>
                     <Card.Content>

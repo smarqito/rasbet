@@ -22,7 +22,6 @@ const AppUserProfile: React.FC<RouteComponentProps<DetailsParams>> = ({
 
   useEffect(() => {
     getAppUser(match.params.id);
-    console.log(appUserDetails);
     return () => {
       clearAppUserDetails();
       clearBets();
